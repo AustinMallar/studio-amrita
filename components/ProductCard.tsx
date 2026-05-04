@@ -45,7 +45,7 @@ export function ProductCard({ product }: { product: UiProduct }) {
         )}
       </div>
       <div className="space-y-1 px-0.5 pt-0.5 text-center">
-        <h3 className="font-sans text-base font-semibold text-heading">{product.name}</h3>
+        <h3 className="text-base font-semibold text-heading">{product.name}</h3>
         <p className="font-sans text-sm text-body">{product.price}</p>
         {product.swatches.length > 0 ? (
           <div className="flex justify-center gap-2 pt-1">

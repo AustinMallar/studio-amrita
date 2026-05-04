@@ -45,7 +45,7 @@ export function ProductRow({
     <section className="border-t border-black/[0.04] bg-cream px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-3 lg:gap-14">
         <ScrollReveal className="flex flex-col gap-4 lg:col-span-1">
-          <h3 className="font-display text-2xl text-heading sm:text-3xl">{categoryName}</h3>
+          <h3 className="text-2xl text-heading sm:text-3xl">{categoryName}</h3>
           <p className="font-sans text-base leading-relaxed text-body">{description}</p>
           <p className="font-sans text-lg font-semibold text-heading">{priceLabel}</p>
           <Link

@@ -13,7 +13,7 @@ function Value({
   return (
     <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
       <div className="mb-3 text-dusty-rose">{icon}</div>
-      <h3 className="font-sans text-sm font-bold uppercase tracking-wide text-heading">{title}</h3>
+      <h3 className="text-sm font-bold uppercase tracking-wide text-heading">{title}</h3>
       <p className="mt-1 max-w-[220px] font-sans text-sm text-body">{body}</p>
     </div>
   );
