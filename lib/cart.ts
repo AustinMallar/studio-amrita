@@ -1,6 +1,42 @@
 import "server-only";
 
+import type { CartProductNode } from "./cart-product-image";
 import { wpGraphQL } from "./wp-graphql";
+
+const CART_PRODUCT_IMAGE_FIELDS = `
+  __typename
+  ... on SimpleProduct {
+    name
+    featuredImage {
+      node {
+        sourceUrl
+        altText
+      }
+    }
+  }
+  ... on VariableProduct {
+    name
+    featuredImage {
+      node {
+        sourceUrl
+        altText
+      }
+    }
+  }
+  ... on ProductVariation {
+    name
+    featuredImage {
+      node {
+        sourceUrl
+        altText
+      }
+    }
+    image {
+      sourceUrl
+      altText
+    }
+  }
+`;
 
 export const ADD_TO_CART_MUTATION = `
   mutation AddToCart($input: AddToCartInput!) {
@@ -13,13 +49,7 @@ export const ADD_TO_CART_MUTATION = `
             subtotal
             product {
               node {
-                __typename
-                ... on SimpleProduct {
-                  name
-                }
-                ... on ProductVariation {
-                  name
-                }
+                ${CART_PRODUCT_IMAGE_FIELDS}
               }
             }
           }
@@ -41,19 +71,40 @@ export const GET_CART_QUERY = `
           subtotal
           product {
             node {
-              __typename
-              ... on SimpleProduct {
-                name
-              }
-              ... on ProductVariation {
-                name
-              }
+              ${CART_PRODUCT_IMAGE_FIELDS}
             }
           }
         }
       }
       total
       subtotal
+    }
+  }
+`;
+
+const CART_FRAGMENT_RESPONSE = `
+  cart {
+    contents {
+      nodes {
+        key
+        quantity
+        subtotal
+        product {
+          node {
+            ${CART_PRODUCT_IMAGE_FIELDS}
+          }
+        }
+      }
+    }
+    total
+    subtotal
+  }
+`;
+
+export const REMOVE_ITEMS_FROM_CART_MUTATION = `
+  mutation RemoveItemsFromCart($input: RemoveItemsFromCartInput!) {
+    removeItemsFromCart(input: $input) {
+      ${CART_FRAGMENT_RESPONSE}
     }
   }
 `;
@@ -84,6 +135,35 @@ export async function addToCartMutation(
   }>(ADD_TO_CART_MUTATION, { input: payload }, sessionToken);
 }
 
+export async function removeItemsFromCartMutation(
+  sessionToken: string | null | undefined,
+  keys: string[]
+) {
+  const payload = {
+    clientMutationId: `next-remove-${Date.now()}`,
+    keys,
+  };
+
+  return wpGraphQL<{
+    removeItemsFromCart?: {
+      cart?: {
+        contents?: {
+          nodes?: Array<{
+            key?: string;
+            quantity?: number | null;
+            subtotal?: string | null;
+            product?: {
+              node?: (CartProductNode & { __typename?: string }) | null;
+            } | null;
+          } | null> | null;
+        } | null;
+        total?: string | null;
+        subtotal?: string | null;
+      } | null;
+    };
+  }>(REMOVE_ITEMS_FROM_CART_MUTATION, { input: payload }, sessionToken);
+}
+
 export async function getCartQuery(sessionToken: string | null | undefined) {
   return wpGraphQL<{
     cart?: {
@@ -92,7 +172,9 @@ export async function getCartQuery(sessionToken: string | null | undefined) {
           key?: string;
           quantity?: number | null;
           subtotal?: string | null;
-          product?: { node?: { name?: string | null } | null } | null;
+          product?: {
+            node?: (CartProductNode & { __typename?: string }) | null;
+          } | null;
         } | null> | null;
       } | null;
       total?: string | null;

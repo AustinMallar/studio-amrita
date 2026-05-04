@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 function Feature({
   icon,
@@ -26,11 +27,14 @@ export function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-cream px-4 pb-16 pt-10 sm:px-6 lg:px-8 lg:pb-24 lg:pt-14">
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-        <div className="order-2 flex flex-col gap-6 lg:order-1">
+        <ScrollReveal
+          className="order-2 flex flex-col gap-6 lg:order-1"
+          rootMargin="0px 0px 12% 0px"
+        >
           <p className="font-sans text-sm font-semibold uppercase tracking-widest text-dusty-rose">
             NEW ARRIVAL ♡
           </p>
-          <h1 className="font-display text-4xl leading-tight text-heading sm:text-5xl lg:text-[3.25rem]">
+          <h1 className="font-heading text-4xl leading-tight text-heading sm:text-5xl lg:text-[3.25rem]">
             Glow Bears Collection
           </h1>
           <p className="font-sans text-xl text-heading/90">Tiny bears. Big on joy.</p>
@@ -78,9 +82,13 @@ export function HeroSection() {
               }
             />
           </div>
-        </div>
+        </ScrollReveal>
 
-        <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
+        <ScrollReveal
+          className="order-1 flex justify-center lg:order-2 lg:justify-end"
+          delayMs={85}
+          rootMargin="0px 0px 12% 0px"
+        >
           <div className="relative w-full max-w-lg">
             <div className="relative aspect-[4/5] w-full overflow-hidden rounded-t-[48%] bg-blush px-8 pb-12 pt-14 sm:px-12 sm:pb-16 sm:pt-16">
               <Image
@@ -93,7 +101,7 @@ export function HeroSection() {
               />
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

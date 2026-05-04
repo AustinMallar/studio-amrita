@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { CartLineThumb } from "@/components/CartLineThumb";
+import { RemoveFromCartButton } from "@/components/RemoveFromCartButton";
 import { useCart } from "@/components/CartProvider";
 
 export function CartPreview({ children }: { children: ReactNode }) {
@@ -52,25 +54,35 @@ export function CartPreview({ children }: { children: ReactNode }) {
             <div className="border-b border-black/[0.06] px-4 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-heading">
               Your cart
             </div>
-            <div className="max-h-64 overflow-y-auto px-4 py-3">
+            <div className="max-h-[22rem] overflow-y-auto px-4 py-3">
               {showLoading ? (
                 <p className="font-sans text-sm text-body">Loading…</p>
               ) : previewLines.length === 0 ? (
                 <p className="font-sans text-sm text-body">Your cart is empty.</p>
               ) : (
-                <ul className="flex flex-col gap-2">
+                <ul className="flex flex-col gap-3">
                   {previewLines.map((line, index) => (
                     <li
                       key={line.key ?? `${line.name}-${index}`}
-                      className="flex justify-between gap-3 font-sans text-sm"
+                      className="flex items-start gap-2 font-sans text-sm"
                     >
-                      <span className="min-w-0 flex-1 leading-snug text-heading">{line.name}</span>
-                      <span className="shrink-0 tabular-nums text-body">
-                        ×{line.quantity ?? 0}
-                        {line.subtotal ? (
-                          <span className="ml-2 text-heading/80">{line.subtotal}</span>
-                        ) : null}
-                      </span>
+                      <CartLineThumb
+                        imageUrl={line.imageUrl}
+                        imageAlt={line.imageAlt}
+                        size="sm"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="leading-snug text-heading">{line.name}</p>
+                        <p className="mt-0.5 tabular-nums text-body">
+                          ×{line.quantity ?? 0}
+                          {line.subtotal ? (
+                            <span className="ml-2 text-heading/80">{line.subtotal}</span>
+                          ) : null}
+                        </p>
+                      </div>
+                      {line.key ? (
+                        <RemoveFromCartButton cartKey={line.key} compact />
+                      ) : null}
                     </li>
                   ))}
                 </ul>

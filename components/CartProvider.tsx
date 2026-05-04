@@ -1,5 +1,6 @@
 "use client";
 
+import { imageFromCartProductNode } from "@/lib/cart-product-image";
 import {
   createContext,
   useCallback,
@@ -19,6 +20,8 @@ export type CartLine = {
   quantity?: number | null;
   subtotal?: string | null;
   name: string;
+  imageUrl?: string;
+  imageAlt?: string;
 };
 
 type CartContextValue = {
@@ -129,7 +132,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 key?: string;
                 quantity?: number | null;
                 subtotal?: string | null;
-                product?: { node?: { name?: string | null } | null } | null;
+                product?: {
+                  node?: {
+                    name?: string | null;
+                    featuredImage?: {
+                      node?: { sourceUrl?: string | null; altText?: string | null } | null;
+                    } | null;
+                    image?: { sourceUrl?: string | null; altText?: string | null } | null;
+                  } | null;
+                } | null;
               } | null> | null;
             } | null;
             total?: string | null;
@@ -148,12 +159,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
       writeStoredCount(ic);
 
       const nodes = json?.data?.cart?.contents?.nodes?.filter(Boolean) ?? [];
-      const lines: CartLine[] = nodes.map((line) => ({
-        key: line?.key,
-        quantity: line?.quantity,
-        subtotal: line?.subtotal,
-        name: line?.product?.node?.name ?? "Product",
-      }));
+      const lines: CartLine[] = nodes.map((line) => {
+        const node = line?.product?.node;
+        const { imageUrl, imageAlt } = imageFromCartProductNode(node);
+        return {
+          key: line?.key,
+          quantity: line?.quantity,
+          subtotal: line?.subtotal,
+          name: node?.name ?? "Product",
+          ...(imageUrl ? { imageUrl, imageAlt } : {}),
+        };
+      });
       const total = json?.data?.cart?.total ?? null;
       setPreviewLines(lines);
       setPreviewTotal(total);

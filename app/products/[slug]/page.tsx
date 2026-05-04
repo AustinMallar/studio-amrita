@@ -7,6 +7,7 @@ import {
 import type { ProductDetailView } from "@/types/product-detail";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { GlowBearBundleMoreColours } from "@/components/GlowBearBundleMoreColours";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { VariableProductImagePicker } from "@/components/VariableProductImagePicker";
 import { FooterValues } from "@/components/FooterValues";
 import { PromoBar } from "@/components/PromoBar";
@@ -47,11 +48,13 @@ export default async function ProductPage({
       <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 lg:gap-14 lg:py-14">
-        <nav className="font-sans text-sm text-body">
-          <Link href="/" className="text-dusty-rose hover:underline">
-            ← Back to home
-          </Link>
-        </nav>
+        <ScrollReveal rootMargin="0px 0px 18% 0px">
+          <nav className="font-sans text-sm text-body">
+            <Link href="/" className="text-dusty-rose hover:underline">
+              ← Back to home
+            </Link>
+          </nav>
+        </ScrollReveal>
 
         {isVariableWithColours ? (
           <VariableProductImagePicker
@@ -68,7 +71,10 @@ export default async function ProductPage({
           </VariableProductImagePicker>
         ) : (
           <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-            <div className="relative aspect-square w-full overflow-hidden rounded-3xl bg-blush">
+            <ScrollReveal
+              className="relative aspect-square w-full overflow-hidden rounded-3xl bg-blush"
+              rootMargin="0px 0px 12% 0px"
+            >
               {product.imageUrl ? (
                 product.imageUrl.startsWith("http") ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -92,10 +98,14 @@ export default async function ProductPage({
                   No image
                 </div>
               )}
-            </div>
+            </ScrollReveal>
 
-            <div className="flex flex-col gap-6">
-              <h1 className="font-display text-3xl text-heading sm:text-4xl">{product.name}</h1>
+            <ScrollReveal
+              className="flex flex-col gap-6"
+              delayMs={90}
+              rootMargin="0px 0px 12% 0px"
+            >
+              <h1 className="font-heading text-3xl text-heading sm:text-4xl">{product.name}</h1>
               <p className="font-sans text-xl font-semibold text-heading">{product.priceLabel}</p>
 
               {product.colorOptions.length > 0 ? (
@@ -140,7 +150,7 @@ export default async function ProductPage({
               {descriptionText ? (
                 <p className="font-sans leading-relaxed text-body">{descriptionText}</p>
               ) : null}
-            </div>
+            </ScrollReveal>
           </div>
         )}
 

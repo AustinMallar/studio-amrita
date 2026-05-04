@@ -44,7 +44,7 @@ export function SiteHeader() {
           className="relative flex shrink-0 items-center justify-center outline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-dusty-rose"
         >
           <Image
-            src="/logo.png"
+            src="/Studio-Amrita-Logo.png"
             alt="Studio Amrita — gold wordmark with a pink and gold heart"
             width={1024}
             height={346}

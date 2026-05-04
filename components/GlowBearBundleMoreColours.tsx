@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { optionToSwatchColor } from "@/lib/product-swatches";
 
 export type BundleSibling = {
@@ -14,18 +15,21 @@ export function GlowBearBundleMoreColours({ siblings }: { siblings: BundleSiblin
 
   return (
     <section className="border-t border-black/[0.06] pt-10 lg:pt-12">
-      <h2 className="font-display text-2xl text-heading sm:text-3xl">
-        More colours in the Glow Bear Bundle
-      </h2>
-      <p className="mt-2 max-w-2xl font-sans text-base leading-relaxed text-body">
-        This bundle is available in every shade below — open another colour to see its full product
-        page.
-      </p>
+      <ScrollReveal className="max-w-2xl">
+        <h2 className="font-heading text-2xl text-heading sm:text-3xl">
+          More colours in the Glow Bear Bundle
+        </h2>
+        <p className="mt-2 font-sans text-base leading-relaxed text-body">
+          This bundle is available in every shade below — open another colour to see its full product
+          page.
+        </p>
+      </ScrollReveal>
       <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4">
-        {siblings.map((s) => {
+        {siblings.map((s, i) => {
           const remote = Boolean(s.imageUrl && s.imageUrl.startsWith("http"));
           return (
             <li key={s.slug}>
+              <ScrollReveal className="h-full" delayMs={40 + i * 56}>
               <Link
                 href={`/products/${s.slug}`}
                 className="group flex flex-col gap-3 rounded-2xl bg-white/60 p-3 text-center shadow-[0_2px_8px_rgba(92,77,77,0.07),0_1px_2px_rgba(92,77,77,0.04)] transition hover:shadow-[0_4px_14px_rgba(92,77,77,0.1)]"
@@ -66,6 +70,7 @@ export function GlowBearBundleMoreColours({ siblings }: { siblings: BundleSiblin
                   />
                 </span>
               </Link>
+              </ScrollReveal>
             </li>
           );
         })}

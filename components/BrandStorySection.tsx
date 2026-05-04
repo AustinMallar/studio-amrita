@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 export function BrandStorySection() {
   return (
     <section className="bg-blush px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
       <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
-        <div className="relative aspect-[4/5] max-h-[520px] w-full overflow-hidden rounded-3xl bg-cream/40">
+        <ScrollReveal className="relative aspect-[4/5] max-h-[520px] w-full overflow-hidden rounded-3xl bg-cream/40">
           <Image
             src="/hero-bear.png"
             alt="Glow bear with dried flowers and thoughtful packaging"
@@ -13,9 +14,9 @@ export function BrandStorySection() {
             className="object-cover object-center"
             sizes="(max-width: 1024px) 100vw, 50vw"
           />
-        </div>
-        <div className="flex flex-col gap-6">
-          <h2 className="font-display text-3xl leading-snug text-heading sm:text-4xl">
+        </ScrollReveal>
+        <ScrollReveal className="flex flex-col gap-6" delayMs={70}>
+          <h2 className="font-heading text-3xl leading-snug text-heading sm:text-4xl">
             Handmade. Thoughtful. Gift-ready.
           </h2>
           <p className="font-sans text-base leading-relaxed text-body">
@@ -35,7 +36,7 @@ export function BrandStorySection() {
               OUR STORY ♡
             </Link>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

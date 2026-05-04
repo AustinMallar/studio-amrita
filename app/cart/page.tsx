@@ -1,6 +1,9 @@
+import { CartLineThumb } from "@/components/CartLineThumb";
+import { RemoveFromCartButton } from "@/components/RemoveFromCartButton";
 import { FooterValues } from "@/components/FooterValues";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
+import { imageFromCartProductNode, type CartProductNode } from "@/lib/cart-product-image";
 import { getCartQuery } from "@/lib/cart";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import Link from "next/link";
@@ -17,7 +20,9 @@ export default async function CartPage() {
         key?: string;
         quantity?: number | null;
         subtotal?: string | null;
-        product?: { node?: { name?: string | null } | null } | null;
+        product?: {
+          node?: (CartProductNode & { __typename?: string }) | null;
+        } | null;
       } | null> | null;
     } | null;
     total?: string | null;
@@ -49,7 +54,7 @@ export default async function CartPage() {
           </Link>
         </nav>
 
-        <h1 className="font-display text-3xl text-heading">Your cart</h1>
+        <h1 className="font-heading text-3xl text-heading">Your cart</h1>
 
         {gqlErrors.length > 0 ? (
           <p className="rounded-2xl border border-dusty-rose/40 bg-white/60 px-4 py-3 font-sans text-sm text-heading">
@@ -64,19 +69,27 @@ export default async function CartPage() {
         {lines.length > 0 ? (
           <ul className="flex flex-col gap-3">
             {lines.map((line, index) => {
-              const name = line?.product?.node?.name ?? "Product";
+              const node = line?.product?.node;
+              const name = node?.name ?? "Product";
               const qty = line?.quantity ?? 0;
               const sub = line?.subtotal ?? "";
+              const { imageUrl, imageAlt } = imageFromCartProductNode(node);
               return (
                 <li
                   key={line?.key ?? `line-${index}`}
-                  className="flex flex-wrap items-baseline justify-between gap-2 rounded-2xl border border-black/[0.06] bg-white/60 px-4 py-3 font-sans text-sm"
+                  className="flex items-start gap-4 rounded-2xl border border-black/[0.06] bg-white/60 px-4 py-3 font-sans text-sm"
                 >
-                  <span className="font-semibold text-heading">{name}</span>
-                  <span className="text-body">
-                    × {qty}
-                    {sub ? ` · ${sub}` : ""}
-                  </span>
+                  <CartLineThumb imageUrl={imageUrl} imageAlt={imageAlt} size="md" />
+                  <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                    <div>
+                      <p className="font-semibold leading-snug text-heading">{name}</p>
+                      <p className="mt-1 text-body">
+                        × {qty}
+                        {sub ? ` · ${sub}` : ""}
+                      </p>
+                    </div>
+                    {line?.key ? <RemoveFromCartButton cartKey={line.key} /> : null}
+                  </div>
                 </li>
               );
             })}

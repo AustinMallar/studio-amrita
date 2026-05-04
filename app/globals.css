@@ -8,9 +8,42 @@
   --color-body: #8a7d7d;
   --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display-serif), ui-serif, Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-quicksand), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background-color: var(--color-cream);
   color: var(--color-heading);
+}
+
+@layer base {
+  h1,
+  h2 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+  }
+}
+
+/* Scroll-triggered fade-up (see ScrollReveal.tsx) */
+.scroll-reveal {
+  --scroll-reveal-delay: 0ms;
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition:
+    opacity 2.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 2.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--scroll-reveal-delay);
+}
+
+.scroll-reveal.scroll-reveal-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
