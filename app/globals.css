@@ -22,6 +22,18 @@ body {
     font-family: var(--font-heading);
     font-weight: 700;
   }
+
+  button:not(:disabled),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  a[href] {
+    cursor: pointer;
+  }
 }
 
 /* Scroll-triggered fade-up (see ScrollReveal.tsx) */
