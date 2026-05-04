@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { formatShippingCostForDisplay } from "@/lib/cart-shipping-utils";
 import { CartLineThumb } from "@/components/CartLineThumb";
 import { RemoveFromCartButton } from "@/components/RemoveFromCartButton";
 import { useCart } from "@/components/CartProvider";
@@ -11,7 +12,7 @@ export function CartPreview({ children }: { children: ReactNode }) {
   const [flash, setFlash] = useState(false);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { previewLines, previewTotal, loading, ensurePreviewFresh } = useCart();
+  const { previewLines, previewTotal, previewShipping, loading, ensurePreviewFresh } = useCart();
 
   useEffect(() => {
     function onCartUpdated() {
@@ -88,10 +89,22 @@ export function CartPreview({ children }: { children: ReactNode }) {
                 </ul>
               )}
             </div>
-            {previewTotal && previewLines.length > 0 ? (
-              <div className="border-t border-black/[0.06] px-4 py-2 font-sans text-sm">
-                <span className="text-body">Total </span>
-                <span className="font-semibold text-heading">{previewTotal}</span>
+            {previewLines.length > 0 && (previewShipping || previewTotal) ? (
+              <div className="space-y-1.5 border-t border-black/[0.06] px-4 py-2 font-sans text-sm">
+                {previewShipping ? (
+                  <p className="flex justify-between text-body">
+                    <span>Shipping</span>
+                    <span className="text-heading">
+                      {formatShippingCostForDisplay(previewShipping)}
+                    </span>
+                  </p>
+                ) : null}
+                {previewTotal ? (
+                  <p>
+                    <span className="text-body">Total </span>
+                    <span className="font-semibold text-heading">{previewTotal}</span>
+                  </p>
+                ) : null}
               </div>
             ) : null}
             <div className="border-t border-black/[0.06] p-3">

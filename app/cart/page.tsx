@@ -1,10 +1,12 @@
 import { CartLineThumb } from "@/components/CartLineThumb";
+import { CartShippingSelector } from "@/components/CartShippingSelector";
 import { RemoveFromCartButton } from "@/components/RemoveFromCartButton";
 import { FooterValues } from "@/components/FooterValues";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
-import { imageFromCartProductNode, type CartProductNode } from "@/lib/cart-product-image";
-import { getCartQuery } from "@/lib/cart";
+import { imageFromCartProductNode } from "@/lib/cart-product-image";
+import { flattenShippingRates, formatShippingCostForDisplay } from "@/lib/cart-shipping-utils";
+import { getCartQuery, type CartQueryShape } from "@/lib/cart";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -14,20 +16,7 @@ export default async function CartPage() {
   const session = cookieStore.get(WOOCOMMERCE_SESSION_COOKIE)?.value ?? null;
 
   let gqlErrors: string[] = [];
-  let cart: {
-    contents?: {
-      nodes?: Array<{
-        key?: string;
-        quantity?: number | null;
-        subtotal?: string | null;
-        product?: {
-          node?: (CartProductNode & { __typename?: string }) | null;
-        } | null;
-      } | null> | null;
-    } | null;
-    total?: string | null;
-    subtotal?: string | null;
-  } | null = null;
+  let cart: CartQueryShape | null = null;
 
   try {
     const result = await getCartQuery(session);
@@ -42,6 +31,10 @@ export default async function CartPage() {
   }
 
   const lines = (cart?.contents?.nodes ?? []).filter(Boolean);
+  const flatRates = flattenShippingRates(cart?.availableShippingMethods);
+  const shippingLabel = cart?.shippingTotal?.trim() ?? "";
+  const hasShippingAmount = shippingLabel.length > 0;
+  const showShippingRow = hasShippingAmount || flatRates.length > 0;
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
@@ -96,16 +89,42 @@ export default async function CartPage() {
           </ul>
         ) : null}
 
-        {(cart?.subtotal || cart?.total) && lines.length > 0 ? (
-          <div className="border-t border-black/[0.08] pt-6 font-sans text-heading">
+        {lines.length > 0 && flatRates.length > 0 ? (
+          <CartShippingSelector
+            rates={flatRates}
+            chosenShippingMethods={cart?.chosenShippingMethods}
+          />
+        ) : null}
+
+        {Boolean(cart?.needsShippingAddress) && flatRates.length === 0 && lines.length > 0 ? (
+          <p className="rounded-2xl border border-black/[0.06] bg-white/50 px-4 py-3 font-sans text-sm text-body">
+            Enter your full shipping address at checkout to see every delivery option. Your store
+            may show an estimate using the default region until then.
+          </p>
+        ) : null}
+
+        {(cart?.subtotal || cart?.total || showShippingRow) && lines.length > 0 ? (
+          <div className="space-y-4 border-t border-black/[0.08] pt-6 font-sans text-heading">
             {cart?.subtotal ? (
               <p className="flex justify-between text-body">
                 <span>Subtotal</span>
                 <span>{cart.subtotal}</span>
               </p>
             ) : null}
+            {showShippingRow ? (
+              <p className="flex justify-between text-body">
+                <span>Shipping</span>
+                <span className="text-right">
+                  {hasShippingAmount
+                    ? formatShippingCostForDisplay(shippingLabel)
+                    : flatRates.length === 1
+                      ? formatShippingCostForDisplay(flatRates[0].cost)
+                      : "—"}
+                </span>
+              </p>
+            ) : null}
             {cart?.total ? (
-              <p className="mt-2 flex justify-between text-lg font-semibold">
+              <p className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
                 <span>{cart.total}</span>
               </p>

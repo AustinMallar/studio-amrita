@@ -6,7 +6,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -28,6 +27,8 @@ type CartContextValue = {
   itemCount: number;
   previewLines: CartLine[];
   previewTotal: string | null;
+  /** WooCommerce cart shipping line (when returned by session). */
+  previewShipping: string | null;
   /** True while GET /api/cart is in flight */
   loading: boolean;
   /** True until we need another GET (no cache or cart changed). */
@@ -61,7 +62,11 @@ function readStoredCount(): number {
   }
 }
 
-function readStoredPreview(): { lines: CartLine[]; total: string | null } | null {
+function readStoredPreview(): {
+  lines: CartLine[];
+  total: string | null;
+  shipping: string | null;
+} | null {
   if (typeof window === "undefined") return null;
   try {
     let raw = localStorage.getItem(STORAGE_PREVIEW);
@@ -76,9 +81,17 @@ function readStoredPreview(): { lines: CartLine[]; total: string | null } | null
       }
     }
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as { lines?: CartLine[]; total?: string | null };
+    const parsed = JSON.parse(raw) as {
+      lines?: CartLine[];
+      total?: string | null;
+      shipping?: string | null;
+    };
     if (!parsed?.lines) return null;
-    return { lines: parsed.lines, total: parsed.total ?? null };
+    return {
+      lines: parsed.lines,
+      total: parsed.total ?? null,
+      shipping: parsed.shipping ?? null,
+    };
   } catch {
     return null;
   }
@@ -92,9 +105,13 @@ function writeStoredCount(ic: number): void {
   }
 }
 
-function writeStoredPreview(lines: CartLine[], total: string | null): void {
+function writeStoredPreview(
+  lines: CartLine[],
+  total: string | null,
+  shipping: string | null
+): void {
   try {
-    localStorage.setItem(STORAGE_PREVIEW, JSON.stringify({ lines, total }));
+    localStorage.setItem(STORAGE_PREVIEW, JSON.stringify({ lines, total, shipping }));
   } catch {
     /* ignore quota */
   }
@@ -104,6 +121,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [itemCount, setItemCount] = useState(0);
   const [previewLines, setPreviewLines] = useState<CartLine[]>([]);
   const [previewTotal, setPreviewTotal] = useState<string | null>(null);
+  const [previewShipping, setPreviewShipping] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   /** When true, we need a GET /api/cart before showing trusted preview / count */
   const [cartStale, setCartStale] = useState(true);
@@ -115,6 +133,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (prev) {
       setPreviewLines(prev.lines);
       setPreviewTotal(prev.total);
+      setPreviewShipping(prev.shipping);
       setCartStale(false);
     }
   }, []);
@@ -144,6 +163,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
               } | null> | null;
             } | null;
             total?: string | null;
+            shippingTotal?: string | null;
           } | null;
         };
       };
@@ -171,9 +191,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
         };
       });
       const total = json?.data?.cart?.total ?? null;
+      const shipping =
+        json?.data?.cart?.shippingTotal != null &&
+        String(json.data.cart.shippingTotal).trim().length > 0
+          ? String(json.data.cart.shippingTotal).trim()
+          : null;
       setPreviewLines(lines);
       setPreviewTotal(total);
-      writeStoredPreview(lines, total);
+      setPreviewShipping(shipping);
+      writeStoredPreview(lines, total, shipping);
       setCartStale(false);
     } catch {
       setCartStale(true);
@@ -200,12 +226,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
       itemCount,
       previewLines,
       previewTotal,
+      previewShipping,
       loading,
       cartStale,
       refreshCart,
       ensurePreviewFresh,
     }),
-    [itemCount, previewLines, previewTotal, loading, cartStale, refreshCart, ensurePreviewFresh]
+    [
+      itemCount,
+      previewLines,
+      previewTotal,
+      previewShipping,
+      loading,
+      cartStale,
+      refreshCart,
+      ensurePreviewFresh,
+    ]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

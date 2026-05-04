@@ -38,76 +38,103 @@ const CART_PRODUCT_IMAGE_FIELDS = `
   }
 `;
 
+/** Full cart selection returned by GetCart and cart-returning mutations (lines + totals + shipping). */
+const CART_SELECTION_FIELDS = `
+  contents {
+    nodes {
+      key
+      quantity
+      subtotal
+      product {
+        node {
+          ${CART_PRODUCT_IMAGE_FIELDS}
+        }
+      }
+    }
+  }
+  total
+  subtotal
+  shippingTotal
+  needsShippingAddress
+  chosenShippingMethods
+  availableShippingMethods {
+    rates {
+      id
+      label
+      cost
+    }
+  }
+`;
+
 export const ADD_TO_CART_MUTATION = `
   mutation AddToCart($input: AddToCartInput!) {
     addToCart(input: $input) {
       cart {
-        contents {
-          nodes {
-            key
-            quantity
-            subtotal
-            product {
-              node {
-                ${CART_PRODUCT_IMAGE_FIELDS}
-              }
-            }
-          }
-        }
-        total
-        subtotal
+        ${CART_SELECTION_FIELDS}
       }
     }
   }
 `;
 
 export const GET_CART_QUERY = `
-  query GetCart {
-    cart {
-      contents {
-        nodes {
-          key
-          quantity
-          subtotal
-          product {
-            node {
-              ${CART_PRODUCT_IMAGE_FIELDS}
-            }
-          }
-        }
-      }
-      total
-      subtotal
+  query GetCart($recalculateTotals: Boolean) {
+    cart(recalculateTotals: $recalculateTotals) {
+      ${CART_SELECTION_FIELDS}
     }
   }
 `;
 
-const CART_FRAGMENT_RESPONSE = `
+const CART_MUTATION_PAYLOAD = `
   cart {
-    contents {
-      nodes {
-        key
-        quantity
-        subtotal
-        product {
-          node {
-            ${CART_PRODUCT_IMAGE_FIELDS}
-          }
-        }
-      }
-    }
-    total
-    subtotal
+    ${CART_SELECTION_FIELDS}
   }
 `;
 
 export const REMOVE_ITEMS_FROM_CART_MUTATION = `
   mutation RemoveItemsFromCart($input: RemoveItemsFromCartInput!) {
     removeItemsFromCart(input: $input) {
-      ${CART_FRAGMENT_RESPONSE}
+      ${CART_MUTATION_PAYLOAD}
     }
   }
 `;
+
+export const UPDATE_SHIPPING_METHOD_MUTATION = `
+  mutation UpdateShippingMethod($input: UpdateShippingMethodInput!) {
+    updateShippingMethod(input: $input) {
+      ${CART_MUTATION_PAYLOAD}
+    }
+  }
+`;
+
+/** WooCommerce GraphQL cart subset used by the storefront. */
+export type CartShippingRate = {
+  id?: string | null;
+  label?: string | null;
+  cost?: string | null;
+};
+
+export type CartShippingPackage = {
+  rates?: CartShippingRate[] | null;
+};
+
+export type CartQueryShape = {
+  contents?: {
+    nodes?: Array<{
+      key?: string;
+      quantity?: number | null;
+      subtotal?: string | null;
+      product?: {
+        node?: (CartProductNode & { __typename?: string }) | null;
+      } | null;
+    } | null> | null;
+  } | null;
+  total?: string | null;
+  subtotal?: string | null;
+  shippingTotal?: string | null;
+  needsShippingAddress?: boolean | null;
+  chosenShippingMethods?: string[] | null;
+  availableShippingMethods?: CartShippingPackage[] | null;
+};
 
 export type AddToCartInput = {
   productId: number;
@@ -146,39 +173,29 @@ export async function removeItemsFromCartMutation(
 
   return wpGraphQL<{
     removeItemsFromCart?: {
-      cart?: {
-        contents?: {
-          nodes?: Array<{
-            key?: string;
-            quantity?: number | null;
-            subtotal?: string | null;
-            product?: {
-              node?: (CartProductNode & { __typename?: string }) | null;
-            } | null;
-          } | null> | null;
-        } | null;
-        total?: string | null;
-        subtotal?: string | null;
-      } | null;
+      cart?: CartQueryShape | null;
     };
   }>(REMOVE_ITEMS_FROM_CART_MUTATION, { input: payload }, sessionToken);
 }
 
+export async function updateShippingMethodMutation(
+  sessionToken: string | null | undefined,
+  shippingMethods: string[]
+) {
+  const payload = {
+    clientMutationId: `next-ship-${Date.now()}`,
+    shippingMethods,
+  };
+
+  return wpGraphQL<{
+    updateShippingMethod?: {
+      cart?: CartQueryShape | null;
+    };
+  }>(UPDATE_SHIPPING_METHOD_MUTATION, { input: payload }, sessionToken);
+}
+
 export async function getCartQuery(sessionToken: string | null | undefined) {
   return wpGraphQL<{
-    cart?: {
-      contents?: {
-        nodes?: Array<{
-          key?: string;
-          quantity?: number | null;
-          subtotal?: string | null;
-          product?: {
-            node?: (CartProductNode & { __typename?: string }) | null;
-          } | null;
-        } | null> | null;
-      } | null;
-      total?: string | null;
-      subtotal?: string | null;
-    } | null;
-  }>(GET_CART_QUERY, {}, sessionToken);
+    cart?: CartQueryShape | null;
+  }>(GET_CART_QUERY, { recalculateTotals: true }, sessionToken);
 }
