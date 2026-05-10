@@ -144,7 +144,8 @@ export type AddToCartInput = {
 
 export async function addToCartMutation(
   sessionToken: string | null | undefined,
-  input: AddToCartInput
+  input: AddToCartInput,
+  authToken?: string | null
 ) {
   const payload = {
     clientMutationId: `next-${Date.now()}`,
@@ -159,12 +160,13 @@ export async function addToCartMutation(
     addToCart?: {
       cart?: unknown;
     };
-  }>(ADD_TO_CART_MUTATION, { input: payload }, sessionToken);
+  }>(ADD_TO_CART_MUTATION, { input: payload }, sessionToken, authToken);
 }
 
 export async function removeItemsFromCartMutation(
   sessionToken: string | null | undefined,
-  keys: string[]
+  keys: string[],
+  authToken?: string | null
 ) {
   const payload = {
     clientMutationId: `next-remove-${Date.now()}`,
@@ -175,12 +177,13 @@ export async function removeItemsFromCartMutation(
     removeItemsFromCart?: {
       cart?: CartQueryShape | null;
     };
-  }>(REMOVE_ITEMS_FROM_CART_MUTATION, { input: payload }, sessionToken);
+  }>(REMOVE_ITEMS_FROM_CART_MUTATION, { input: payload }, sessionToken, authToken);
 }
 
 export async function updateShippingMethodMutation(
   sessionToken: string | null | undefined,
-  shippingMethods: string[]
+  shippingMethods: string[],
+  authToken?: string | null
 ) {
   const payload = {
     clientMutationId: `next-ship-${Date.now()}`,
@@ -191,11 +194,14 @@ export async function updateShippingMethodMutation(
     updateShippingMethod?: {
       cart?: CartQueryShape | null;
     };
-  }>(UPDATE_SHIPPING_METHOD_MUTATION, { input: payload }, sessionToken);
+  }>(UPDATE_SHIPPING_METHOD_MUTATION, { input: payload }, sessionToken, authToken);
 }
 
-export async function getCartQuery(sessionToken: string | null | undefined) {
+export async function getCartQuery(
+  sessionToken: string | null | undefined,
+  authToken?: string | null
+) {
   return wpGraphQL<{
     cart?: CartQueryShape | null;
-  }>(GET_CART_QUERY, { recalculateTotals: true }, sessionToken);
+  }>(GET_CART_QUERY, { recalculateTotals: true }, sessionToken, authToken);
 }

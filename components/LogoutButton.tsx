@@ -13,7 +13,8 @@ export function LogoutButton() {
   async function logout() {
     setPending(true);
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+      window.dispatchEvent(new Event("cart:updated"));
       router.push("/");
       router.refresh();
     } finally {

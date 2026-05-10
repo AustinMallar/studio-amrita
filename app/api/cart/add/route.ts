@@ -1,5 +1,6 @@
 import { addToCartMutation, getCartQuery } from "@/lib/cart";
 import { setWooSessionCookie } from "@/lib/cart-cookie";
+import { getJwtAuthToken } from "@/lib/auth-session";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import { isInvalidCartTokenError } from "@/lib/woo-session";
 import { cookies } from "next/headers";
@@ -35,6 +36,7 @@ export async function POST(req: Request) {
 
     const cookieStore = await cookies();
     let session = cookieStore.get(WOOCOMMERCE_SESSION_COOKIE)?.value?.trim() || null;
+    const jwt = await getJwtAuthToken();
 
     const cartInput = {
       productId,
@@ -44,17 +46,17 @@ export async function POST(req: Request) {
 
     /** Establish a WooCommerce session when missing (required by some hosts). */
     if (!session) {
-      const warm = await getCartQuery(null);
+      const warm = await getCartQuery(null, jwt);
       session = warm.sessionHeader ?? null;
     }
 
-    let result = await addToCartMutation(session, cartInput);
+    let result = await addToCartMutation(session, cartInput, jwt);
 
     /** Stale or malformed cookie / token — fetch a fresh session and retry once. */
     if (isInvalidCartTokenError(result.errors)) {
-      const warm = await getCartQuery(null);
+      const warm = await getCartQuery(null, jwt);
       session = warm.sessionHeader ?? null;
-      result = await addToCartMutation(session, cartInput);
+      result = await addToCartMutation(session, cartInput, jwt);
     }
 
     const { sessionHeader, ...payload } = result;

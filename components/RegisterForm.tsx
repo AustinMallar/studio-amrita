@@ -28,6 +28,7 @@ export function RegisterForm({ nextHref }: { nextHref: string }) {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           username,
           email,
@@ -41,6 +42,7 @@ export function RegisterForm({ nextHref }: { nextHref: string }) {
         setError(data.error ?? "Registration failed.");
         return;
       }
+      window.dispatchEvent(new Event("cart:updated"));
       router.push(nextHref);
       router.refresh();
     } catch {

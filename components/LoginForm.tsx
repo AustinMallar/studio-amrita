@@ -25,6 +25,7 @@ export function LoginForm({ nextHref }: { nextHref: string }) {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ username, password }),
       });
       const data = (await res.json()) as { error?: string };
@@ -32,6 +33,8 @@ export function LoginForm({ nextHref }: { nextHref: string }) {
         setError(data.error ?? "Sign in failed.");
         return;
       }
+      /** Reload cart with JWT + Woo session so WC restores customer cart. */
+      window.dispatchEvent(new Event("cart:updated"));
       router.push(nextHref);
       router.refresh();
     } catch {

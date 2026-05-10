@@ -1,5 +1,6 @@
 import { getCartQuery, updateShippingMethodMutation } from "@/lib/cart";
 import { setWooSessionCookie } from "@/lib/cart-cookie";
+import { getJwtAuthToken } from "@/lib/auth-session";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import { graphQLErrorText, isInvalidCartTokenError } from "@/lib/woo-session";
 import { cookies } from "next/headers";
@@ -28,18 +29,19 @@ export async function POST(req: Request) {
 
     const cookieStore = await cookies();
     let session = cookieStore.get(WOOCOMMERCE_SESSION_COOKIE)?.value?.trim() || null;
+    const jwt = await getJwtAuthToken();
 
     if (!session) {
-      const warm = await getCartQuery(null);
+      const warm = await getCartQuery(null, jwt);
       session = warm.sessionHeader ?? null;
     }
 
-    let result = await updateShippingMethodMutation(session, shippingMethods);
+    let result = await updateShippingMethodMutation(session, shippingMethods, jwt);
 
     if (isInvalidCartTokenError(result.errors)) {
-      const warm = await getCartQuery(null);
+      const warm = await getCartQuery(null, jwt);
       session = warm.sessionHeader ?? null;
-      result = await updateShippingMethodMutation(session, shippingMethods);
+      result = await updateShippingMethodMutation(session, shippingMethods, jwt);
     }
 
     if (result.errors?.length) {

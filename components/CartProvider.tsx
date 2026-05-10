@@ -141,7 +141,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const refreshCart = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/cart", { credentials: "include" });
+      const res = await fetch("/api/cart", {
+        credentials: "include",
+        cache: "no-store",
+      });
       const json = (await res.json()) as {
         itemCount?: number;
         data?: {
