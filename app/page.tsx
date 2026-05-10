@@ -6,7 +6,8 @@ import { HeroSection } from "@/components/HeroSection";
 import { ProductRow } from "@/components/ProductRow";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
-import type { UiProduct } from "@/components/ProductCard";
+import type { RawCatalogProduct } from "@/lib/ui-products";
+import { toUiProducts } from "@/lib/ui-products";
 
 type LayoutType = "grid" | "lifestyle";
 
@@ -26,39 +27,9 @@ type HomepageRowConfig = {
     lifestyleImageAlt?: string;
     /** Classic Glow Bear variable product — colour attribute options. */
     swatches?: string[];
-    products: Array<{
-      id: string;
-      slug?: string;
-      name: string;
-      price: string;
-      imageUrl: string;
-      imageAlt: string;
-      swatches: string[];
-    }>;
+    products: RawCatalogProduct[];
   } | null;
 };
-
-function toUiProducts(
-  list: Array<{
-    id: string;
-    slug?: string;
-    name: string;
-    price: string;
-    imageUrl: string;
-    imageAlt: string;
-    swatches: string[];
-  }>
-): UiProduct[] {
-  return list.map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    name: p.name,
-    price: p.price,
-    imageUrl: p.imageUrl,
-    imageAlt: p.imageAlt,
-    swatches: p.swatches,
-  }));
-}
 
 export default async function Home() {
   const { rows } = (await getHomepageCollections()) as { rows: HomepageRowConfig[] };
