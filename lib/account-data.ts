@@ -245,6 +245,23 @@ export async function fetchOrderDetail(authToken: string, databaseId: number) {
   );
 }
 
+/** Guest / session context — may succeed right after checkout when the WooCommerce session matches. */
+export async function fetchOrderDetailWithSession(
+  sessionToken: string | null | undefined,
+  databaseId: number,
+  authToken?: string | null
+) {
+  return wpGraphQL<{ order?: OrderDetailData | null }>(
+    ORDER_DETAIL_QUERY,
+    {
+      id: String(databaseId),
+      idType: "DATABASE_ID",
+    },
+    sessionToken ?? null,
+    authToken ?? null
+  );
+}
+
 export function collectGraphQLErrors(
   errors?: Array<{ message?: string }> | null
 ): string[] {
