@@ -17,7 +17,7 @@ export function BrandStorySection() {
         </ScrollReveal>
         <ScrollReveal className="flex flex-col gap-6" delayMs={70}>
           <h2 className="font-heading text-3xl leading-snug text-heading sm:text-4xl">
-            Handmade. Thoughtful. Gift-ready.
+            Handmade. <br></br>Thoughtful. <br></br>Gift-ready.
           </h2>
           <p className="font-sans text-base leading-relaxed text-body">
             Studio Amrita pairs handmade crochet characters with curated skincare minis so every
