@@ -1,17 +1,35 @@
 "use client";
 
+import type { ShopMegaMenuTile } from "@/lib/shop-mega-menu-types";
+import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 const DRAWER_MS = 320;
 
-const NAV_LINKS = [
-  { href: "/shop", label: "Shop" },
-  { href: "/collections", label: "Collections" },
-  { href: "/about", label: "About" },
-  { href: "/faq", label: "FAQ" },
-] as const;
+type DrawerLink = {
+  href: string;
+  label: string;
+  indent?: boolean;
+  imageUrl?: string | null;
+  imageAlt?: string;
+};
+
+function buildDrawerLinks(collections: ShopMegaMenuTile[]): DrawerLink[] {
+  return [
+    { href: "/shop", label: "Shop" },
+    ...collections.map((c) => ({
+      href: c.href,
+      label: c.label,
+      indent: true as const,
+      imageUrl: c.imageUrl,
+      imageAlt: c.imageAlt,
+    })),
+    { href: "/about", label: "About" },
+    { href: "/faq", label: "FAQ" },
+  ];
+}
 
 function subscribePrefersReducedMotion(onChange: () => void) {
   const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -53,7 +71,15 @@ function IconClose() {
   );
 }
 
-export function MobileNav({ signedIn = false }: { signedIn?: boolean }) {
+export function MobileNav({
+  shopCollections,
+  signedIn = false,
+}: {
+  shopCollections: ShopMegaMenuTile[];
+  signedIn?: boolean;
+}) {
+  const drawerLinks = useMemo(() => buildDrawerLinks(shopCollections), [shopCollections]);
+
   const [visible, setVisible] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   /** True while the drawer is performing its close animation (or waiting to unmount). */
@@ -213,14 +239,18 @@ export function MobileNav({ signedIn = false }: { signedIn?: boolean }) {
                 </div>
 
                 <div className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto px-3 pb-10 pt-4">
-                  {NAV_LINKS.map(({ href, label }, i) => {
+                  {drawerLinks.map(({ href, label, indent, imageUrl, imageAlt }, i) => {
                     const delayMs = reduceMotion ? 0 : 85 + i * 48;
                     return (
                       <Link
-                        key={href}
+                        key={`${href}-${label}`}
                         href={href}
                         onClick={requestClose}
-                        className={`rounded-xl px-3 py-3.5 font-sans text-sm font-medium uppercase tracking-[0.18em] text-heading transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:duration-150 hover:bg-blush/45 hover:text-dusty-rose ${
+                        className={`flex items-center gap-3 rounded-xl px-3 py-3 font-sans text-sm font-medium text-heading transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:duration-150 hover:bg-blush/45 hover:text-dusty-rose ${
+                          indent
+                            ? "pl-4 text-[0.8125rem] font-normal normal-case tracking-normal text-body"
+                            : "uppercase tracking-[0.18em]"
+                        } ${
                           panelOpen && !reduceMotion
                             ? "translate-x-0 opacity-100"
                             : reduceMotion && panelOpen
@@ -235,7 +265,18 @@ export function MobileNav({ signedIn = false }: { signedIn?: boolean }) {
                             : undefined
                         }
                       >
-                        {label}
+                        {indent && imageUrl ? (
+                          <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-blush/40">
+                            <Image
+                              src={imageUrl}
+                              alt={imageAlt ?? label}
+                              width={44}
+                              height={44}
+                              className="h-full w-full object-cover"
+                            />
+                          </span>
+                        ) : null}
+                        <span className="min-w-0 flex-1">{label}</span>
                       </Link>
                     );
                   })}
@@ -251,7 +292,7 @@ export function MobileNav({ signedIn = false }: { signedIn?: boolean }) {
                       !reduceMotion
                         ? {
                             transitionDelay: panelOpen
-                              ? `${85 + NAV_LINKS.length * 48}ms`
+                              ? `${85 + drawerLinks.length * 48}ms`
                               : "0ms",
                           }
                         : undefined

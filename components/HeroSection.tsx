@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
@@ -42,12 +41,12 @@ export function HeroSection() {
             Handmade with love and paired with skincare minis for a daily dose of glow.
           </p>
           <div>
-            <Link
-              href="/shop"
+            <a
+              href="#choose-your-glow"
               className="inline-flex items-center justify-center rounded-full bg-dusty-rose px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-dusty-rose/90"
             >
               SHOP NOW ♡
-            </Link>
+            </a>
           </div>
           <div className="mt-4 grid gap-5 border-t border-black/[0.06] pt-8 sm:grid-cols-3 sm:gap-6">
             <Feature

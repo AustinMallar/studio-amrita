@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${jost.variable} ${displaySerif.variable} ${quicksand.variable} h-full antialiased`}
+      className={`${jost.variable} ${displaySerif.variable} ${quicksand.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full bg-cream font-sans text-body">
         <CartProvider>{children}</CartProvider>
