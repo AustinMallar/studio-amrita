@@ -53,7 +53,7 @@ function IconClose() {
   );
 }
 
-export function MobileNav() {
+export function MobileNav({ signedIn = false }: { signedIn?: boolean }) {
   const [visible, setVisible] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   /** True while the drawer is performing its close animation (or waiting to unmount). */
@@ -239,6 +239,42 @@ export function MobileNav() {
                       </Link>
                     );
                   })}
+                  <div
+                    className={`mt-4 border-t border-black/[0.06] pt-4 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                      panelOpen && !reduceMotion
+                        ? "translate-x-0 opacity-100"
+                        : reduceMotion && panelOpen
+                          ? "opacity-100"
+                          : "-translate-x-3 opacity-0"
+                    }`}
+                    style={
+                      !reduceMotion
+                        ? {
+                            transitionDelay: panelOpen
+                              ? `${85 + NAV_LINKS.length * 48}ms`
+                              : "0ms",
+                          }
+                        : undefined
+                    }
+                  >
+                    {signedIn ? (
+                      <Link
+                        href="/account"
+                        onClick={requestClose}
+                        className="block rounded-xl px-3 py-3.5 font-sans text-sm font-medium uppercase tracking-[0.18em] text-heading hover:bg-blush/45 hover:text-dusty-rose"
+                      >
+                        Account
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/login"
+                        onClick={requestClose}
+                        className="block rounded-xl px-3 py-3.5 font-sans text-sm font-medium uppercase tracking-[0.18em] text-heading hover:bg-blush/45 hover:text-dusty-rose"
+                      >
+                        Sign in
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </nav>
             </div>,

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CartCountBadge } from "@/components/CartCountBadge";
 import { CartPreview } from "@/components/CartPreview";
+import { getJwtAuthToken } from "@/lib/auth-session";
 import { MobileNav } from "./MobileNav";
 
 function IconBag() {
@@ -23,12 +24,15 @@ function IconBag() {
   );
 }
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const token = await getJwtAuthToken();
+  const signedIn = Boolean(token);
+
   return (
     <header className="sticky top-0 z-40 border-b border-black/[0.06] bg-cream/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 flex-1 items-center gap-6">
-          <MobileNav />
+          <MobileNav signedIn={signedIn} />
           <nav className="hidden items-center gap-8 font-sans text-sm font-medium uppercase tracking-wide text-heading lg:flex">
             <Link href="/shop" className="hover:text-dusty-rose">
               Shop
@@ -62,6 +66,15 @@ export function SiteHeader() {
             <Link href="/faq" className="hover:text-dusty-rose">
               FAQ
             </Link>
+            {signedIn ? (
+              <Link href="/account" className="hover:text-dusty-rose">
+                Account
+              </Link>
+            ) : (
+              <Link href="/login" className="hover:text-dusty-rose">
+                Sign in
+              </Link>
+            )}
           </nav>
           <CartPreview>
             <Link

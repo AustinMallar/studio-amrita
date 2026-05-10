@@ -14,7 +14,9 @@ type GraphQLResponse<T> = {
 export async function wpGraphQL<T>(
   query: string,
   variables?: Record<string, unknown>,
-  sessionToken?: string | null
+  sessionToken?: string | null,
+  /** WPGraphQL JWT — sent as `Authorization: Bearer …` for authenticated requests (e.g. `viewer`). */
+  authToken?: string | null
 ): Promise<GraphQLResponse<T> & { sessionHeader: string | null }> {
   const endpoint = process.env.WORDPRESS_API_URL;
   if (!endpoint) {
@@ -22,12 +24,17 @@ export async function wpGraphQL<T>(
   }
 
   const outgoing = normalizeOutgoingWooSessionHeader(sessionToken ?? undefined);
+  const bearer =
+    typeof authToken === "string" && authToken.trim().length > 0
+      ? authToken.trim()
+      : null;
 
   const res = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       ...(outgoing ? { "woocommerce-session": outgoing } : {}),
+      ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}),
     },
     body: JSON.stringify({ query, variables }),
     cache: "no-store",
