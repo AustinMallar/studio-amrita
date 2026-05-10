@@ -72,8 +72,12 @@ export function BillingShippingForms({ initialBilling, initialShipping }: Props)
   const shippingKey = JSON.stringify(initialShipping ?? null);
 
   useEffect(() => {
-    setBilling(addrToState(JSON.parse(billingKey) as CustomerAddress | null));
-    setShipping(addrToState(JSON.parse(shippingKey) as CustomerAddress | null));
+    const nextBilling = addrToState(JSON.parse(billingKey) as CustomerAddress | null);
+    const nextShipping = addrToState(JSON.parse(shippingKey) as CustomerAddress | null);
+    queueMicrotask(() => {
+      setBilling(nextBilling);
+      setShipping(nextShipping);
+    });
   }, [billingKey, shippingKey]);
 
   function setBill<K extends keyof ReturnType<typeof emptyAddr>>(key: K, value: string) {

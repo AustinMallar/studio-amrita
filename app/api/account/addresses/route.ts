@@ -66,7 +66,8 @@ export async function POST(req: Request) {
   /** WooCommerce shipping meta typically excludes email; omit if present. */
   let shippingInput = shipping;
   if (shippingInput && "email" in shippingInput) {
-    const { email: _e, ...rest } = shippingInput as Record<string, unknown>;
+    const rest = { ...(shippingInput as Record<string, unknown>) };
+    delete rest.email;
     shippingInput = rest as CustomerAddress;
   }
 

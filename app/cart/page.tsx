@@ -134,8 +134,23 @@ export default async function CartPage() {
           </div>
         ) : null}
 
+        {lines.length > 0 ? (
+          <Link
+            href="/checkout"
+            className="inline-flex w-full items-center justify-center rounded-full bg-dusty-rose px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-dusty-rose/90 sm:w-auto"
+          >
+            Checkout with PayPal
+          </Link>
+        ) : null}
+
         <p className="font-sans text-xs text-body">
-          Checkout is handled on WordPress / WooCommerce — connect your payment flow when ready.
+          Payments are processed by WooCommerce via PayPal. If checkout says “invalid payment method,” set{" "}
+          <code className="rounded bg-black/[0.05] px-1 py-0.5 font-mono text-[0.8rem]">
+            WOOCOMMERCE_PAYMENT_GATEWAY_ID
+          </code>{" "}
+          to your WooCommerce gateway id (often{" "}
+          <code className="rounded bg-black/[0.05] px-1 py-0.5 font-mono text-[0.8rem]">ppcp-gateway</code>{" "}
+          for PayPal Payments).
         </p>
       </main>
       <FooterValues />

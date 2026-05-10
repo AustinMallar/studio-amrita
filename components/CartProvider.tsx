@@ -118,25 +118,13 @@ function writeStoredPreview(
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [itemCount, setItemCount] = useState(0);
-  const [previewLines, setPreviewLines] = useState<CartLine[]>([]);
-  const [previewTotal, setPreviewTotal] = useState<string | null>(null);
-  const [previewShipping, setPreviewShipping] = useState<string | null>(null);
+  const [itemCount, setItemCount] = useState(() => readStoredCount());
+  const [previewLines, setPreviewLines] = useState<CartLine[]>(() => readStoredPreview()?.lines ?? []);
+  const [previewTotal, setPreviewTotal] = useState<string | null>(() => readStoredPreview()?.total ?? null);
+  const [previewShipping, setPreviewShipping] = useState<string | null>(() => readStoredPreview()?.shipping ?? null);
   const [loading, setLoading] = useState(false);
   /** When true, we need a GET /api/cart before showing trusted preview / count */
-  const [cartStale, setCartStale] = useState(true);
-
-  useEffect(() => {
-    const count = readStoredCount();
-    const prev = readStoredPreview();
-    setItemCount(count);
-    if (prev) {
-      setPreviewLines(prev.lines);
-      setPreviewTotal(prev.total);
-      setPreviewShipping(prev.shipping);
-      setCartStale(false);
-    }
-  }, []);
+  const [cartStale, setCartStale] = useState(() => readStoredPreview() === null);
 
   const refreshCart = useCallback(async () => {
     setLoading(true);
