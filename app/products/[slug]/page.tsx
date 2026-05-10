@@ -4,12 +4,14 @@ import {
   getProductBySlug,
   mapProductDetail,
 } from "@/lib/api";
+import { getFrontendHoverVideo } from "@/lib/product-hover-videos";
 import type { ProductDetailView } from "@/types/product-detail";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { GlowBearBundleMoreColours } from "@/components/GlowBearBundleMoreColours";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { VariableProductImagePicker } from "@/components/VariableProductImagePicker";
 import { FooterValues } from "@/components/FooterValues";
+import { ProductDetailVideo } from "@/components/ProductDetailVideo";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { optionToSwatchColor } from "@/lib/product-swatches";
@@ -42,6 +44,8 @@ export default async function ProductPage({
 
   const isVariableWithColours =
     product.variations.length > 0 && /variable/i.test(String(product.productType || ""));
+
+  const detailClip = getFrontendHoverVideo(product.slug);
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
@@ -153,6 +157,16 @@ export default async function ProductPage({
             </ScrollReveal>
           </div>
         )}
+
+        {detailClip ? (
+          <ScrollReveal
+            className="w-full max-w-3xl"
+            delayMs={140}
+            rootMargin="0px 0px 12% 0px"
+          >
+            <ProductDetailVideo src={detailClip.url} />
+          </ScrollReveal>
+        ) : null}
 
         {showBundleSiblings ? <GlowBearBundleMoreColours siblings={bundleSiblings} /> : null}
       </main>

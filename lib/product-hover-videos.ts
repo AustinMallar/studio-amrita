@@ -1,6 +1,9 @@
 /**
- * Host hover clip files under `public/` (e.g. `public/product-hover/matcha-green.mp4`)
- * and map each product by its WooCommerce slug. These take priority over the WooCommerce gallery.
+ * Host clip files under `public/` (e.g. `public/product-hover/matcha-green.mp4`)
+ * and map each product by its WooCommerce slug. Used for:
+ *   - Product cards (hover preview)
+ *   - `/products/[slug]` (“See it in motion”)
+ * Frontend clips take priority over gallery-based hover from WooCommerce.
  *
  * Example:
  *   1. Add `public/product-hover/matcha-green.mp4`
