@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const inputClass =
@@ -11,7 +10,6 @@ const btnClass =
   "inline-flex w-full items-center justify-center rounded-full bg-dusty-rose px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-dusty-rose/90 disabled:cursor-not-allowed disabled:opacity-50";
 
 export function LoginForm({ nextHref }: { nextHref: string }) {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -35,8 +33,8 @@ export function LoginForm({ nextHref }: { nextHref: string }) {
       }
       /** Reload cart with JWT + Woo session so WC restores customer cart. */
       window.dispatchEvent(new Event("cart:updated"));
-      router.push(nextHref);
-      router.refresh();
+      /** Full navigation so the httpOnly JWT is always sent on the next document request (avoids RSC cookie races after login). */
+      window.location.assign(nextHref);
     } catch {
       setError("Something went wrong. Try again.");
     } finally {

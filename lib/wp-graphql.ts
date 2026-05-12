@@ -57,14 +57,41 @@ export async function wpGraphQL<T>(
 
   /**
    * Many WP hosts return HTTP 401/403 with a normal GraphQL `{ errors: [...] }` body (e.g. expired
-   * JWT). Throwing here surfaced as “Could not reach WordPress” on /account. Prefer returning
-   * those errors so callers can show the real message and treat `viewer` as null.
+   * JWT). Prefer returning those errors so callers can show the real message and treat `viewer` as null.
+   *
+   * JWT / REST-style plugins sometimes return `{ message: "...", code: "..." }` without `errors`.
    */
   if (!res.ok) {
     if (json.errors?.length) {
       return { ...json, sessionHeader };
     }
-    throw new Error(`GraphQL HTTP ${res.status}`);
+
+    const loose = json as Record<string, unknown>;
+    const restMsg =
+      typeof loose.message === "string"
+        ? loose.message
+        : typeof loose.error === "string"
+          ? loose.error
+          : typeof loose.error_description === "string"
+            ? loose.error_description
+            : null;
+
+    if (restMsg?.trim()) {
+      return {
+        errors: [{ message: restMsg.trim() }],
+        data: undefined,
+        sessionHeader,
+      };
+    }
+
+    const snippet = raw.replace(/\s+/g, " ").trim();
+    const preview =
+      snippet.length > 200 ? `${snippet.slice(0, 200)}…` : snippet;
+    throw new Error(
+      preview
+        ? `GraphQL HTTP ${res.status}: ${preview}`
+        : `GraphQL HTTP ${res.status} (empty body)`
+    );
   }
 
   return { ...json, sessionHeader };

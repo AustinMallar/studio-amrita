@@ -22,16 +22,7 @@ export default async function AccountPage() {
     redirect("/login?next=/account");
   }
 
-  let overview: Awaited<ReturnType<typeof fetchAccountOverview>>;
-  try {
-    overview = await fetchAccountOverview(token);
-  } catch {
-    overview = {
-      errors: [{ message: "Could not reach WordPress." }],
-      data: undefined,
-      sessionHeader: null,
-    };
-  }
+  const overview = await fetchAccountOverview(token);
 
   const gqlErrors = collectGraphQLErrors(overview.errors);
   const sessionErrMsg = gqlErrors.join(" ") || "Your session could not be verified.";

@@ -53,8 +53,9 @@ export type AccountOverviewData = {
   } | null;
 };
 
-const ACCOUNT_OVERVIEW_QUERY = `
-  query StudioAmritaAccountOverview {
+/** Split from `customer` so a WC resolver failure does not abort `viewer` (avoids blank account UX). */
+const ACCOUNT_VIEWER_QUERY = `
+  query StudioAmritaAccountViewer {
     viewer {
       id
       databaseId
@@ -63,6 +64,11 @@ const ACCOUNT_OVERVIEW_QUERY = `
       firstName
       lastName
     }
+  }
+`;
+
+const ACCOUNT_CUSTOMER_QUERY = `
+  query StudioAmritaAccountCustomer {
     customer {
       databaseId
       email
@@ -224,13 +230,57 @@ const ORDER_DETAIL_QUERY = `
   }
 `;
 
+/**
+ * Loads viewer + WooCommerce customer in two requests so one failing resolver does not throw away
+ * the other, and so HTTP/HTML failures surface as structured errors instead of aborting the whole page.
+ */
 export async function fetchAccountOverview(authToken: string) {
-  return wpGraphQL<AccountOverviewData>(
-    ACCOUNT_OVERVIEW_QUERY,
-    undefined,
-    null,
-    authToken
-  );
+  const merged: Array<{ message?: string }> = [];
+  let sessionHeader: string | null = null;
+
+  let viewer: AccountOverviewData["viewer"] | null = null;
+  try {
+    const r = await wpGraphQL<{ viewer?: AccountOverviewData["viewer"] | null }>(
+      ACCOUNT_VIEWER_QUERY,
+      undefined,
+      null,
+      authToken
+    );
+    sessionHeader = r.sessionHeader ?? sessionHeader;
+    viewer = r.data?.viewer ?? null;
+    if (r.errors?.length) merged.push(...r.errors);
+  } catch (e) {
+    merged.push({
+      message:
+        e instanceof Error ? e.message : "Could not load your WordPress profile (viewer query).",
+    });
+  }
+
+  let customer: AccountOverviewData["customer"] | null = null;
+  try {
+    const r = await wpGraphQL<{ customer?: AccountOverviewData["customer"] | null }>(
+      ACCOUNT_CUSTOMER_QUERY,
+      undefined,
+      null,
+      authToken
+    );
+    sessionHeader = r.sessionHeader ?? sessionHeader;
+    customer = r.data?.customer ?? null;
+    if (r.errors?.length) merged.push(...r.errors);
+  } catch (e) {
+    merged.push({
+      message:
+        e instanceof Error
+          ? e.message
+          : "Could not load WooCommerce customer data (customer query).",
+    });
+  }
+
+  return {
+    data: { viewer, customer },
+    errors: merged.length ? merged : undefined,
+    sessionHeader,
+  };
 }
 
 export async function fetchOrderDetail(authToken: string, databaseId: number) {

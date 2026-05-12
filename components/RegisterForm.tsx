@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const inputClass =
@@ -11,7 +10,6 @@ const btnClass =
   "inline-flex w-full items-center justify-center rounded-full bg-dusty-rose px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-dusty-rose/90 disabled:cursor-not-allowed disabled:opacity-50";
 
 export function RegisterForm({ nextHref }: { nextHref: string }) {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,8 +41,7 @@ export function RegisterForm({ nextHref }: { nextHref: string }) {
         return;
       }
       window.dispatchEvent(new Event("cart:updated"));
-      router.push(nextHref);
-      router.refresh();
+      window.location.assign(nextHref);
     } catch {
       setError("Something went wrong. Try again.");
     } finally {
