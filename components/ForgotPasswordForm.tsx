@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const inputClass =
@@ -10,33 +9,30 @@ const inputClass =
 const btnClass =
   "inline-flex w-full items-center justify-center rounded-full bg-dusty-rose px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-dusty-rose/90 disabled:cursor-not-allowed disabled:opacity-50";
 
-export function LoginForm({ nextHref }: { nextHref: string }) {
-  const router = useRouter();
+export function ForgotPasswordForm() {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     setPending(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username }),
       });
-      const data = (await res.json()) as { error?: string };
+      const data = (await res.json()) as { error?: string; message?: string };
       if (!res.ok) {
-        setError(data.error ?? "Sign in failed.");
+        setError(data.error ?? "Something went wrong.");
         return;
       }
-      /** Reload cart with JWT + Woo session so WC restores customer cart. */
-      window.dispatchEvent(new Event("cart:updated"));
-      router.push(nextHref);
-      router.refresh();
+      setSuccess(data.message ?? "Check your email for reset instructions.");
+      setUsername("");
     } catch {
       setError("Something went wrong. Try again.");
     } finally {
@@ -54,13 +50,18 @@ export function LoginForm({ nextHref }: { nextHref: string }) {
           {error}
         </p>
       ) : null}
+      {success ? (
+        <p className="rounded-2xl border border-black/[0.08] bg-white/60 px-4 py-3 text-sm text-heading">
+          {success}
+        </p>
+      ) : null}
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="login-username" className="text-sm font-medium text-heading">
+        <label htmlFor="forgot-username" className="text-sm font-medium text-heading">
           Username or email
         </label>
         <input
-          id="login-username"
+          id="forgot-username"
           name="username"
           type="text"
           autoComplete="username"
@@ -71,35 +72,14 @@ export function LoginForm({ nextHref }: { nextHref: string }) {
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="login-password" className="text-sm font-medium text-heading">
-          Password
-        </label>
-        <input
-          id="login-password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={inputClass}
-        />
-        <p className="text-right text-sm">
-          <Link href="/forgot-password" className="font-medium text-dusty-rose hover:underline">
-            Forgot password?
-          </Link>
-        </p>
-      </div>
-
       <button type="submit" disabled={pending} className={btnClass}>
-        {pending ? "Signing in…" : "Sign in"}
+        {pending ? "Sending…" : "Send reset link"}
       </button>
 
       <p className="text-center text-sm text-body">
-        No account?{" "}
-        <Link href="/register" className="font-medium text-dusty-rose hover:underline">
-          Create one
+        Remember your password?{" "}
+        <Link href="/login" className="font-medium text-dusty-rose hover:underline">
+          Sign in
         </Link>
       </p>
     </form>

@@ -8,10 +8,11 @@ import Link from "next/link";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; reset?: string }>;
 }) {
   const sp = await searchParams;
   const nextHref = safeNextPath(sp.next);
+  const showPasswordResetOk = sp.reset === "1";
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
@@ -30,6 +31,12 @@ export default async function LoginPage({
             Sign in with the same email or username you use for your Studio Amrita account.
           </p>
         </div>
+
+        {showPasswordResetOk ? (
+          <p className="rounded-2xl border border-black/[0.08] bg-white/60 px-4 py-3 font-sans text-sm text-heading">
+            Your password was updated. Sign in with your new password.
+          </p>
+        ) : null}
 
         <LoginForm nextHref={nextHref} />
       </main>

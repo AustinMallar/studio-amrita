@@ -10,32 +10,43 @@ const inputClass =
 const btnClass =
   "inline-flex w-full items-center justify-center rounded-full bg-dusty-rose px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-dusty-rose/90 disabled:cursor-not-allowed disabled:opacity-50";
 
-export function LoginForm({ nextHref }: { nextHref: string }) {
+type Props = {
+  keyValue: string;
+  loginValue: string;
+};
+
+export function ResetPasswordForm({ keyValue, loginValue }: Props) {
   const router = useRouter();
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (password !== confirm) {
+      setError("Passwords do not match.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
     setPending(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ key: keyValue, login: loginValue, password }),
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
-        setError(data.error ?? "Sign in failed.");
+        setError(data.error ?? "Could not reset password.");
         return;
       }
-      /** Reload cart with JWT + Woo session so WC restores customer cart. */
-      window.dispatchEvent(new Event("cart:updated"));
-      router.push(nextHref);
+      router.push("/login?reset=1");
       router.refresh();
     } catch {
       setError("Something went wrong. Try again.");
@@ -56,50 +67,48 @@ export function LoginForm({ nextHref }: { nextHref: string }) {
       ) : null}
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="login-username" className="text-sm font-medium text-heading">
-          Username or email
+        <label htmlFor="reset-password" className="text-sm font-medium text-heading">
+          New password
         </label>
         <input
-          id="login-username"
-          name="username"
-          type="text"
-          autoComplete="username"
-          required
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className={inputClass}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label htmlFor="login-password" className="text-sm font-medium text-heading">
-          Password
-        </label>
-        <input
-          id="login-password"
+          id="reset-password"
           name="password"
           type="password"
-          autoComplete="current-password"
+          autoComplete="new-password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className={inputClass}
         />
-        <p className="text-right text-sm">
-          <Link href="/forgot-password" className="font-medium text-dusty-rose hover:underline">
-            Forgot password?
-          </Link>
-        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="reset-confirm" className="text-sm font-medium text-heading">
+          Confirm new password
+        </label>
+        <input
+          id="reset-confirm"
+          name="confirm"
+          type="password"
+          autoComplete="new-password"
+          required
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          className={inputClass}
+        />
       </div>
 
       <button type="submit" disabled={pending} className={btnClass}>
-        {pending ? "Signing in…" : "Sign in"}
+        {pending ? "Updating…" : "Set new password"}
       </button>
 
       <p className="text-center text-sm text-body">
-        No account?{" "}
-        <Link href="/register" className="font-medium text-dusty-rose hover:underline">
-          Create one
+        <Link href="/forgot-password" className="font-medium text-dusty-rose hover:underline">
+          Request a new link
+        </Link>
+        {" · "}
+        <Link href="/login" className="font-medium text-dusty-rose hover:underline">
+          Sign in
         </Link>
       </p>
     </form>
