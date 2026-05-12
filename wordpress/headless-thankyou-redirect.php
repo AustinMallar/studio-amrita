@@ -4,8 +4,7 @@
  *
  * Install (pick one):
  *
- * - Code Snippets: New snippet → paste this entire file → scope "Run everywhere" (must run on
- *   the storefront for woocommerce_thankyou) → Save & Activate.
+ * - Code Snippets: paste this entire file → scope "Run everywhere" (must run on the storefront).
  *
  * - mu-plugin: copy this file to wp-content/mu-plugins/ (loads automatically).
  *
@@ -22,13 +21,66 @@
  *
  * Cross-domain wp_safe_redirect requires allowed_redirect_hosts (see filter below). Without it,
  * WordPress may send users to wp-login.php with redirect_to pointing at wp-admin.
+ *
+ * IMPORTANT: If STUDIO_AMRITA_FRONTEND_URL is not set, this snippet does nothing — you will stay
+ * on the WordPress order-received page.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Runs before the order-received template renders (more reliable than woocommerce_thankyou alone,
+ * which can receive $order_id = 0 in some payment flows).
+ */
+add_action( 'template_redirect', 'studio_amrita_redirect_order_received_to_headless', 10 );
+
 add_action( 'woocommerce_thankyou', 'studio_amrita_redirect_thankyou_to_headless', 5, 1 );
+
+/**
+ * Redirect when the browser hits the order-received endpoint (pretty URLs: …/order-received/47/).
+ */
+function studio_amrita_redirect_order_received_to_headless() {
+	$endpoint = get_option( 'woocommerce_checkout_order_received_endpoint', 'order-received' );
+
+	if ( ! function_exists( 'is_wc_endpoint_url' ) || ! is_wc_endpoint_url( $endpoint ) ) {
+		return;
+	}
+	if ( is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+		return;
+	}
+	if ( wp_doing_cron() ) {
+		return;
+	}
+
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
+	if ( isset( $_GET['headless_stay'] ) && '1' === (string) $_GET['headless_stay'] ) {
+		return;
+	}
+	$key = isset( $_GET['key'] ) ? sanitize_text_field( wp_unslash( $_GET['key'] ) ) : '';
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+	if ( $key === '' ) {
+		return;
+	}
+
+	$order_id = absint( get_query_var( $endpoint, 0 ) );
+	if ( $order_id < 1 ) {
+		return;
+	}
+
+	$order = wc_get_order( $order_id );
+	if ( ! $order || ! is_a( $order, 'WC_Order' ) ) {
+		return;
+	}
+
+	if ( ! hash_equals( $order->get_order_key(), $key ) ) {
+		return;
+	}
+
+	studio_amrita_send_headless_thankyou_redirect( $order );
+}
 
 /**
  * @param int $order_id Order ID.
@@ -41,11 +93,6 @@ function studio_amrita_redirect_thankyou_to_headless( $order_id ) {
 		return;
 	}
 
-	$base = studio_amrita_headless_frontend_url();
-	if ( $base === '' ) {
-		return;
-	}
-
 	$order = wc_get_order( (int) $order_id );
 	if ( ! $order || ! is_a( $order, 'WC_Order' ) ) {
 		return;
@@ -53,6 +100,18 @@ function studio_amrita_redirect_thankyou_to_headless( $order_id ) {
 
 	// Optional: add ?headless_stay=1 to the order-received URL to debug the WP page without redirect.
 	if ( isset( $_GET['headless_stay'] ) && '1' === (string) $_GET['headless_stay'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return;
+	}
+
+	studio_amrita_send_headless_thankyou_redirect( $order );
+}
+
+/**
+ * @param WC_Order $order Order object.
+ */
+function studio_amrita_send_headless_thankyou_redirect( $order ) {
+	$base = studio_amrita_headless_frontend_url();
+	if ( $base === '' ) {
 		return;
 	}
 

@@ -23,20 +23,11 @@ export function FooterValues() {
   const blocks = [
     {
       title: "Free Shipping",
-      body: "On orders over $50.",
+      body: "On all orders.",
       icon: (
         <svg className="mx-auto h-8 w-8 sm:mx-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.15} stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0z" />
           <path strokeLinecap="round" strokeLinejoin="round" d="M13 17V6a1 1 0 00-1-1H8L5 9v8h3m5-8h3l3 4v4h-3" />
-        </svg>
-      ),
-    },
-    {
-      title: "Easy Returns",
-      body: "14-day return policy.",
-      icon: (
-        <svg className="mx-auto h-8 w-8 sm:mx-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.15} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
         </svg>
       ),
     },
@@ -62,7 +53,7 @@ export function FooterValues() {
 
   return (
     <footer className="border-t border-black/[0.06] bg-cream px-4 py-14 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {blocks.map((item, i) => (
           <ScrollReveal key={item.title} delayMs={i * 44}>
             <Value title={item.title} body={item.body} icon={item.icon} />
