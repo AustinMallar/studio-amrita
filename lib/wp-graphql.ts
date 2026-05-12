@@ -62,6 +62,15 @@ export async function wpGraphQL<T>(
    * JWT / REST-style plugins sometimes return `{ message: "...", code: "..." }` without `errors`.
    */
   if (!res.ok) {
+    /**
+     * Query Analyzer, security plugins, or reverse proxies sometimes respond with HTTP 403/401 even
+     * when the body is valid GraphQL containing `data` (and optional `extensions`). Treat like a
+     * normal response so authenticated viewer/customer queries still succeed.
+     */
+    if (json.data !== undefined) {
+      return { ...json, sessionHeader };
+    }
+
     if (json.errors?.length) {
       return { ...json, sessionHeader };
     }
