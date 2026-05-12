@@ -41,9 +41,29 @@ export async function wpGraphQL<T>(
   });
 
   const sessionHeader = res.headers.get("woocommerce-session");
-  const json = (await res.json()) as GraphQLResponse<T>;
 
+  const raw = await res.text();
+  let json: GraphQLResponse<T> = {};
+  if (raw.trim()) {
+    try {
+      json = JSON.parse(raw) as GraphQLResponse<T>;
+    } catch {
+      if (!res.ok) {
+        throw new Error(`GraphQL HTTP ${res.status}: expected JSON`);
+      }
+      throw new Error("Invalid JSON from GraphQL endpoint");
+    }
+  }
+
+  /**
+   * Many WP hosts return HTTP 401/403 with a normal GraphQL `{ errors: [...] }` body (e.g. expired
+   * JWT). Throwing here surfaced as “Could not reach WordPress” on /account. Prefer returning
+   * those errors so callers can show the real message and treat `viewer` as null.
+   */
   if (!res.ok) {
+    if (json.errors?.length) {
+      return { ...json, sessionHeader };
+    }
     throw new Error(`GraphQL HTTP ${res.status}`);
   }
 

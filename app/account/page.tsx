@@ -34,6 +34,12 @@ export default async function AccountPage() {
   }
 
   const gqlErrors = collectGraphQLErrors(overview.errors);
+  const sessionErrMsg = gqlErrors.join(" ") || "Your session could not be verified.";
+  /** Avoid repeating generic advice when WordPress already returned a JWT/auth message. */
+  const showSessionHint =
+    !/expired|invalid|jwt|token|unauthorized|not authenticated|signature|Forbidden/i.test(
+      sessionErrMsg
+    );
   const viewer = overview.data?.viewer ?? null;
   const customer = overview.data?.customer ?? null;
 
@@ -88,8 +94,8 @@ export default async function AccountPage() {
         {invalidSession ? (
           <div className="space-y-4 font-sans">
             <p className="rounded-2xl border border-dusty-rose/40 bg-white/60 px-4 py-3 text-sm text-heading">
-              {gqlErrors.join(" ") || "Your session could not be verified."} Sign in again if your
-              JWT expired.
+              {sessionErrMsg}
+              {showSessionHint ? <> Sign in again if your session expired.</> : null}
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
