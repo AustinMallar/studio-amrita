@@ -47,7 +47,7 @@ export function CheckoutForm({
 }: Props) {
   const [billing, setBilling] = useState(emptyAddr);
   const [shipping, setShipping] = useState(emptyAddr);
-  const [sameAs, setSameAs] = useState(true);
+  const [shippingDifferent, setShippingDifferent] = useState(false);
   const [customerNote, setCustomerNote] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -111,7 +111,7 @@ export function CheckoutForm({
       return;
     }
 
-    if (!sameAs) {
+    if (shippingDifferent) {
       const ship = { ...shipping };
       const shipErr = validateAddressSide("shipping", ship);
       if (shipErr) {
@@ -138,10 +138,10 @@ export function CheckoutForm({
 
       const body: Record<string, unknown> = {
         billing: billingPayload,
-        shipToDifferentAddress: !sameAs,
+        shipToDifferentAddress: shippingDifferent,
         customerNote: customerNote.trim(),
       };
-      if (!sameAs) {
+      if (shippingDifferent) {
         const ship = { ...shipping };
         delete ship.email;
         body.shipping = ship;
@@ -351,15 +351,15 @@ export function CheckoutForm({
         <label className="flex cursor-pointer items-start gap-3 font-sans text-sm text-heading">
           <input
             type="checkbox"
-            checked={sameAs}
-            onChange={(e) => setSameAs(e.target.checked)}
+            checked={shippingDifferent}
+            onChange={(e) => setShippingDifferent(e.target.checked)}
             className="mt-1 h-4 w-4 rounded border-black/[0.2] text-dusty-rose focus:ring-dusty-rose"
           />
-          <span>Shipping address is the same as billing</span>
+          <span>Shipping address is different from billing</span>
         </label>
       </div>
 
-      {!sameAs ? (
+      {shippingDifferent ? (
         <div className="space-y-4">
           <h3 className="font-heading text-lg text-heading">Shipping address</h3>
           <div className="grid gap-4 sm:grid-cols-2">

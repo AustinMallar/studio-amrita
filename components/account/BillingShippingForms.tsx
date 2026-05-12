@@ -12,6 +12,7 @@ import {
   acctSelectClass,
 } from "@/components/account/account-form-classes";
 import { getCountryOptions, getRegionOptions } from "@/lib/country-region-options";
+import { shippingAddressDiffersFromBilling } from "@/lib/shipping-address-differs";
 
 function emptyAddr(): Record<string, string> {
   return {
@@ -82,7 +83,12 @@ export function BillingShippingForms({
   const router = useRouter();
   const [billing, setBilling] = useState(() => addrToState(initialBilling));
   const [shipping, setShipping] = useState(() => addrToState(initialShipping));
-  const [sameAs, setSameAs] = useState(false);
+  const [shippingDifferent, setShippingDifferent] = useState(() =>
+    shippingAddressDiffersFromBilling(
+      addrToState(initialBilling),
+      addrToState(initialShipping)
+    )
+  );
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
   const [pending, setPending] = useState(false);
@@ -100,6 +106,7 @@ export function BillingShippingForms({
     queueMicrotask(() => {
       setBilling(nextBilling);
       setShipping(nextShipping);
+      setShippingDifferent(shippingAddressDiffersFromBilling(nextBilling, nextShipping));
     });
   }, [billingKey, shippingKey]);
 
@@ -136,7 +143,7 @@ export function BillingShippingForms({
       return;
     }
 
-    if (!sameAs) {
+    if (shippingDifferent) {
       const shipErr = validateCountryState("shipping", shipping);
       if (shipErr) {
         setError(shipErr);
@@ -150,9 +157,9 @@ export function BillingShippingForms({
 
     const body: Record<string, unknown> = {
       billing: stripEmpty(billingPayload),
-      shippingSameAsBilling: sameAs,
+      shippingSameAsBilling: !shippingDifferent,
     };
-    if (!sameAs) {
+    if (shippingDifferent) {
       const ship = { ...stripEmpty(shipping) };
       delete ship.email;
       body.shipping = ship;
@@ -289,15 +296,15 @@ export function BillingShippingForms({
         <label className="flex cursor-pointer items-start gap-3 font-sans text-sm text-heading">
           <input
             type="checkbox"
-            checked={sameAs}
-            onChange={(e) => setSameAs(e.target.checked)}
+            checked={shippingDifferent}
+            onChange={(e) => setShippingDifferent(e.target.checked)}
             className="mt-1 h-4 w-4 rounded border-black/[0.2] text-dusty-rose focus:ring-dusty-rose"
           />
-          <span>Shipping address is the same as billing</span>
+          <span>Shipping address is different from billing</span>
         </label>
       </div>
 
-      {!sameAs ? (
+      {shippingDifferent ? (
         <div className="space-y-4">
           <h3 className="font-heading text-lg text-heading">Shipping address</h3>
           <div className="grid gap-4 sm:grid-cols-2">
