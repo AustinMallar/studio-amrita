@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { CustomerAddress } from "@/lib/account-data";
 
@@ -9,7 +9,9 @@ import {
   acctBtnPrimaryClass,
   acctInputClass,
   acctLabelClass,
+  acctSelectClass,
 } from "@/components/account/account-form-classes";
+import { getCountryOptions, getRegionOptions } from "@/lib/country-region-options";
 
 function emptyAddr(): Record<string, string> {
   return {
@@ -21,7 +23,7 @@ function emptyAddr(): Record<string, string> {
     city: "",
     state: "",
     postcode: "",
-    country: "",
+    country: "CA",
     email: "",
     phone: "",
   };
@@ -39,7 +41,7 @@ function addrToState(a: CustomerAddress | null | undefined): Record<string, stri
     city: a.city ?? "",
     state: a.state ?? "",
     postcode: a.postcode ?? "",
-    country: a.country ?? "",
+    country: (a.country ?? "").trim() || "CA",
     email: a.email ?? "",
     phone: a.phone ?? "",
   };
@@ -54,12 +56,29 @@ function stripEmpty(o: Record<string, string>): Record<string, string> {
   return out;
 }
 
+function validateCountryState(label: string, addr: Record<string, string>): string | null {
+  if (!addr.country.trim()) return `Select a country (${label}).`;
+  if (!addr.state.trim()) {
+    const regs = getRegionOptions(addr.country);
+    return regs.length > 0
+      ? `Select a province or state (${label}).`
+      : `Enter your state or province (${label}).`;
+  }
+  return null;
+}
+
 type Props = {
   initialBilling: CustomerAddress | null | undefined;
   initialShipping: CustomerAddress | null | undefined;
+  /** Account email — billing email field is hidden and this value is sent when saving. */
+  accountEmail?: string | null;
 };
 
-export function BillingShippingForms({ initialBilling, initialShipping }: Props) {
+export function BillingShippingForms({
+  initialBilling,
+  initialShipping,
+  accountEmail,
+}: Props) {
   const router = useRouter();
   const [billing, setBilling] = useState(() => addrToState(initialBilling));
   const [shipping, setShipping] = useState(() => addrToState(initialShipping));
@@ -67,6 +86,10 @@ export function BillingShippingForms({ initialBilling, initialShipping }: Props)
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
   const [pending, setPending] = useState(false);
+
+  const countryOptions = useMemo(() => getCountryOptions(), []);
+  const billingRegions = useMemo(() => getRegionOptions(billing.country), [billing.country]);
+  const shippingRegions = useMemo(() => getRegionOptions(shipping.country), [shipping.country]);
 
   const billingKey = JSON.stringify(initialBilling ?? null);
   const shippingKey = JSON.stringify(initialShipping ?? null);
@@ -87,14 +110,46 @@ export function BillingShippingForms({ initialBilling, initialShipping }: Props)
     setShipping((prev) => ({ ...prev, [key]: value }));
   }
 
+  function setBillCountry(code: string) {
+    setBilling((prev) => ({ ...prev, country: code, state: "" }));
+  }
+  function setShipCountry(code: string) {
+    setShipping((prev) => ({ ...prev, country: code, state: "" }));
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setOk(false);
+
+    const emailResolved =
+      (accountEmail?.trim() || billing.email.trim()) || "";
+    if (!emailResolved) {
+      setError("Email is required on the billing address.");
+      return;
+    }
+
+    const billingForValidation = { ...billing, email: emailResolved };
+    const billErr = validateCountryState("billing", billingForValidation);
+    if (billErr) {
+      setError(billErr);
+      return;
+    }
+
+    if (!sameAs) {
+      const shipErr = validateCountryState("shipping", shipping);
+      if (shipErr) {
+        setError(shipErr);
+        return;
+      }
+    }
+
     setPending(true);
 
+    const billingPayload = { ...billing, email: emailResolved };
+
     const body: Record<string, unknown> = {
-      billing: stripEmpty(billing),
+      billing: stripEmpty(billingPayload),
       shippingSameAsBilling: sameAs,
     };
     if (!sameAs) {
@@ -106,6 +161,7 @@ export function BillingShippingForms({ initialBilling, initialShipping }: Props)
     try {
       const res = await fetch("/api/account/addresses", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -139,27 +195,85 @@ export function BillingShippingForms({ initialBilling, initialShipping }: Props)
       <div className="space-y-4">
         <h3 className="font-heading text-lg text-heading">Billing address</h3>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="First name" id="bill-fn" value={billing.firstName} onChange={(v) => setBill("firstName", v)} />
-          <Field label="Last name" id="bill-ln" value={billing.lastName} onChange={(v) => setBill("lastName", v)} />
+          <Field label="First name" id="bill-fn" autoComplete="given-name" value={billing.firstName} onChange={(v) => setBill("firstName", v)} />
+          <Field label="Last name" id="bill-ln" autoComplete="family-name" value={billing.lastName} onChange={(v) => setBill("lastName", v)} />
         </div>
         <Field label="Company (optional)" id="bill-co" value={billing.company} onChange={(v) => setBill("company", v)} />
-        <Field label="Address line 1" id="bill-a1" value={billing.address1} onChange={(v) => setBill("address1", v)} />
-        <Field label="Address line 2" id="bill-a2" value={billing.address2} onChange={(v) => setBill("address2", v)} />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="City" id="bill-city" value={billing.city} onChange={(v) => setBill("city", v)} />
-          <Field label="State / County" id="bill-state" value={billing.state} onChange={(v) => setBill("state", v)} />
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Postal code" id="bill-zip" value={billing.postcode} onChange={(v) => setBill("postcode", v)} />
-          <Field
-            label="Country code"
-            id="bill-cc"
-            hint="ISO code, e.g. US, GB, CA"
+        <Field label="Address line 1" id="bill-a1" autoComplete="address-line1" value={billing.address1} onChange={(v) => setBill("address1", v)} />
+        <Field label="Address line 2" id="bill-a2" autoComplete="address-line2" value={billing.address2} onChange={(v) => setBill("address2", v)} />
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor="bill-country" className={acctLabelClass}>
+            Country
+          </label>
+          <select
+            id="bill-country"
             value={billing.country}
-            onChange={(v) => setBill("country", v)}
-          />
+            disabled={pending}
+            onChange={(e) => setBillCountry(e.target.value)}
+            autoComplete="country"
+            className={acctSelectClass}
+          >
+            <option value="">Select a country</option>
+            {countryOptions.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </div>
+
         <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="City" id="bill-city" autoComplete="address-level2" value={billing.city} onChange={(v) => setBill("city", v)} />
+          {billingRegions.length > 0 ? (
+            <div className="flex flex-col gap-2">
+              <label htmlFor="bill-state" className={acctLabelClass}>
+                Province / State
+              </label>
+              <select
+                id="bill-state"
+                value={billing.state}
+                disabled={pending}
+                onChange={(e) => setBill("state", e.target.value)}
+                autoComplete="address-level1"
+                className={acctSelectClass}
+              >
+                <option value="">Select province or state</option>
+                {billingRegions.map((r) => (
+                  <option key={r.code} value={r.code}>
+                    {r.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <Field
+              label="State / Province / Region"
+              id="bill-state"
+              autoComplete="address-level1"
+              value={billing.state}
+              onChange={(v) => setBill("state", v)}
+            />
+          )}
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="Postal code"
+            id="bill-zip"
+            autoComplete="postal-code"
+            value={billing.postcode}
+            onChange={(v) => setBill("postcode", v)}
+          />
+          <Field label="Phone" id="bill-phone" type="tel" autoComplete="tel" value={billing.phone} onChange={(v) => setBill("phone", v)} />
+        </div>
+
+        {accountEmail?.trim() ? (
+          <div className="rounded-xl border border-black/[0.08] bg-cream/80 px-4 py-3 font-sans text-sm text-heading">
+            <span className="text-body">Email </span>
+            <span className="font-medium">{accountEmail.trim()}</span>
+          </div>
+        ) : (
           <Field
             label="Email"
             id="bill-email"
@@ -168,8 +282,7 @@ export function BillingShippingForms({ initialBilling, initialShipping }: Props)
             value={billing.email}
             onChange={(v) => setBill("email", v)}
           />
-          <Field label="Phone" id="bill-phone" type="tel" value={billing.phone} onChange={(v) => setBill("phone", v)} />
-        </div>
+        )}
       </div>
 
       <div className="border-t border-black/[0.06] pt-8">
@@ -194,21 +307,72 @@ export function BillingShippingForms({ initialBilling, initialShipping }: Props)
           <Field label="Company (optional)" id="ship-co" value={shipping.company} onChange={(v) => setShip("company", v)} />
           <Field label="Address line 1" id="ship-a1" value={shipping.address1} onChange={(v) => setShip("address1", v)} />
           <Field label="Address line 2" id="ship-a2" value={shipping.address2} onChange={(v) => setShip("address2", v)} />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="City" id="ship-city" value={shipping.city} onChange={(v) => setShip("city", v)} />
-            <Field label="State / County" id="ship-state" value={shipping.state} onChange={(v) => setShip("state", v)} />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Postal code" id="ship-zip" value={shipping.postcode} onChange={(v) => setShip("postcode", v)} />
-            <Field
-              label="Country code"
-              id="ship-cc"
-              hint="ISO code"
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="ship-country" className={acctLabelClass}>
+              Country
+            </label>
+            <select
+              id="ship-country"
               value={shipping.country}
-              onChange={(v) => setShip("country", v)}
-            />
+              disabled={pending}
+              onChange={(e) => setShipCountry(e.target.value)}
+              autoComplete="shipping country"
+              className={acctSelectClass}
+            >
+              <option value="">Select a country</option>
+              {countryOptions.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
-          <Field label="Phone" id="ship-phone" type="tel" value={shipping.phone} onChange={(v) => setShip("phone", v)} />
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="City" id="ship-city" autoComplete="address-level2" value={shipping.city} onChange={(v) => setShip("city", v)} />
+            {shippingRegions.length > 0 ? (
+              <div className="flex flex-col gap-2">
+                <label htmlFor="ship-state" className={acctLabelClass}>
+                  Province / State
+                </label>
+                <select
+                  id="ship-state"
+                  value={shipping.state}
+                  disabled={pending}
+                  onChange={(e) => setShip("state", e.target.value)}
+                  autoComplete="address-level1"
+                  className={acctSelectClass}
+                >
+                  <option value="">Select province or state</option>
+                  {shippingRegions.map((r) => (
+                    <option key={r.code} value={r.code}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <Field
+                label="State / Province / Region"
+                id="ship-state"
+                autoComplete="address-level1"
+                value={shipping.state}
+                onChange={(v) => setShip("state", v)}
+              />
+            )}
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Postal code"
+              id="ship-zip"
+              autoComplete="shipping postal-code"
+              value={shipping.postcode}
+              onChange={(v) => setShip("postcode", v)}
+            />
+            <Field label="Phone" id="ship-phone" type="tel" autoComplete="tel" value={shipping.phone} onChange={(v) => setShip("phone", v)} />
+          </div>
         </div>
       ) : null}
 

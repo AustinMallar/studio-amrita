@@ -167,14 +167,15 @@ export default async function AccountPage() {
                   <div>
                     <h2 className="font-heading text-xl text-heading">Billing & shipping</h2>
                     <p className="mt-1 font-sans text-sm text-body">
-                      Used for checkout and delivery. Country must match WooCommerce{" "}
-                      <span className="font-medium text-heading">CountriesEnum</span> (ISO codes).
+                      Used for checkout and delivery. Choose your country, then province or state when
+                      listed.
                     </p>
                   </div>
                   <div className="rounded-2xl border border-black/[0.06] bg-white/60 px-5 py-6 sm:px-7">
                     <BillingShippingForms
                       initialBilling={customer?.billing}
                       initialShipping={customer?.shipping}
+                      accountEmail={email || null}
                     />
                   </div>
                 </section>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { updateCustomerMutation } from "@/lib/account-mutations";
-import { firstGraphQLErrorMessage } from "@/lib/auth-wp";
+import { firstGraphQLErrorMessage, wpFetchViewer } from "@/lib/auth-wp";
 import type { CustomerAddress } from "@/lib/account-data";
 import { getBearerFromCookies } from "@/lib/account-route-auth";
 
@@ -46,7 +46,18 @@ export async function POST(req: Request) {
   }
 
   const record = body && typeof body === "object" ? (body as Record<string, unknown>) : {};
-  const billingRaw = pickAddress(record.billing);
+  let billingRaw = pickAddress(record.billing);
+  if (billingRaw && !billingRaw.email?.trim()) {
+    try {
+      const vr = await wpFetchViewer(token);
+      const em = vr.data?.viewer?.email?.trim();
+      if (em) {
+        billingRaw = { ...billingRaw, email: em };
+      }
+    } catch {
+      /* keep billing without email — mutation may still reject */
+    }
+  }
   const shippingRaw = pickAddress(record.shipping);
   const shippingSameAsBilling =
     typeof record.shippingSameAsBilling === "boolean"
