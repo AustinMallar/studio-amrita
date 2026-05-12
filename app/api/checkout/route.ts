@@ -7,7 +7,7 @@ import {
   type CustomerAddressInput,
 } from "@/lib/checkout";
 import { flattenShippingRates } from "@/lib/cart-shipping-utils";
-import { firstGraphQLErrorMessage } from "@/lib/auth-wp";
+import { firstGraphQLErrorMessage, wpFetchViewer } from "@/lib/auth-wp";
 import { getJwtAuthToken } from "@/lib/auth-session";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import { isInvalidCartTokenError } from "@/lib/woo-session";
@@ -78,20 +78,34 @@ export async function POST(req: Request) {
     }
 
     const record = body && typeof body === "object" ? (body as Record<string, unknown>) : {};
+    const jwt = await getJwtAuthToken();
+
     const billingRaw = pickAddress(record.billing);
-    if (!billingRaw || !billingRaw.email) {
+    let billingEmail = billingRaw?.email?.trim() ?? "";
+    if (!billingEmail && jwt) {
+      try {
+        const vr = await wpFetchViewer(jwt);
+        billingEmail = vr.data?.viewer?.email?.trim() ?? "";
+      } catch {
+        billingEmail = "";
+      }
+    }
+
+    if (!billingRaw || !billingEmail) {
       return NextResponse.json(
         { error: "Billing address and email are required." },
         { status: 400 }
       );
     }
-    if (!billingRaw.firstName || !billingRaw.lastName || !billingRaw.address1) {
+
+    const billingWithEmail: Record<string, string> = { ...billingRaw, email: billingEmail };
+    if (!billingWithEmail.firstName || !billingWithEmail.lastName || !billingWithEmail.address1) {
       return NextResponse.json(
         { error: "Please enter your name and street address." },
         { status: 400 }
       );
     }
-    if (!billingRaw.city || !billingRaw.postcode || !billingRaw.country) {
+    if (!billingWithEmail.city || !billingWithEmail.postcode || !billingWithEmail.country) {
       return NextResponse.json(
         { error: "City, postal code, and country are required." },
         { status: 400 }
@@ -126,7 +140,6 @@ export async function POST(req: Request) {
 
     const cookieStore = await cookies();
     let session = cookieStore.get(WOOCOMMERCE_SESSION_COOKIE)?.value?.trim() || null;
-    const jwt = await getJwtAuthToken();
 
     function adoptSession(h: string | null | undefined) {
       if (h && h.trim().length > 0) session = h.trim();
@@ -171,7 +184,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const billingInput = toGraphQLAddress(billingRaw, { includeEmail: true, overwrite: true });
+    const billingInput = toGraphQLAddress(billingWithEmail, { includeEmail: true, overwrite: true });
     let shippingInput: CustomerAddressInput | undefined;
     if (shipToDifferent && shippingRaw) {
       shippingInput = toGraphQLAddress(shippingRaw, { includeEmail: false, overwrite: true });

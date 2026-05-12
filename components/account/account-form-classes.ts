@@ -1,6 +1,9 @@
 export const acctInputClass =
   "w-full rounded-xl border border-black/[0.08] bg-white/80 px-4 py-3 font-sans text-sm text-heading outline-none placeholder:text-body/70 focus:border-dusty-rose focus:ring-2 focus:ring-dusty-rose/35";
 
+/** Native `<select>` — matches input height and focus ring. */
+export const acctSelectClass = `${acctInputClass} cursor-pointer`;
+
 export const acctLabelClass = "text-sm font-medium text-heading";
 
 export const acctBtnPrimaryClass =

@@ -2,6 +2,7 @@ import { CheckoutForm } from "@/components/CheckoutForm";
 import { FooterValues } from "@/components/FooterValues";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
+import { wpFetchViewer } from "@/lib/auth-wp";
 import { getCartQuery, type CartQueryShape } from "@/lib/cart";
 import { flattenShippingRates } from "@/lib/cart-shipping-utils";
 import { getJwtAuthToken } from "@/lib/auth-session";
@@ -39,6 +40,16 @@ export default async function CheckoutPage() {
 
   const flatRates = flattenShippingRates(cart?.availableShippingMethods);
 
+  let accountEmail: string | null = null;
+  if (jwt) {
+    try {
+      const vr = await wpFetchViewer(jwt);
+      accountEmail = vr.data?.viewer?.email?.trim() ?? null;
+    } catch {
+      accountEmail = null;
+    }
+  }
+
   const shippingLabel = cart?.shippingTotal?.trim() ?? "";
   const cartSummary = {
     subtotal: cart?.subtotal ?? null,
@@ -75,6 +86,7 @@ export default async function CheckoutPage() {
               flatRates={flatRates}
               chosenShippingMethods={cart?.chosenShippingMethods}
               cartSummary={cartSummary}
+              accountEmail={accountEmail}
             />
           </>
         ) : null}
