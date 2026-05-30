@@ -39,6 +39,34 @@ function collectionImage(row: HomepageRow): { url: string | null; alt: string } 
   return { url: null, alt: name };
 }
 
+function CollectionHeroImage({ url, alt }: { url: string; alt: string }) {
+  const isLocal = url.startsWith("/");
+
+  if (isLocal) {
+    return (
+      <Image
+        src={url}
+        alt={alt}
+        width={1024}
+        height={904}
+        unoptimized
+        className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={url}
+      alt={alt}
+      fill
+      sizes="(max-width: 1152px) 100vw, 1152px"
+      quality={90}
+      className="object-cover transition duration-300 group-hover:scale-[1.02]"
+    />
+  );
+}
+
 function CollectionCard({ row }: { row: HomepageRow }) {
   const name = row.data?.name ?? row.categoryName;
   const description =
@@ -56,13 +84,7 @@ function CollectionCard({ row }: { row: HomepageRow }) {
       >
         <div className="relative aspect-[16/10] w-full overflow-hidden bg-blush/35">
           {url ? (
-            <Image
-              src={url}
-              alt={alt}
-              fill
-              sizes="(max-width: 1024px) 100vw, 33vw"
-              className="object-cover transition duration-300 group-hover:scale-[1.02]"
-            />
+            <CollectionHeroImage url={url} alt={alt} />
           ) : (
             <div className="flex h-full items-center justify-center px-4 text-center font-sans text-sm uppercase tracking-wide text-body">
               {name}

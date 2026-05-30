@@ -53,7 +53,7 @@ export function VariableProductImagePicker({
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
+    <div className="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-14">
       <div className="flex flex-col gap-4">
         <ScrollReveal
           className="relative aspect-square w-full overflow-hidden rounded-3xl bg-blush"
@@ -90,11 +90,12 @@ export function VariableProductImagePicker({
         ) : null}
       </div>
 
-      <ScrollReveal
-        className="flex flex-col gap-6"
-        delayMs={90}
-        rootMargin="0px 0px 12% 0px"
-      >
+      <div className="lg:sticky lg:top-28 lg:self-start">
+        <ScrollReveal
+          className="flex flex-col gap-6"
+          delayMs={90}
+          rootMargin="0px 0px 12% 0px"
+        >
         <h1 className="font-heading text-3xl text-heading sm:text-4xl">{productName}</h1>
         <p className="font-sans text-xl font-semibold text-heading">{displayPrice}</p>
 
@@ -153,7 +154,8 @@ export function VariableProductImagePicker({
         />
 
         {children}
-      </ScrollReveal>
+        </ScrollReveal>
+      </div>
     </div>
   );
 }

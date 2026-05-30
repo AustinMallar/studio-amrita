@@ -77,7 +77,7 @@ export default async function ProductPage({
             ) : null}
           </VariableProductImagePicker>
         ) : (
-          <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-14">
             {product.imageUrl ? (
               <ProductDetailGallery
                 mainImageUrl={product.imageUrl}
@@ -95,11 +95,12 @@ export default async function ProductPage({
               </ScrollReveal>
             )}
 
-            <ScrollReveal
-              className="flex flex-col gap-6"
-              delayMs={90}
-              rootMargin="0px 0px 12% 0px"
-            >
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <ScrollReveal
+                className="flex flex-col gap-6"
+                delayMs={90}
+                rootMargin="0px 0px 12% 0px"
+              >
               <h1 className="font-heading text-3xl text-heading sm:text-4xl">{product.name}</h1>
               <p className="font-sans text-xl font-semibold text-heading">{product.priceLabel}</p>
 
@@ -145,7 +146,8 @@ export default async function ProductPage({
               {descriptionText ? (
                 <p className="font-sans leading-relaxed text-body">{descriptionText}</p>
               ) : null}
-            </ScrollReveal>
+              </ScrollReveal>
+            </div>
           </div>
         )}
 
