@@ -16,7 +16,7 @@ export const DEMO_GRID_PRODUCTS = [
     rawPrice: "39",
     imageUrl: "/hero-bear.png",
     imageAlt: "Glow bear in gift box",
-    swatches: ["#CFAEB5"],
+    swatches: ["#E6B9BC"],
   },
   {
     id: "demo-3",

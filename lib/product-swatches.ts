@@ -11,7 +11,7 @@ const RULES: Array<{ test: (blob: string) => boolean; hex: string }> = [
   },
   {
     test: (b) => /\bsakura\b/i.test(b) || /\bsakura\s*pink\b/i.test(b),
-    hex: "#CFAEB5",
+    hex: "#E6B9BC",
   },
   {
     test: (b) =>
@@ -27,8 +27,8 @@ const RULES: Array<{ test: (blob: string) => boolean; hex: string }> = [
 const LEGACY_NAMED: Record<string, string> = {
   matcha: "#BDCAB7",
   "matcha green": "#BDCAB7",
-  sakura: "#CFAEB5",
-  "sakura pink": "#CFAEB5",
+  sakura: "#E6B9BC",
+  "sakura pink": "#E6B9BC",
   honey: "#AA9183",
   "honey brown": "#AA9183",
   cloud: "#CAC8C4",
