@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 export const metadata: Metadata = {
   title: "About | Studio Amrita",
   description:
-    "The story behind Studio Amrita — handmade crochet glow bears, curated skincare minis, and gift-ready packaging made for slow, thoughtful gifting.",
+    "The story behind Studio Amrita: handmade crochet glow bears, curated skincare minis, and gift-ready packaging made for slow, thoughtful gifting.",
 };
 
 function Pillar({
@@ -56,7 +56,7 @@ export default function AboutPage() {
               </h1>
               <p className="mt-4 font-sans text-base leading-relaxed text-body">
                 Studio Amrita pairs handmade crochet characters with curated skincare minis so every
-                gift feels personal — soft textures, quiet rituals, and a little sparkle for
+                gift feels personal, with soft textures, quiet rituals, and a little sparkle for
                 everyday routines.
               </p>
             </ScrollReveal>
@@ -71,7 +71,7 @@ export default function AboutPage() {
               </h2>
               <p className="font-sans text-base leading-relaxed text-body">
                 We design for gifts that feel considered on a shelf, joyful to unwrap, and easy to
-                love long after the bow comes off. Each piece is made in small batches — never
+                love long after the bow comes off. Each piece is made in small batches, never
                 rushed, always intentional.
               </p>
               <p className="font-sans text-base leading-relaxed text-body">
@@ -100,7 +100,7 @@ export default function AboutPage() {
               <ScrollReveal delayMs={0}>
                 <Pillar
                   title="Handmade with love"
-                  body="Crafted in small batches with premium chenille yarn — each bear is a little work of art."
+                  body="Crafted in small batches with premium chenille yarn. Each bear is a little work of art."
                   icon={
                     <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" strokeWidth={1.25} stroke="currentColor">
                       <path
@@ -115,7 +115,7 @@ export default function AboutPage() {
               <ScrollReveal delayMs={44}>
                 <Pillar
                   title="Gift-ready from the start"
-                  body="Clear packaging, a satin bow, and a gift tag — ready to give the moment it arrives."
+                  body="Clear packaging, a satin bow, and a gift tag, ready to give the moment it arrives."
                   icon={
                     <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" strokeWidth={1.25} stroke="currentColor">
                       <path
@@ -130,7 +130,7 @@ export default function AboutPage() {
               <ScrollReveal delayMs={88} className="sm:col-span-2 lg:col-span-1">
                 <Pillar
                   title="Skincare that sparkles"
-                  body="Curated Korean minis paired with each bear — a daily glow-up in a tiny, joyful package."
+                  body="Curated Korean minis paired with each bear, for a daily glow-up in a tiny, joyful package."
                   icon={
                     <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" strokeWidth={1.25} stroke="currentColor">
                       <path
@@ -150,7 +150,7 @@ export default function AboutPage() {
           <ScrollReveal className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
             <h2 className="font-heading text-2xl text-heading sm:text-3xl">Ready to find your glow?</h2>
             <p className="font-sans text-sm leading-relaxed text-body">
-              Explore our glow bear bundles — or read our FAQ
+              Explore our glow bear bundles, or read our FAQ
               for shipping, skincare, and packaging details.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">

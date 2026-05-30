@@ -4,9 +4,9 @@
  * Show FREE for zero-amount shipping (e.g. "$0.00"); pass through Woo-formatted strings otherwise.
  */
 export function formatShippingCostForDisplay(cost: string | null | undefined): string {
-  if (cost == null) return "—";
+  if (cost == null) return "N/A";
   const trimmed = String(cost).trim();
-  if (trimmed === "") return "—";
+  if (trimmed === "") return "N/A";
   const n = parseFloat(trimmed.replace(/[^0-9.-]/g, ""));
   if (Number.isFinite(n) && n === 0) return "FREE";
   return trimmed;

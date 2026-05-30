@@ -24,7 +24,7 @@ const quicksand = Quicksand({
 export const metadata: Metadata = {
   title: "Studio Amrita | Handmade Glow Bears & Gifts",
   description:
-    "Handmade crochet bears and skincare minis — thoughtful, gift-ready pieces from Studio Amrita.",
+    "Handmade crochet bears and skincare minis, thoughtfully gift-ready pieces from Studio Amrita.",
 };
 
 export default function RootLayout({

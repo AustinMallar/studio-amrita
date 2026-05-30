@@ -28,7 +28,7 @@ export function OrdersSection({ orders }: { orders: OrderSummary[] }) {
             const id = order.databaseId;
             const label =
               order.orderNumber?.trim() ||
-              (id != null ? `#${id}` : order.id?.slice(0, 8) ?? "—");
+              (id != null ? `#${id}` : order.id?.slice(0, 8) ?? "N/A");
             const href = id != null ? `/account/orders/${id}` : "#";
             return (
               <tr key={order.id ?? String(id)} className="border-b border-black/[0.04] last:border-0">
@@ -44,9 +44,9 @@ export function OrdersSection({ orders }: { orders: OrderSummary[] }) {
                 <td className="px-4 py-3 text-body">{formatOrderDate(order.date)}</td>
                 <td className="px-4 py-3 text-heading">{formatOrderStatus(order.status)}</td>
                 <td className="max-w-[140px] truncate px-4 py-3 text-body">
-                  {order.paymentMethodTitle?.trim() || "—"}
+                  {order.paymentMethodTitle?.trim() || "N/A"}
                 </td>
-                <td className="px-4 py-3 text-right font-medium text-heading">{order.total ?? "—"}</td>
+                <td className="px-4 py-3 text-right font-medium text-heading">{order.total ?? "N/A"}</td>
               </tr>
             );
           })}

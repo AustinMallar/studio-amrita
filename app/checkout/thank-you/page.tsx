@@ -82,7 +82,7 @@ export default async function CheckoutThankYouPage({
           <>
             <p className="rounded-2xl border border-dusty-rose/35 bg-white/60 px-4 py-3 font-sans text-sm text-heading">
               {result?.message ??
-                "We couldn’t load order details. Your order may still be processing — check your email for confirmation."}
+                "We couldn’t load order details. Your order may still be processing. Check your email for confirmation."}
             </p>
             <p className="font-sans text-sm text-body">
               Order reference: <span className="tabular-nums font-medium text-heading">#{orderId}</span>

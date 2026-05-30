@@ -78,12 +78,12 @@ function thankYouFromGraphQL(order: OrderDetailData): ThankYouOrderView {
             : null,
     lines: lineNodes.map((item) => ({
       label: lineItemLabel(item ?? {}),
-      quantity: String(item?.quantity ?? "—"),
-      total: item?.total?.trim() || "—",
+      quantity: String(item?.quantity ?? "N/A"),
+      total: item?.total?.trim() || "N/A",
     })),
     shippingRows: shipLines.map((sl) => ({
       label: sl?.methodTitle?.trim() || "Shipping",
-      total: sl?.total?.trim() || "—",
+      total: sl?.total?.trim() || "N/A",
     })),
     subtotal: order.subtotal?.trim() ?? null,
     shippingTotal: order.shippingTotal?.trim() ?? null,
@@ -154,7 +154,7 @@ function minorToDisplay(
   currencyCode: string,
   minorUnit: number
 ): string {
-  if (raw == null || raw === "") return "—";
+  if (raw == null || raw === "") return "N/A";
   const n = Number(raw);
   if (!Number.isFinite(n)) return raw;
   const mu = Number.isFinite(minorUnit) && minorUnit > 0 ? minorUnit : 0;
@@ -180,7 +180,7 @@ function thankYouFromStoreApi(o: StoreApiOrder): ThankYouOrderView {
   const lines =
     o.items?.map((item) => ({
       label: item.name?.trim() || "Item",
-      quantity: String(item.quantity ?? "—"),
+      quantity: String(item.quantity ?? "N/A"),
       total: minorToDisplay(item.totals?.line_total, currency, minor),
     })) ?? [];
 

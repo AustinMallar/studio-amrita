@@ -121,7 +121,7 @@ export default async function CartPage() {
                     ? formatShippingCostForDisplay(shippingLabel)
                     : flatRates.length === 1
                       ? formatShippingCostForDisplay(flatRates[0].cost)
-                      : "—"}
+                      : "N/A"}
                 </span>
               </p>
             ) : null}

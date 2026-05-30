@@ -38,7 +38,7 @@ export async function POST(req: Request) {
         {
           error:
             err ??
-            "Could not reset password. The link may be invalid or expired — request a new one.",
+            "Could not reset password. The link may be invalid or expired. Request a new one.",
         },
         { status: 400 }
       );

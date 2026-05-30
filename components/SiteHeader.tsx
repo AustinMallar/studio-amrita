@@ -56,7 +56,7 @@ export async function SiteHeader() {
         >
           <Image
             src="/Studio-Amrita-Logo.png"
-            alt="Studio Amrita — gold wordmark with a pink and gold heart"
+            alt="Studio Amrita, gold wordmark with a pink and gold heart"
             width={1024}
             height={346}
             className="h-9 w-auto max-w-[min(100%,300px)] sm:h-10 sm:max-w-[360px] md:h-12 md:max-w-[400px] lg:h-14 lg:max-w-[min(100%,480px)]"

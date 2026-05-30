@@ -88,7 +88,7 @@ export function OrderThankYouSummary({ view }: { view: ThankYouOrderView }) {
                 </span>
               ))
             ) : (
-              <span>—</span>
+              <span>Not provided</span>
             )}
           </address>
         </section>
@@ -102,7 +102,7 @@ export function OrderThankYouSummary({ view }: { view: ThankYouOrderView }) {
                 </span>
               ))
             ) : (
-              <span>—</span>
+              <span>Not provided</span>
             )}
           </address>
         </section>

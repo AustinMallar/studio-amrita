@@ -143,7 +143,7 @@ export default async function ShopPage() {
               </p>
               <h1 className="mt-3 font-heading text-3xl text-heading sm:text-4xl">Shop</h1>
               <p className="mt-4 font-sans text-base leading-relaxed text-body">
-                Handmade crochet glow bears and bundles — each paired with curated skincare minis
+                Handmade crochet glow bears and bundles, each paired with curated skincare minis
                 and gift-ready packaging.
               </p>
             </ScrollReveal>

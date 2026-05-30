@@ -120,8 +120,8 @@ export default async function AccountOrderPage({
                 {lineNodes.map((item, i) => (
                   <tr key={`line-${i}`} className="border-b border-black/[0.04] last:border-0">
                     <td className="py-3 pr-4 text-heading">{lineItemLabel(item ?? {})}</td>
-                    <td className="py-3 pr-4 text-body">{item?.quantity ?? "—"}</td>
-                    <td className="py-3 text-right font-medium text-heading">{item?.total ?? "—"}</td>
+                    <td className="py-3 pr-4 text-body">{item?.quantity ?? "N/A"}</td>
+                    <td className="py-3 text-right font-medium text-heading">{item?.total ?? "N/A"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -135,7 +135,7 @@ export default async function AccountOrderPage({
                 {shipLines.map((sl, i) => (
                   <li key={`ship-${i}`} className="flex justify-between gap-4">
                     <span>{sl?.methodTitle ?? "Shipping"}</span>
-                    <span className="font-medium text-heading">{sl?.total ?? "—"}</span>
+                    <span className="font-medium text-heading">{sl?.total ?? "N/A"}</span>
                   </li>
                 ))}
               </ul>
@@ -181,7 +181,7 @@ export default async function AccountOrderPage({
                   </span>
                 ))
               ) : (
-                <span>—</span>
+                <span>Not provided</span>
               )}
             </address>
           </section>
@@ -195,7 +195,7 @@ export default async function AccountOrderPage({
                   </span>
                 ))
               ) : (
-                <span>—</span>
+                <span>Not provided</span>
               )}
             </address>
           </section>

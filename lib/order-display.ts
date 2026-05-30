@@ -1,6 +1,6 @@
 /** Display WooCommerce order status slug as readable text. */
 export function formatOrderStatus(status: string | null | undefined): string {
-  if (!status || typeof status !== "string") return "—";
+  if (!status || typeof status !== "string") return "N/A";
   return status
     .replace(/^wc-/i, "")
     .split(/[-_]/g)
@@ -10,7 +10,7 @@ export function formatOrderStatus(status: string | null | undefined): string {
 }
 
 export function formatOrderDate(iso: string | null | undefined): string {
-  if (!iso || typeof iso !== "string") return "—";
+  if (!iso || typeof iso !== "string") return "N/A";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleDateString(undefined, {

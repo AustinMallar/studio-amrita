@@ -20,7 +20,7 @@ export function GlowBearBundleMoreColours({ siblings }: { siblings: BundleSiblin
           More colours in the Essential Glow Bear
         </h2>
         <p className="mt-2 font-sans text-base leading-relaxed text-body">
-          This essential glow bear is available in every shade below — open another colour to see its
+          This essential glow bear is available in every shade below. Open another colour to see its
           full product page.
         </p>
       </ScrollReveal>

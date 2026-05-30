@@ -11,7 +11,7 @@ export function BrandStorySection() {
           </h2>
           <p className="font-sans text-base leading-relaxed text-body">
             Studio Amrita pairs handmade crochet characters with curated skincare minis so every
-            gift feels personal — soft textures, quiet rituals, and a little sparkle for everyday
+            gift feels personal, with soft textures, quiet rituals, and a little sparkle for everyday
             routines.
           </p>
           <p className="font-sans text-base leading-relaxed text-body">

@@ -147,7 +147,7 @@ export default async function AccountPage() {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })
-                      : "—"}
+                      : "N/A"}
                   </dd>
                 </div>
               </dl>
