@@ -5,8 +5,9 @@ import type { ReactNode } from "react";
 import { useId, useMemo, useState } from "react";
 import { optionToSwatchColor } from "@/lib/product-swatches";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { ProductDetailGallery } from "@/components/ProductDetailGallery";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import type { ProductVariationView } from "@/types/product-detail";
+import type { ProductGalleryImage, ProductVariationView } from "@/types/product-detail";
 
 type Props = {
   productDatabaseId: number;
@@ -15,6 +16,7 @@ type Props = {
   fallbackImageAlt: string;
   fallbackPrice: string;
   variations: ProductVariationView[];
+  galleryImages?: ProductGalleryImage[];
   children?: ReactNode;
 };
 
@@ -29,6 +31,7 @@ export function VariableProductImagePicker({
   fallbackImageAlt,
   fallbackPrice,
   variations,
+  galleryImages = [],
   children,
 }: Props) {
   const formId = useId();
@@ -51,19 +54,20 @@ export function VariableProductImagePicker({
 
   return (
     <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-      <ScrollReveal
-        className="relative aspect-square w-full overflow-hidden rounded-3xl bg-blush"
-        rootMargin="0px 0px 12% 0px"
-      >
-        {displayImageUrl ? (
-          isRemoteUrl(displayImageUrl) ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={displayImageUrl}
-              src={displayImageUrl}
-              alt={displayImageAlt}
-              className="h-full w-full object-cover"
-            />
+      <div className="flex flex-col gap-4">
+        <ScrollReveal
+          className="relative aspect-square w-full overflow-hidden rounded-3xl bg-blush"
+          rootMargin="0px 0px 12% 0px"
+        >
+          {displayImageUrl ? (
+            isRemoteUrl(displayImageUrl) ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={displayImageUrl}
+                src={displayImageUrl}
+                alt={displayImageAlt}
+                className="h-full w-full object-cover"
+              />
           ) : (
             <Image
               key={displayImageUrl}
@@ -75,12 +79,16 @@ export function VariableProductImagePicker({
               priority
             />
           )
-        ) : (
-          <div className="flex h-full items-center justify-center font-sans text-body">
-            No image
-          </div>
-        )}
-      </ScrollReveal>
+          ) : (
+            <div className="flex h-full items-center justify-center font-sans text-body">
+              No image
+            </div>
+          )}
+        </ScrollReveal>
+        {galleryImages.length > 0 ? (
+          <ProductDetailGallery galleryImages={galleryImages} />
+        ) : null}
+      </div>
 
       <ScrollReveal
         className="flex flex-col gap-6"

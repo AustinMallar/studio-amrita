@@ -12,11 +12,11 @@ import { GlowBearBundleMoreColours } from "@/components/GlowBearBundleMoreColour
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { VariableProductImagePicker } from "@/components/VariableProductImagePicker";
 import { FooterValues } from "@/components/FooterValues";
+import { ProductDetailGallery } from "@/components/ProductDetailGallery";
 import { ProductDetailVideo } from "@/components/ProductDetailVideo";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { optionToSwatchColor } from "@/lib/product-swatches";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -70,6 +70,7 @@ export default async function ProductPage({
             fallbackImageAlt={product.imageAlt}
             fallbackPrice={product.priceLabel}
             variations={product.variations}
+            galleryImages={product.galleryImages}
           >
             {descriptionText ? (
               <p className="font-sans leading-relaxed text-body">{descriptionText}</p>
@@ -77,34 +78,22 @@ export default async function ProductPage({
           </VariableProductImagePicker>
         ) : (
           <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-            <ScrollReveal
-              className="relative aspect-square w-full overflow-hidden rounded-3xl bg-blush"
-              rootMargin="0px 0px 12% 0px"
-            >
-              {product.imageUrl ? (
-                product.imageUrl.startsWith("http") ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={product.imageUrl}
-                    alt={product.imageAlt}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.imageAlt}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
-                  />
-                )
-              ) : (
+            {product.imageUrl ? (
+              <ProductDetailGallery
+                mainImageUrl={product.imageUrl}
+                mainImageAlt={product.imageAlt}
+                galleryImages={product.galleryImages}
+              />
+            ) : (
+              <ScrollReveal
+                className="relative aspect-square w-full overflow-hidden rounded-3xl bg-blush"
+                rootMargin="0px 0px 12% 0px"
+              >
                 <div className="flex h-full items-center justify-center font-sans text-body">
                   No image
                 </div>
-              )}
-            </ScrollReveal>
+              </ScrollReveal>
+            )}
 
             <ScrollReveal
               className="flex flex-col gap-6"

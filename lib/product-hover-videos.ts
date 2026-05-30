@@ -12,9 +12,7 @@
 
 export type FrontendHoverVideo = { url: string; kind: "video" };
 
-export const HOVER_VIDEO_BY_SLUG: Record<string, string> = {
-  "matcha-green": "/product-hover/matcha-green.mp4",
-};
+export const HOVER_VIDEO_BY_SLUG: Record<string, string> = {};
 
 export function getFrontendHoverVideo(slug: string): FrontendHoverVideo | null {
   if (!slug) return null;

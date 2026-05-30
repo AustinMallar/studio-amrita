@@ -1,3 +1,8 @@
+export type ProductGalleryImage = {
+  url: string;
+  alt: string;
+};
+
 export type ProductVariationView = {
   id: string;
   label: string;
@@ -20,4 +25,6 @@ export type ProductDetailView = {
   variations: ProductVariationView[];
   /** WooCommerce category slugs for this product */
   categorySlugs: string[];
+  /** Additional stills from the WooCommerce product gallery (excludes featured + videos). */
+  galleryImages: ProductGalleryImage[];
 };
