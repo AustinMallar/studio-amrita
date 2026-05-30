@@ -24,7 +24,7 @@ export function GlowBearBundleMoreColours({ siblings }: { siblings: BundleSiblin
           full product page.
         </p>
       </ScrollReveal>
-      <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4">
+      <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-3">
         {siblings.map((s, i) => {
           const remote = Boolean(s.imageUrl && s.imageUrl.startsWith("http"));
           return (
@@ -50,7 +50,7 @@ export function GlowBearBundleMoreColours({ siblings }: { siblings: BundleSiblin
                         alt={s.imageAlt}
                         fill
                         className="object-cover transition duration-300 group-hover:scale-[1.03]"
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
                       />
                     )
                   ) : (
