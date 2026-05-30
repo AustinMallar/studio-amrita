@@ -1,0 +1,144 @@
+import { getHomepageCollections } from "@/lib/api";
+import { FooterValues } from "@/components/FooterValues";
+import { ProductCard } from "@/components/ProductCard";
+import { PromoBar } from "@/components/PromoBar";
+import { ScrollReveal } from "@/components/ScrollReveal";
+import { SiteHeader } from "@/components/SiteHeader";
+import { toUiProducts } from "@/lib/ui-products";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Shop | Studio Amrita",
+  description:
+    "Shop handmade crochet glow bears, classic bears, bow charms, and gift bundles from Studio Amrita.",
+};
+
+type HomepageRow = Awaited<ReturnType<typeof getHomepageCollections>>["rows"][number];
+
+function collectionImage(row: HomepageRow): { url: string | null; alt: string } {
+  const data = row.data;
+  const name = row.data?.name ?? row.categoryName;
+
+  if (data?.lifestyleImageUrl) {
+    return {
+      url: data.lifestyleImageUrl,
+      alt: data.lifestyleImageAlt?.trim() || name,
+    };
+  }
+
+  const first = data?.products?.[0];
+  if (first?.imageUrl) {
+    return {
+      url: first.imageUrl,
+      alt: first.imageAlt?.trim() || name,
+    };
+  }
+
+  return { url: null, alt: name };
+}
+
+function CollectionCard({ row }: { row: HomepageRow }) {
+  const name = row.data?.name ?? row.categoryName;
+  const description =
+    row.data?.description && row.data.description.length > 0
+      ? row.data.description
+      : row.fallbackDescription;
+  const { url, alt } = collectionImage(row);
+  const previewProducts = toUiProducts(row.data?.products ?? []).slice(0, 4);
+
+  return (
+    <article className="flex flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-white/50">
+      <Link
+        href={row.shopHref}
+        className="group block overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dusty-rose"
+      >
+        <div className="relative aspect-[16/10] w-full overflow-hidden bg-blush/35">
+          {url ? (
+            <Image
+              src={url}
+              alt={alt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 33vw"
+              className="object-cover transition duration-300 group-hover:scale-[1.02]"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center px-4 text-center font-sans text-sm uppercase tracking-wide text-body">
+              {name}
+            </div>
+          )}
+        </div>
+      </Link>
+
+      <div className="flex flex-1 flex-col gap-4 p-6 sm:p-8">
+        <div>
+          <h2 className="font-heading text-2xl text-heading">{name}</h2>
+          <p className="mt-3 font-sans text-sm leading-relaxed text-body">{description}</p>
+          <p className="mt-4 font-sans text-lg font-semibold text-heading">{row.displayPrice}</p>
+        </div>
+
+        {previewProducts.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {previewProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : null}
+
+        <Link
+          href={row.shopHref}
+          className="mt-auto inline-flex w-fit items-center font-sans text-sm font-semibold uppercase tracking-wide text-dusty-rose hover:underline"
+        >
+          {row.shopLabel}
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+export default async function ShopPage() {
+  const { rows } = await getHomepageCollections();
+
+  return (
+    <div className="flex min-h-screen flex-col bg-cream">
+      <PromoBar />
+      <SiteHeader />
+      <main className="flex-1">
+        <section className="border-b border-black/[0.04] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+          <div className="mx-auto max-w-6xl">
+            <ScrollReveal>
+              <nav className="font-sans text-sm text-body">
+                <Link href="/" className="text-dusty-rose hover:underline">
+                  ← Back to home
+                </Link>
+              </nav>
+            </ScrollReveal>
+
+            <ScrollReveal className="mt-10 max-w-2xl" delayMs={40}>
+              <p className="font-sans text-sm font-semibold uppercase tracking-[0.25em] text-dusty-rose">
+                OUR COLLECTIONS ♡
+              </p>
+              <h1 className="mt-3 font-heading text-3xl text-heading sm:text-4xl">Shop</h1>
+              <p className="mt-4 font-sans text-base leading-relaxed text-body">
+                Handmade crochet glow bears, classic bears, bow charms, and bundles — each paired
+                with curated skincare minis and gift-ready packaging.
+              </p>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        <section className="px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+          <div className="mx-auto flex max-w-6xl flex-col gap-12 lg:gap-16">
+            {rows.map((row, i) => (
+              <ScrollReveal key={row.key} delayMs={i * 50}>
+                <CollectionCard row={row} />
+              </ScrollReveal>
+            ))}
+          </div>
+        </section>
+      </main>
+      <FooterValues />
+    </div>
+  );
+}
