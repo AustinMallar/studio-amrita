@@ -84,21 +84,20 @@ export function HeroSection() {
         </ScrollReveal>
 
         <ScrollReveal
-          className="order-1 flex justify-center lg:order-2 lg:justify-end"
+          className="order-1 w-full max-w-lg justify-self-center lg:order-2 lg:justify-self-end"
           delayMs={85}
           rootMargin="0px 0px 12% 0px"
         >
-          <div className="relative w-full max-w-lg">
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-t-[48%]">
-              <Image
-                src="/hero-bear.jpg"
-                alt="Four Essential Glow Bear gift sets in cream, matcha green, sakura pink, and honey brown"
-                fill
-                className="object-cover object-[48%_65%]"
-                sizes="(max-width: 1024px) 100vw, 480px"
-                priority
-              />
-            </div>
+          <div className="overflow-hidden rounded-3xl shadow-[0_4px_24px_rgba(92,77,77,0.08)]">
+            <Image
+              src="/hero-bear.jpg"
+              alt="Four Essential Glow Bear gift sets in cream, matcha green, sakura pink, and honey brown"
+              width={681}
+              height={1024}
+              className="h-auto w-full"
+              sizes="(max-width: 1024px) 100vw, 480px"
+              priority
+            />
           </div>
         </ScrollReveal>
       </div>
