@@ -2,6 +2,7 @@ import { FooterValues } from "@/components/FooterValues";
 import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SocialLinks } from "@/components/SocialLinks";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -176,6 +177,7 @@ export default function AboutPage() {
                 Read FAQ
               </Link>
             </div>
+            <SocialLinks size="lg" />
           </ScrollReveal>
         </section>
       </main>

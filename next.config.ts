@@ -14,12 +14,16 @@ const host = wpHostname();
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: host
-      ? [
-          { protocol: "https", hostname: host, pathname: "/**" },
-          { protocol: "http", hostname: host, pathname: "/**" },
-        ]
-      : [],
+    remotePatterns: [
+      ...(host
+        ? [
+            { protocol: "https" as const, hostname: host, pathname: "/**" },
+            { protocol: "http" as const, hostname: host, pathname: "/**" },
+          ]
+        : []),
+      { protocol: "https", hostname: "**.cdninstagram.com", pathname: "/**" },
+      { protocol: "https", hostname: "**.fbcdn.net", pathname: "/**" },
+    ],
   },
 };
 

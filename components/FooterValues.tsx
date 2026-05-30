@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { SocialLinks } from "@/components/SocialLinks";
 
 function Value({
   icon,
@@ -60,7 +61,13 @@ export function FooterValues() {
           </ScrollReveal>
         ))}
       </div>
-      <p className="mx-auto mt-12 max-w-6xl text-center font-sans text-xs text-body">
+      <ScrollReveal className="mx-auto mt-12 flex max-w-6xl flex-col items-center gap-4">
+        <p className="font-sans text-xs font-semibold uppercase tracking-[0.2em] text-body">
+          Follow us
+        </p>
+        <SocialLinks />
+      </ScrollReveal>
+      <p className="mx-auto mt-8 max-w-6xl text-center font-sans text-xs text-body">
         © {new Date().getFullYear()} Studio Amrita. All rights reserved.
       </p>
     </footer>

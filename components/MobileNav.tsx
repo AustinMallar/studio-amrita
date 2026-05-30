@@ -3,6 +3,7 @@
 import type { ShopMegaMenuTile } from "@/lib/shop-mega-menu-types";
 import Image from "next/image";
 import Link from "next/link";
+import { SocialLinks } from "@/components/SocialLinks";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
@@ -315,6 +316,12 @@ export function MobileNav({
                         Sign in
                       </Link>
                     )}
+                    <div className="mt-4 flex flex-col items-start gap-3 px-3">
+                      <p className="font-sans text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-body">
+                        Follow us
+                      </p>
+                      <SocialLinks size="sm" />
+                    </div>
                   </div>
                 </div>
               </nav>
