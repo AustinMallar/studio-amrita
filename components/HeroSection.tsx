@@ -94,7 +94,7 @@ export function HeroSection() {
                 src="/hero-bear.jpg"
                 alt="Four Essential Glow Bear gift sets in cream, matcha green, sakura pink, and honey brown"
                 fill
-                className="object-cover object-bottom"
+                className="object-cover object-[48%_65%]"
                 sizes="(max-width: 1024px) 100vw, 480px"
                 priority
               />
