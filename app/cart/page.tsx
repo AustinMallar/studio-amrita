@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { imageFromCartProductNode } from "@/lib/cart-product-image";
 import { flattenShippingRates, formatShippingCostForDisplay } from "@/lib/cart-shipping-utils";
 import { getCartQuery, type CartQueryShape } from "@/lib/cart";
+import { deleteJwtAuthCookieServer } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import Link from "next/link";
@@ -22,6 +23,9 @@ export default async function CartPage() {
 
   try {
     const result = await getCartQuery(session, jwt);
+    if (result.jwtWasInvalid) {
+      await deleteJwtAuthCookieServer();
+    }
     if (result.errors?.length) {
       gqlErrors = result.errors
         .map((e) => (typeof e === "object" && e && "message" in e ? String((e as { message?: string }).message) : ""))

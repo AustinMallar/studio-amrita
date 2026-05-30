@@ -8,11 +8,12 @@ import { LogoutButton } from "@/components/LogoutButton";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
-  collectGraphQLErrors,
   fetchAccountOverview,
   type OrderSummary,
 } from "@/lib/account-data";
+import { deleteJwtAuthCookieServer } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
+import { uniqueGraphQLErrorMessages } from "@/lib/jwt-auth-errors";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -24,7 +25,12 @@ export default async function AccountPage() {
 
   const overview = await fetchAccountOverview(token);
 
-  const gqlErrors = collectGraphQLErrors(overview.errors);
+  if (overview.jwtInvalid) {
+    await deleteJwtAuthCookieServer();
+    redirect("/login?next=/account");
+  }
+
+  const gqlErrors = uniqueGraphQLErrorMessages(overview.errors);
   const sessionErrMsg = gqlErrors.join(" ") || "Your session could not be verified.";
   /** Avoid repeating generic advice when WordPress already returned a JWT/auth message. */
   const showSessionHint =

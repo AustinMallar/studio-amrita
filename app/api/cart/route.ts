@@ -1,5 +1,6 @@
 import { getCartQuery } from "@/lib/cart";
 import { setWooSessionCookie } from "@/lib/cart-cookie";
+import { clearJwtAuthCookie } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import { cookies } from "next/headers";
@@ -15,8 +16,9 @@ export async function GET() {
     const nodes = result.data?.cart?.contents?.nodes?.filter(Boolean) ?? [];
     const itemCount = nodes.reduce((acc, line) => acc + (line?.quantity ?? 0), 0);
 
-    const { sessionHeader, ...payload } = result;
+    const { sessionHeader, jwtWasInvalid, ...payload } = result;
     const res = NextResponse.json({ ...payload, itemCount });
+    if (jwtWasInvalid) clearJwtAuthCookie(res);
     setWooSessionCookie(res, sessionHeader);
     return res;
   } catch (e) {

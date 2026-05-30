@@ -1,5 +1,6 @@
 import "server-only";
 
+import { graphQLErrorsLookLikeInvalidJwt } from "./jwt-auth-errors";
 import { wpGraphQL } from "./wp-graphql";
 
 /** Billing/shipping shape from `customer { billing shipping }` — maps to `CustomerAddressInput` on mutations. */
@@ -280,6 +281,7 @@ export async function fetchAccountOverview(authToken: string) {
     data: { viewer, customer },
     errors: merged.length ? merged : undefined,
     sessionHeader,
+    jwtInvalid: Boolean(authToken) && !viewer && graphQLErrorsLookLikeInvalidJwt(merged),
   };
 }
 

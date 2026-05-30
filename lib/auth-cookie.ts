@@ -24,3 +24,10 @@ export function clearJwtAuthCookie(res: NextResponse) {
     maxAge: 0,
   });
 }
+
+/** Clear stale JWT from Server Components / route handlers using `cookies()`. */
+export async function deleteJwtAuthCookieServer() {
+  const { cookies } = await import("next/headers");
+  const store = await cookies();
+  store.delete(WP_JWT_AUTH_COOKIE);
+}

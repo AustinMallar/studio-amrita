@@ -1,5 +1,6 @@
 import { getCartQuery, updateShippingMethodMutation } from "@/lib/cart";
 import { setWooSessionCookie } from "@/lib/cart-cookie";
+import { clearJwtAuthCookie } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import { graphQLErrorText, isInvalidCartTokenError } from "@/lib/woo-session";
@@ -31,17 +32,23 @@ export async function POST(req: Request) {
     let session = cookieStore.get(WOOCOMMERCE_SESSION_COOKIE)?.value?.trim() || null;
     const jwt = await getJwtAuthToken();
 
+    let jwtWasInvalid = false;
+
     if (!session) {
       const warm = await getCartQuery(null, jwt);
+      jwtWasInvalid = jwtWasInvalid || warm.jwtWasInvalid;
       session = warm.sessionHeader ?? null;
     }
 
     let result = await updateShippingMethodMutation(session, shippingMethods, jwt);
+    jwtWasInvalid = jwtWasInvalid || result.jwtWasInvalid;
 
     if (isInvalidCartTokenError(result.errors)) {
-      const warm = await getCartQuery(null, jwt);
+      const warm = await getCartQuery(null, jwtWasInvalid ? null : jwt);
+      jwtWasInvalid = jwtWasInvalid || warm.jwtWasInvalid;
       session = warm.sessionHeader ?? null;
-      result = await updateShippingMethodMutation(session, shippingMethods, jwt);
+      result = await updateShippingMethodMutation(session, shippingMethods, jwtWasInvalid ? null : jwt);
+      jwtWasInvalid = jwtWasInvalid || result.jwtWasInvalid;
     }
 
     if (result.errors?.length) {
@@ -53,8 +60,10 @@ export async function POST(req: Request) {
       result.data?.updateShippingMethod?.cart?.contents?.nodes?.filter(Boolean) ?? [];
     const itemCount = nodes.reduce((acc, line) => acc + (line?.quantity ?? 0), 0);
 
-    const { sessionHeader, ...payload } = result;
+    const { sessionHeader, jwtWasInvalid: resultJwtInvalid, ...payload } = result;
+    jwtWasInvalid = jwtWasInvalid || resultJwtInvalid;
     const res = NextResponse.json({ ...payload, itemCount });
+    if (jwtWasInvalid) clearJwtAuthCookie(res);
     setWooSessionCookie(res, sessionHeader);
     return res;
   } catch (e) {

@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { CartProductNode } from "./cart-product-image";
-import { wpGraphQL } from "./wp-graphql";
+import { wpGraphQLWithJwtRecovery } from "./wp-graphql-jwt-recovery";
 
 const CART_PRODUCT_IMAGE_FIELDS = `
   __typename
@@ -156,7 +156,7 @@ export async function addToCartMutation(
       : {}),
   };
 
-  return wpGraphQL<{
+  return wpGraphQLWithJwtRecovery<{
     addToCart?: {
       cart?: unknown;
     };
@@ -173,7 +173,7 @@ export async function removeItemsFromCartMutation(
     keys,
   };
 
-  return wpGraphQL<{
+  return wpGraphQLWithJwtRecovery<{
     removeItemsFromCart?: {
       cart?: CartQueryShape | null;
     };
@@ -190,7 +190,7 @@ export async function updateShippingMethodMutation(
     shippingMethods,
   };
 
-  return wpGraphQL<{
+  return wpGraphQLWithJwtRecovery<{
     updateShippingMethod?: {
       cart?: CartQueryShape | null;
     };
@@ -201,7 +201,7 @@ export async function getCartQuery(
   sessionToken: string | null | undefined,
   authToken?: string | null
 ) {
-  return wpGraphQL<{
+  return wpGraphQLWithJwtRecovery<{
     cart?: CartQueryShape | null;
   }>(GET_CART_QUERY, { recalculateTotals: true }, sessionToken, authToken);
 }

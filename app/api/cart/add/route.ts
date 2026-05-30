@@ -1,5 +1,6 @@
 import { addToCartMutation, getCartQuery } from "@/lib/cart";
 import { setWooSessionCookie } from "@/lib/cart-cookie";
+import { clearJwtAuthCookie } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import { isInvalidCartTokenError } from "@/lib/woo-session";
@@ -44,23 +45,31 @@ export async function POST(req: Request) {
       variationId: variationId != null && variationId > 0 ? variationId : null,
     };
 
+    let jwtWasInvalid = false;
+
     /** Establish a WooCommerce session when missing (required by some hosts). */
     if (!session) {
       const warm = await getCartQuery(null, jwt);
+      jwtWasInvalid = jwtWasInvalid || warm.jwtWasInvalid;
       session = warm.sessionHeader ?? null;
     }
 
     let result = await addToCartMutation(session, cartInput, jwt);
+    jwtWasInvalid = jwtWasInvalid || result.jwtWasInvalid;
 
     /** Stale or malformed cookie / token — fetch a fresh session and retry once. */
     if (isInvalidCartTokenError(result.errors)) {
-      const warm = await getCartQuery(null, jwt);
+      const warm = await getCartQuery(null, jwtWasInvalid ? null : jwt);
+      jwtWasInvalid = jwtWasInvalid || warm.jwtWasInvalid;
       session = warm.sessionHeader ?? null;
-      result = await addToCartMutation(session, cartInput, jwt);
+      result = await addToCartMutation(session, cartInput, jwtWasInvalid ? null : jwt);
+      jwtWasInvalid = jwtWasInvalid || result.jwtWasInvalid;
     }
 
-    const { sessionHeader, ...payload } = result;
+    const { sessionHeader, jwtWasInvalid: resultJwtInvalid, ...payload } = result;
+    jwtWasInvalid = jwtWasInvalid || resultJwtInvalid;
     const res = NextResponse.json(payload);
+    if (jwtWasInvalid) clearJwtAuthCookie(res);
     setWooSessionCookie(res, sessionHeader);
     return res;
   } catch (e) {
