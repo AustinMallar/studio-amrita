@@ -66,6 +66,12 @@ export function FooterValues() {
           Follow us
         </p>
         <SocialLinks />
+        <a
+          href="mailto:shop@studioamrita.ca"
+          className="font-sans text-sm text-body underline-offset-4 hover:text-dusty-rose hover:underline"
+        >
+          Contact us
+        </a>
       </ScrollReveal>
       <p className="mx-auto mt-8 max-w-6xl text-center font-sans text-xs text-body">
         © {new Date().getFullYear()} Studio Amrita. All rights reserved.

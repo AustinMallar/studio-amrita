@@ -29,6 +29,7 @@ function buildDrawerLinks(collections: ShopMegaMenuTile[]): DrawerLink[] {
     })),
     { href: "/about", label: "About" },
     { href: "/faq", label: "FAQ" },
+    { href: "mailto:shop@studioamrita.ca", label: "Contact" },
   ];
 }
 

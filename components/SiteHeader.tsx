@@ -47,6 +47,9 @@ export async function SiteHeader() {
             <Link href="/faq" className="hover:text-dusty-rose">
               FAQ
             </Link>
+            <a href="mailto:shop@studioamrita.ca" className="hover:text-dusty-rose">
+              Contact
+            </a>
           </nav>
         </div>
 
