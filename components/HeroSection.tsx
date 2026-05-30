@@ -89,12 +89,12 @@ export function HeroSection() {
           rootMargin="0px 0px 12% 0px"
         >
           <div className="relative w-full max-w-lg">
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-t-[48%] bg-blush px-6 pb-10 pt-10 sm:px-8 sm:pb-12 sm:pt-12">
+            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-t-[48%]">
               <Image
                 src="/hero-bear.jpg"
                 alt="Four Essential Glow Bear gift sets in cream, matcha green, sakura pink, and honey brown"
                 fill
-                className="object-contain object-center"
+                className="object-cover object-bottom"
                 sizes="(max-width: 1024px) 100vw, 480px"
                 priority
               />
