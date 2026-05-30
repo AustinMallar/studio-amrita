@@ -159,7 +159,7 @@ export default function AboutPage() {
           <ScrollReveal className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
             <h2 className="font-heading text-2xl text-heading sm:text-3xl">Ready to find your glow?</h2>
             <p className="font-sans text-sm leading-relaxed text-body">
-              Explore our collections of crochet bears, bow charms, and bundles — or read our FAQ
+              Explore our glow bear bundles — or read our FAQ
               for shipping, skincare, and packaging details.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">

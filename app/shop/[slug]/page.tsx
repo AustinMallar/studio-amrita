@@ -1,4 +1,9 @@
-import { CATEGORY_SLUGS, getProductCategoryCollection } from "@/lib/api";
+import {
+  CATEGORY_SLUGS,
+  getProductCategoryCollection,
+  isShopCollectionSlugVisible,
+  visibleShopCollectionSlugs,
+} from "@/lib/api";
 import { FooterValues } from "@/components/FooterValues";
 import { ProductCard } from "@/components/ProductCard";
 import { toUiProducts } from "@/lib/ui-products";
@@ -39,6 +44,11 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function ShopCollectionPage(props: Props) {
   const { slug } = await props.params;
+
+  if (!isShopCollectionSlugVisible(slug)) {
+    notFound();
+  }
+
   const collection = await getProductCategoryCollection(slug);
 
   if (!collection) {

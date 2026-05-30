@@ -12,7 +12,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Shop | Studio Amrita",
   description:
-    "Shop handmade crochet glow bears, classic bears, bow charms, and gift bundles from Studio Amrita.",
+    "Shop handmade crochet glow bears and gift bundles from Studio Amrita.",
 };
 
 type HomepageRow = Awaited<ReturnType<typeof getHomepageCollections>>["rows"][number];
@@ -121,8 +121,8 @@ export default async function ShopPage() {
               </p>
               <h1 className="mt-3 font-heading text-3xl text-heading sm:text-4xl">Shop</h1>
               <p className="mt-4 font-sans text-base leading-relaxed text-body">
-                Handmade crochet glow bears, classic bears, bow charms, and bundles — each paired
-                with curated skincare minis and gift-ready packaging.
+                Handmade crochet glow bears and bundles — each paired with curated skincare minis
+                and gift-ready packaging.
               </p>
             </ScrollReveal>
           </div>
