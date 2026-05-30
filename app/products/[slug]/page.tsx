@@ -33,7 +33,7 @@ export default async function ProductPage({
   if (!product || !product.slug) notFound();
   if (!isProductVisible(product.slug, product.categorySlugs)) notFound();
 
-  const bundleCatSlug = CATEGORY_SLUGS["Glow Bear Bundle"];
+  const bundleCatSlug = CATEGORY_SLUGS["Essential Glow Bear"];
   const showBundleSiblings =
     Array.isArray(product.categorySlugs) && product.categorySlugs.includes(bundleCatSlug);
   const bundleSiblings = showBundleSiblings

@@ -17,11 +17,11 @@ export function GlowBearBundleMoreColours({ siblings }: { siblings: BundleSiblin
     <section className="border-t border-black/[0.06] pt-10 lg:pt-12">
       <ScrollReveal className="max-w-2xl">
         <h2 className="font-heading text-2xl text-heading sm:text-3xl">
-          More colours in the Glow Bear Bundle
+          More colours in the Essential Glow Bear
         </h2>
         <p className="mt-2 font-sans text-base leading-relaxed text-body">
-          This bundle is available in every shade below — open another colour to see its full product
-          page.
+          This essential glow bear is available in every shade below — open another colour to see its
+          full product page.
         </p>
       </ScrollReveal>
       <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4">
