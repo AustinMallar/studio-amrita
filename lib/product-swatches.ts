@@ -5,38 +5,34 @@
  */
 
 const RULES: Array<{ test: (blob: string) => boolean; hex: string }> = [
-  // Matcha — muted sage green (bear + gift box)
   {
     test: (b) => /\bmatcha\b/i.test(b) || /\bmatcha\s*green\b/i.test(b),
-    hex: "#7d956f",
+    hex: "#BDCAB7",
   },
-  // Sakura — dusty rose pink
   {
     test: (b) => /\bsakura\b/i.test(b) || /\bsakura\s*pink\b/i.test(b),
-    hex: "#e598a8",
+    hex: "#CFAEB5",
   },
-  // Honey — warm brown / amber (matches crochet bear tone)
   {
     test: (b) =>
       /\bhoney\s*brown\b/i.test(b) || (/\bhoney\b/i.test(b) && !/\bhoney\s*(bow|charm)/i.test(b)),
-    hex: "#a07852",
+    hex: "#AA9183",
   },
-  // Cloud — soft cream / off-white
   {
     test: (b) => /\bcloud\s*cream\b/i.test(b) || (/\bcloud\b/i.test(b) && !/\bcloud\s*bow\b/i.test(b)),
-    hex: "#ebe4d8",
+    hex: "#CAC8C4",
   },
 ];
 
 const LEGACY_NAMED: Record<string, string> = {
-  matcha: "#7d956f",
-  "matcha green": "#7d956f",
-  sakura: "#e598a8",
-  "sakura pink": "#e598a8",
-  honey: "#a07852",
-  "honey brown": "#a07852",
-  cloud: "#ebe4d8",
-  "cloud cream": "#ebe4d8",
+  matcha: "#BDCAB7",
+  "matcha green": "#BDCAB7",
+  sakura: "#CFAEB5",
+  "sakura pink": "#CFAEB5",
+  honey: "#AA9183",
+  "honey brown": "#AA9183",
+  cloud: "#CAC8C4",
+  "cloud cream": "#CAC8C4",
   "rose gold": "#e4a8a8",
 };
 

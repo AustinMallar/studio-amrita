@@ -7,7 +7,7 @@ export const DEMO_GRID_PRODUCTS = [
     rawPrice: "39",
     imageUrl: "/hero-bear.png",
     imageAlt: "Glow bear in gift box",
-    swatches: ["#8fbc8f", "#c8e6c9"],
+    swatches: ["#BDCAB7"],
   },
   {
     id: "demo-2",
@@ -16,7 +16,7 @@ export const DEMO_GRID_PRODUCTS = [
     rawPrice: "39",
     imageUrl: "/hero-bear.png",
     imageAlt: "Glow bear in gift box",
-    swatches: ["#f8bbd9", "#fce4ec"],
+    swatches: ["#CFAEB5"],
   },
   {
     id: "demo-3",
@@ -25,7 +25,7 @@ export const DEMO_GRID_PRODUCTS = [
     rawPrice: "39",
     imageUrl: "/hero-bear.png",
     imageAlt: "Glow bear in gift box",
-    swatches: ["#e6c77c", "#fff8e1"],
+    swatches: ["#AA9183"],
   },
   {
     id: "demo-4",
@@ -34,6 +34,6 @@ export const DEMO_GRID_PRODUCTS = [
     rawPrice: "39",
     imageUrl: "/hero-bear.png",
     imageAlt: "Glow bear in gift box",
-    swatches: ["#e3f2fd", "#90caf9"],
+    swatches: ["#CAC8C4"],
   },
 ];
