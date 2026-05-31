@@ -62,9 +62,9 @@ export async function SiteHeader() {
             alt="Studio Amrita, gold wordmark with a pink and gold heart"
             width={1024}
             height={346}
-            className="h-9 w-auto max-w-[min(100%,300px)] sm:h-10 sm:max-w-[360px] md:h-12 md:max-w-[400px] lg:h-14 lg:max-w-[min(100%,480px)]"
+            className="h-12 w-auto max-w-[min(100%,300px)] sm:h-12 sm:max-w-[360px] md:h-12 md:max-w-[400px] lg:h-14 lg:max-w-[min(100%,480px)]"
             priority
-            sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 480px"
+            sizes="(max-width: 640px) 320px, (max-width: 1024px) 400px, 480px"
           />
         </Link>
 

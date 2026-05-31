@@ -14,7 +14,7 @@ function HeaderSkeleton() {
           <Skeleton className="h-4 w-10" />
           <Skeleton className="h-4 w-16" />
         </div>
-        <Skeleton className="h-10 w-40 max-w-[280px] rounded-lg sm:h-11 sm:w-52 lg:h-14 lg:w-64" />
+        <Skeleton className="h-12 w-44 max-w-[280px] rounded-lg sm:w-52 lg:h-14 lg:w-64" />
         <div className="flex flex-1 items-center justify-end gap-4">
           <Skeleton className="hidden h-4 w-16 lg:block" />
           <Skeleton className="h-9 w-9 rounded-full" />
