@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CartProvider } from "@/components/CartProvider";
 import { NavigationProgress } from "@/components/loading/NavigationProgress";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { Analytics } from "@vercel/analytics/next";
 import { Cormorant_Garamond, Jost, Quicksand } from "next/font/google";
 import "./globals.css";
@@ -41,6 +42,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-cream font-sans text-body">
         <CartProvider>
+          <ScrollToTop />
           <NavigationProgress />
           {children}
         </CartProvider>
