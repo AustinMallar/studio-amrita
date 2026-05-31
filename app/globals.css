@@ -63,4 +63,27 @@ body {
     transform: none !important;
     transition: none !important;
   }
+
+  .animate-pulse {
+    animation: none !important;
+  }
+
+  .nav-progress-bar {
+    animation: none !important;
+    width: 100% !important;
+  }
+}
+
+/* Top-of-page progress bar during client navigations */
+@keyframes nav-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+.nav-progress-bar {
+  animation: nav-progress 1.1s ease-in-out infinite;
 }
