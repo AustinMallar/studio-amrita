@@ -139,8 +139,20 @@ export function faqPageSchema(items: FaqItem[], path = "/faq"): Record<string, u
   };
 }
 
+function freeShippingDetails(): Record<string, unknown> {
+  return {
+    "@type": "OfferShippingDetails",
+    shippingRate: {
+      "@type": "MonetaryAmount",
+      value: 0,
+      currency: SITE.currency,
+    },
+  };
+}
+
 function productOffers(product: ProductDetailView): Record<string, unknown> {
   const productUrl = absoluteUrl(`/products/${product.slug}`);
+  const shippingDetails = freeShippingDetails();
   const variationPrices = product.variations
     .map((variation) => parsePriceAmount(variation.price))
     .filter((value): value is number => value != null);
@@ -156,6 +168,7 @@ function productOffers(product: ProductDetailView): Record<string, unknown> {
       highPrice: formatPriceAmount(high),
       offerCount: variationPrices.length,
       availability: "https://schema.org/InStock",
+      shippingDetails,
     };
   }
 
@@ -168,6 +181,7 @@ function productOffers(product: ProductDetailView): Record<string, unknown> {
     priceCurrency: SITE.currency,
     ...(price != null ? { price: formatPriceAmount(price) } : {}),
     availability: "https://schema.org/InStock",
+    shippingDetails,
   };
 }
 
