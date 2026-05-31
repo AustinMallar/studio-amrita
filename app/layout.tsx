@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CartProvider } from "@/components/CartProvider";
 import { NavigationProgress } from "@/components/loading/NavigationProgress";
+import { Analytics } from "@vercel/analytics/next";
 import { Cormorant_Garamond, Jost, Quicksand } from "next/font/google";
 import "./globals.css";
 
@@ -43,6 +44,7 @@ export default function RootLayout({
           <NavigationProgress />
           {children}
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );
