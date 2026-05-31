@@ -9,6 +9,7 @@ import { getFrontendHoverVideo } from "@/lib/product-hover-videos";
 import type { ProductDetailView } from "@/types/product-detail";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { GlowBearBundleMoreColours } from "@/components/GlowBearBundleMoreColours";
+import { JsonLd } from "@/components/JsonLd";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { VariableProductImagePicker } from "@/components/VariableProductImagePicker";
 import { FooterValues } from "@/components/FooterValues";
@@ -17,6 +18,7 @@ import { ProductDetailVideo } from "@/components/ProductDetailVideo";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { optionToSwatchColor } from "@/lib/product-swatches";
+import { productPageSchemas } from "@/lib/schema";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -51,6 +53,7 @@ export default async function ProductPage({
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
+      <JsonLd data={productPageSchemas(product)} />
       <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 lg:gap-14 lg:py-14">

@@ -1,9 +1,11 @@
 import { FooterValues } from "@/components/FooterValues";
+import { JsonLd } from "@/components/JsonLd";
 import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { ABOUT_STORY_VIDEO, StorySectionVideo } from "@/components/StorySectionVideo";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SocialLinks } from "@/components/SocialLinks";
+import { webPageSchema } from "@/lib/schema";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -35,6 +37,15 @@ function Pillar({
 export default function AboutPage() {
   return (
     <div className="flex min-h-screen flex-col bg-cream">
+      <JsonLd
+        data={webPageSchema({
+          path: "/about",
+          name: "About | Studio Amrita",
+          description:
+            "The story behind Studio Amrita: handmade crochet glow bears, curated skincare minis, and gift-ready packaging made for slow, thoughtful gifting.",
+          type: "AboutPage",
+        })}
+      />
       <PromoBar />
       <SiteHeader />
       <main className="flex-1">

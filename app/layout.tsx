@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { CartProvider } from "@/components/CartProvider";
+import { JsonLd } from "@/components/JsonLd";
 import { NavigationProgress } from "@/components/loading/NavigationProgress";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { siteWideSchemas } from "@/lib/schema";
+import { SITE } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/next";
 import { Cormorant_Garamond, Jost, Quicksand } from "next/font/google";
 import "./globals.css";
@@ -25,9 +28,9 @@ const quicksand = Quicksand({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
   title: "Studio Amrita | Handmade Glow Bears & Gifts",
-  description:
-    "Handmade crochet bears and skincare minis, thoughtfully gift-ready pieces from Studio Amrita.",
+  description: SITE.description,
 };
 
 export default function RootLayout({
@@ -41,6 +44,7 @@ export default function RootLayout({
       className={`${jost.variable} ${displaySerif.variable} ${quicksand.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full bg-cream font-sans text-body">
+        <JsonLd data={siteWideSchemas()} />
         <CartProvider>
           <ScrollToTop />
           <NavigationProgress />

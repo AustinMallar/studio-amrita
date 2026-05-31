@@ -4,11 +4,30 @@ import { BrandStorySection } from "@/components/BrandStorySection";
 import { CollectionsIntro } from "@/components/CollectionsIntro";
 import { FooterValues } from "@/components/FooterValues";
 import { HeroSection } from "@/components/HeroSection";
+import { JsonLd } from "@/components/JsonLd";
 import { ProductRow } from "@/components/ProductRow";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
+import { collectionPageSchemas } from "@/lib/schema";
+import { absoluteUrl, SITE } from "@/lib/site";
 import type { RawCatalogProduct } from "@/lib/ui-products";
 import { toUiProducts } from "@/lib/ui-products";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  openGraph: {
+    images: [
+      {
+        url: SITE.defaultOgImage,
+        alt: "Studio Amrita Glow Bears in gift-ready packaging",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [SITE.defaultOgImage],
+  },
+};
 
 type LayoutType = "grid" | "lifestyle";
 
@@ -32,11 +51,54 @@ type HomepageRowConfig = {
   } | null;
 };
 
+function homepageSchemaProducts(rows: HomepageRowConfig[]) {
+  const seen = new Set<string>();
+  const items: { name: string; url: string; image?: string }[] = [];
+
+  for (const row of rows) {
+    const rowSlug = row.data?.slug?.trim();
+    const rowName = row.data?.name ?? row.categoryName;
+    if (rowSlug && !seen.has(rowSlug)) {
+      seen.add(rowSlug);
+      items.push({
+        name: rowName,
+        url: absoluteUrl(`/products/${rowSlug}`),
+        image: row.data?.lifestyleImageUrl ?? undefined,
+      });
+    }
+
+    for (const product of row.data?.products ?? []) {
+      const slug = product.slug?.trim();
+      if (!slug || seen.has(slug)) continue;
+      seen.add(slug);
+      items.push({
+        name: product.name,
+        url: absoluteUrl(`/products/${slug}`),
+        image: product.imageUrl || undefined,
+      });
+    }
+  }
+
+  return items;
+}
+
 export default async function Home() {
   const { rows } = (await getHomepageCollections()) as { rows: HomepageRowConfig[] };
 
+  const productItems = homepageSchemaProducts(rows);
+
   return (
     <div className="flex min-h-screen flex-col bg-cream">
+      <JsonLd
+        data={collectionPageSchemas({
+          path: "/",
+          name: "Studio Amrita | Handmade Glow Bears & Gifts",
+          description: SITE.description,
+          products: productItems,
+          pageType: "WebPage",
+          primaryImage: SITE.defaultOgImage,
+        })}
+      />
       <PromoBar />
       <SiteHeader />
       <main className="flex-1">

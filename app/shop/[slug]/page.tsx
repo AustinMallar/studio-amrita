@@ -5,11 +5,14 @@ import {
   visibleShopCollectionSlugs,
 } from "@/lib/api";
 import { FooterValues } from "@/components/FooterValues";
+import { JsonLd } from "@/components/JsonLd";
 import { ProductCard } from "@/components/ProductCard";
 import { toUiProducts } from "@/lib/ui-products";
 import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SiteHeader } from "@/components/SiteHeader";
+import { absoluteUrl } from "@/lib/site";
+import { collectionPageSchemas } from "@/lib/schema";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -61,9 +64,24 @@ export default async function ShopCollectionPage(props: Props) {
       : FALLBACK_DESCRIPTION[slug] ?? "";
 
   const products = toUiProducts(collection.products ?? []);
+  const productItems = products
+    .filter((product) => product.slug)
+    .map((product) => ({
+      name: product.name,
+      url: absoluteUrl(`/products/${product.slug}`),
+      image: product.imageUrl || undefined,
+    }));
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
+      <JsonLd
+        data={collectionPageSchemas({
+          path: `/shop/${slug}`,
+          name: collection.name,
+          description: description || undefined,
+          products: productItems,
+        })}
+      />
       <PromoBar />
       <SiteHeader />
       <main className="flex-1">

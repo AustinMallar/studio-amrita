@@ -1,9 +1,12 @@
 import { getHomepageCollections } from "@/lib/api";
 import { FooterValues } from "@/components/FooterValues";
+import { JsonLd } from "@/components/JsonLd";
 import { ProductCard } from "@/components/ProductCard";
 import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SiteHeader } from "@/components/SiteHeader";
+import { absoluteUrl } from "@/lib/site";
+import { collectionPageSchemas } from "@/lib/schema";
 import { toUiProducts } from "@/lib/ui-products";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -121,9 +124,31 @@ function CollectionCard({ row }: { row: HomepageRow }) {
 
 export default async function ShopPage() {
   const { rows } = await getHomepageCollections();
+  const seen = new Set<string>();
+  const productItems = rows.flatMap((row) =>
+    toUiProducts(row.data?.products ?? [])
+      .filter((product) => product.slug && !seen.has(product.slug))
+      .map((product) => {
+        seen.add(product.slug!);
+        return {
+          name: product.name,
+          url: absoluteUrl(`/products/${product.slug}`),
+          image: product.imageUrl || undefined,
+        };
+      })
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
+      <JsonLd
+        data={collectionPageSchemas({
+          path: "/shop",
+          name: "Shop | Studio Amrita",
+          description:
+            "Shop handmade crochet glow bears and gift bundles from Studio Amrita.",
+          products: productItems,
+        })}
+      />
       <PromoBar />
       <SiteHeader />
       <main className="flex-1">
