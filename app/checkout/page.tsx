@@ -4,6 +4,7 @@ import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { wpFetchViewer } from "@/lib/auth-wp";
 import { getCartQuery, type CartQueryShape } from "@/lib/cart";
+import { setWooSessionCookieServer } from "@/lib/cart-cookie";
 import { flattenShippingRates } from "@/lib/cart-shipping-utils";
 import { deleteJwtAuthCookieServer } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
@@ -22,6 +23,7 @@ export default async function CheckoutPage() {
 
   try {
     const result = await getCartQuery(session, jwt);
+    await setWooSessionCookieServer(result.sessionHeader);
     if (result.jwtWasInvalid) {
       await deleteJwtAuthCookieServer();
     }

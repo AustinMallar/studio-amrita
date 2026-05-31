@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { CartProductNode } from "./cart-product-image";
+import { isInvalidCartTokenError } from "./woo-session";
 import { wpGraphQLWithJwtRecovery } from "./wp-graphql-jwt-recovery";
 
 const CART_PRODUCT_IMAGE_FIELDS = `
@@ -201,7 +202,35 @@ export async function getCartQuery(
   sessionToken: string | null | undefined,
   authToken?: string | null
 ) {
-  return wpGraphQLWithJwtRecovery<{
+  const session = sessionToken?.trim() || null;
+  let auth = authToken;
+
+  let result = await wpGraphQLWithJwtRecovery<{
     cart?: CartQueryShape | null;
-  }>(GET_CART_QUERY, { recalculateTotals: true }, sessionToken, authToken);
+  }>(GET_CART_QUERY, { recalculateTotals: true }, session, auth);
+
+  let jwtWasInvalid = result.jwtWasInvalid;
+  if (jwtWasInvalid) auth = null;
+
+  /** Stale session cookie — establish a fresh WooCommerce session and retry once. */
+  if (isInvalidCartTokenError(result.errors) && session) {
+    const warm = await wpGraphQLWithJwtRecovery<{
+      cart?: CartQueryShape | null;
+    }>(GET_CART_QUERY, { recalculateTotals: true }, null, auth);
+    jwtWasInvalid = jwtWasInvalid || warm.jwtWasInvalid;
+    if (warm.jwtWasInvalid) auth = null;
+
+    const freshSession = warm.sessionHeader ?? null;
+    result = await wpGraphQLWithJwtRecovery<{
+      cart?: CartQueryShape | null;
+    }>(GET_CART_QUERY, { recalculateTotals: true }, freshSession, auth);
+
+    return {
+      ...result,
+      sessionHeader: result.sessionHeader ?? freshSession,
+      jwtWasInvalid: jwtWasInvalid || result.jwtWasInvalid,
+    };
+  }
+
+  return { ...result, jwtWasInvalid };
 }

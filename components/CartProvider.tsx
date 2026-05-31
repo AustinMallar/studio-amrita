@@ -200,6 +200,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    void refreshCart();
+  }, [refreshCart]);
+
+  useEffect(() => {
     function onCartUpdated() {
       void refreshCart();
     }
