@@ -1,6 +1,7 @@
 import { FooterValues } from "@/components/FooterValues";
 import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { ABOUT_STORY_VIDEO, StorySectionVideo } from "@/components/StorySectionVideo";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SocialLinks } from "@/components/SocialLinks";
 import type { Metadata } from "next";
@@ -64,8 +65,14 @@ export default function AboutPage() {
         </section>
 
         <section className="bg-blush px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-          <div className="mx-auto max-w-2xl">
-            <ScrollReveal className="flex flex-col gap-6">
+          <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <ScrollReveal rootMargin="0px 0px 12% 0px">
+              <StorySectionVideo
+                src={ABOUT_STORY_VIDEO}
+                ariaLabel="Handmade glow bears being crafted and packaged at Studio Amrita"
+              />
+            </ScrollReveal>
+            <ScrollReveal className="flex flex-col gap-6" delayMs={70} rootMargin="0px 0px 12% 0px">
               <h2 className="font-heading text-2xl leading-snug text-heading sm:text-3xl">
                 Slow gifting, made with care
               </h2>

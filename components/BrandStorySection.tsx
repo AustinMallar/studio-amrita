@@ -1,11 +1,18 @@
 import Link from "next/link";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { HOMEPAGE_STORY_VIDEO, StorySectionVideo } from "@/components/StorySectionVideo";
 
 export function BrandStorySection() {
   return (
     <section className="bg-blush px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-      <div className="mx-auto max-w-2xl">
-        <ScrollReveal className="flex flex-col gap-6">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <ScrollReveal rootMargin="0px 0px 12% 0px">
+          <StorySectionVideo
+            src={HOMEPAGE_STORY_VIDEO}
+            ariaLabel="Studio Amrita glow bears and gift-ready packaging"
+          />
+        </ScrollReveal>
+        <ScrollReveal className="flex flex-col gap-6" delayMs={70} rootMargin="0px 0px 12% 0px">
           <h2 className="font-heading text-3xl leading-snug text-heading sm:text-4xl">
             Handmade. <br></br>Thoughtful. <br></br>Gift-ready.
           </h2>
