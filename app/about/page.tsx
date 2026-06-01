@@ -67,7 +67,7 @@ export default function AboutPage() {
                 Handmade. Thoughtful. Gift-ready.
               </h1>
               <p className="mt-4 font-sans text-base leading-relaxed text-body">
-                Studio Amrita pairs handmade crochet characters with curated skincare minis so every
+                Studio Amrita pairs handmade crochet bears with curated skincare minis so every
                 gift feels personal, with soft textures, quiet rituals, and a little sparkle for
                 everyday routines.
               </p>
