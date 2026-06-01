@@ -29,16 +29,49 @@ export async function wpGraphQL<T>(
       ? authToken.trim()
       : null;
 
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(outgoing ? { "woocommerce-session": outgoing } : {}),
-      ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}),
-    },
-    body: JSON.stringify({ query, variables }),
-    cache: "no-store",
-  });
+  let res: Response;
+  try {
+    res = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(outgoing ? { "woocommerce-session": outgoing } : {}),
+        ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}),
+      },
+      body: JSON.stringify({ query, variables }),
+      cache: "no-store",
+    });
+  } catch (first) {
+    /** Transient network blips between Vercel and WordPress. */
+    try {
+      res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(outgoing ? { "woocommerce-session": outgoing } : {}),
+          ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}),
+        },
+        body: JSON.stringify({ query, variables }),
+        cache: "no-store",
+      });
+    } catch {
+      throw first;
+    }
+  }
+
+  if (!res.ok && [502, 503, 504].includes(res.status)) {
+    const retry = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(outgoing ? { "woocommerce-session": outgoing } : {}),
+        ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}),
+      },
+      body: JSON.stringify({ query, variables }),
+      cache: "no-store",
+    });
+    if (retry.ok || retry.status < 500) res = retry;
+  }
 
   const sessionHeader = res.headers.get("woocommerce-session");
 

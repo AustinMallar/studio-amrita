@@ -23,6 +23,8 @@ export function isInvalidCartTokenError(errors: Array<{ message?: string }> | un
   return (
     text.includes("invalid_cart_token") ||
     text.includes("invalid cart-token") ||
-    text.includes("invalid cart token")
+    text.includes("invalid cart token") ||
+    text.includes("cart token is invalid") ||
+    (text.includes("cart") && text.includes("token") && text.includes("invalid"))
   );
 }

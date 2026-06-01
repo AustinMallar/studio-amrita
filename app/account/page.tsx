@@ -11,7 +11,7 @@ import {
   fetchAccountOverview,
   type OrderSummary,
 } from "@/lib/account-data";
-import { deleteJwtAuthCookieServer } from "@/lib/auth-cookie";
+import { tryDeleteJwtAuthCookieServer } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
 import { uniqueGraphQLErrorMessages } from "@/lib/jwt-auth-errors";
 import Link from "next/link";
@@ -26,7 +26,7 @@ export default async function AccountPage() {
   const overview = await fetchAccountOverview(token);
 
   if (overview.jwtInvalid) {
-    await deleteJwtAuthCookieServer();
+    await tryDeleteJwtAuthCookieServer();
     redirect("/login?next=/account");
   }
 

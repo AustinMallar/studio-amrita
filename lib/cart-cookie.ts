@@ -1,4 +1,5 @@
 import type { NextResponse } from "next/server";
+import { isReadonlyCookiesError } from "./server-cookies";
 import { WOOCOMMERCE_SESSION_COOKIE } from "./session-cookie";
 
 const WOO_SESSION_COOKIE_OPTIONS = {
@@ -17,12 +18,21 @@ export function setWooSessionCookie(
   res.cookies.set(WOOCOMMERCE_SESSION_COOKIE, sessionHeader, WOO_SESSION_COOKIE_OPTIONS);
 }
 
-/** Persist refreshed WooCommerce session from Server Components / route handlers. */
-export async function setWooSessionCookieServer(
+/**
+ * Persist refreshed WooCommerce session from route handlers (always works) or Server
+ * Components (returns false when Next.js forbids mutation — caller should sync via /api/cart).
+ */
+export async function trySetWooSessionCookieServer(
   sessionHeader: string | null | undefined
-) {
-  if (!sessionHeader?.trim()) return;
-  const { cookies } = await import("next/headers");
-  const store = await cookies();
-  store.set(WOOCOMMERCE_SESSION_COOKIE, sessionHeader.trim(), WOO_SESSION_COOKIE_OPTIONS);
+): Promise<boolean> {
+  if (!sessionHeader?.trim()) return true;
+  try {
+    const { cookies } = await import("next/headers");
+    const store = await cookies();
+    store.set(WOOCOMMERCE_SESSION_COOKIE, sessionHeader.trim(), WOO_SESSION_COOKIE_OPTIONS);
+    return true;
+  } catch (error) {
+    if (isReadonlyCookiesError(error)) return false;
+    throw error;
+  }
 }

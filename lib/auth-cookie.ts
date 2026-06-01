@@ -1,4 +1,5 @@
 import type { NextResponse } from "next/server";
+import { isReadonlyCookiesError } from "./server-cookies";
 
 /** HttpOnly cookie storing the JWT from WPGraphQL JWT Authentication (`authToken` / `jwtAuthToken`). */
 export const WP_JWT_AUTH_COOKIE = "wp-jwt-auth";
@@ -25,9 +26,15 @@ export function clearJwtAuthCookie(res: NextResponse) {
   });
 }
 
-/** Clear stale JWT from Server Components / route handlers using `cookies()`. */
-export async function deleteJwtAuthCookieServer() {
-  const { cookies } = await import("next/headers");
-  const store = await cookies();
-  store.delete(WP_JWT_AUTH_COOKIE);
+/** Clear stale JWT; returns false in Server Components (use /api/cart or a route handler to clear). */
+export async function tryDeleteJwtAuthCookieServer(): Promise<boolean> {
+  try {
+    const { cookies } = await import("next/headers");
+    const store = await cookies();
+    store.delete(WP_JWT_AUTH_COOKIE);
+    return true;
+  } catch (error) {
+    if (isReadonlyCookiesError(error)) return false;
+    throw error;
+  }
 }

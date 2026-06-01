@@ -3,10 +3,9 @@ import { FooterValues } from "@/components/FooterValues";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { wpFetchViewer } from "@/lib/auth-wp";
-import { getCartQuery, type CartQueryShape } from "@/lib/cart";
-import { setWooSessionCookieServer } from "@/lib/cart-cookie";
+import { WooSessionSync } from "@/components/WooSessionSync";
+import { loadCartPageData } from "@/lib/cart-page-data";
 import { flattenShippingRates } from "@/lib/cart-shipping-utils";
-import { deleteJwtAuthCookieServer } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
 import Link from "next/link";
@@ -18,26 +17,7 @@ export default async function CheckoutPage() {
   const session = cookieStore.get(WOOCOMMERCE_SESSION_COOKIE)?.value ?? null;
   const jwt = await getJwtAuthToken();
 
-  let gqlErrors: string[] = [];
-  let cart: CartQueryShape | null = null;
-
-  try {
-    const result = await getCartQuery(session, jwt);
-    await setWooSessionCookieServer(result.sessionHeader);
-    if (result.jwtWasInvalid) {
-      await deleteJwtAuthCookieServer();
-    }
-    if (result.errors?.length) {
-      gqlErrors = result.errors
-        .map((e) =>
-          typeof e === "object" && e && "message" in e ? String((e as { message?: string }).message) : ""
-        )
-        .filter(Boolean);
-    }
-    cart = result.data?.cart ?? null;
-  } catch {
-    gqlErrors = ["Could not load cart. Check WORDPRESS_API_URL and WooCommerce session."];
-  }
+  const { cart, gqlErrors, sessionSyncNeeded } = await loadCartPageData(session, jwt);
 
   const lines = (cart?.contents?.nodes ?? []).filter(Boolean);
   if (lines.length === 0 && gqlErrors.length === 0) {
@@ -65,6 +45,7 @@ export default async function CheckoutPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
+      <WooSessionSync active={sessionSyncNeeded} />
       <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6 lg:py-14">
