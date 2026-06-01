@@ -1,5 +1,5 @@
-import Image from "next/image";
 import type { ReactNode } from "react";
+import { HeroBearEasterEgg } from "@/components/HeroBearEasterEgg";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
 function Feature({
@@ -88,17 +88,14 @@ export function HeroSection() {
           delayMs={85}
           rootMargin="0px 0px 12% 0px"
         >
-          <div className="overflow-hidden rounded-3xl shadow-[0_4px_24px_rgba(92,77,77,0.08)]">
-            <Image
-              src="/hero-bear.jpg"
-              alt="Four Essential Glow Bear gift sets in cream, matcha green, sakura pink, and honey brown"
-              width={681}
-              height={1024}
-              className="h-auto w-full"
-              sizes="(max-width: 1024px) 100vw, 480px"
-              priority
-            />
-          </div>
+          <HeroBearEasterEgg
+            src="/hero-bear.jpg"
+            alt="Four Essential Glow Bear gift sets in cream, matcha green, sakura pink, and honey brown"
+            width={681}
+            height={1024}
+            sizes="(max-width: 1024px) 100vw, 480px"
+            priority
+          />
         </ScrollReveal>
       </div>
     </section>

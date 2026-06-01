@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 36">
+  <!-- Fluffy pink crochet strawberry matching the reference photo -->
+  <!-- Green leaf crown -->
+  <ellipse cx="16" cy="7" rx="9" ry="5" fill="#88c878"/>
+  <!-- Leaf loops -->
+  <circle cx="9" cy="5" r="4" fill="#88c878"/>
+  <circle cx="13" cy="3" r="3.5" fill="#9dd48c"/>
+  <circle cx="18" cy="3" r="3.5" fill="#9dd48c"/>
+  <circle cx="23" cy="5" r="4" fill="#88c878"/>
+  <circle cx="16" cy="2" r="3" fill="#9dd48c"/>
+  <!-- Leaf shading -->
+  <ellipse cx="16" cy="7" rx="7" ry="3.5" fill="#70b060"/>
+  <!-- Body shadow -->
+  <ellipse cx="17" cy="27" rx="11" ry="11" fill="#c8889a"/>
+  <!-- Main body - soft pink like the real one -->
+  <ellipse cx="16" cy="25" rx="11" ry="11" fill="#e8b0bc"/>
+  <!-- Crochet rows -->
+  <path d="M6 20 Q16 17 26 20" stroke="#c8889a" stroke-width="1.2" fill="none" opacity="0.6"/>
+  <path d="M5 25 Q16 22 27 25" stroke="#c8889a" stroke-width="1.2" fill="none" opacity="0.6"/>
+  <path d="M6 30 Q16 27 26 30" stroke="#c8889a" stroke-width="1.2" fill="none" opacity="0.55"/>
+  <!-- Highlight -->
+  <ellipse cx="12" cy="20" rx="4" ry="3" fill="white" opacity="0.35"/>
+  <!-- Bottom point -->
+  <ellipse cx="16" cy="34" rx="3.5" ry="3" fill="#d899a8"/>
+</svg>

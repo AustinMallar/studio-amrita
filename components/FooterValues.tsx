@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SocialLinks } from "@/components/SocialLinks";
 
@@ -72,6 +73,12 @@ export function FooterValues() {
         >
           Contact us
         </a>
+        <Link
+          href="/play"
+          className="font-sans text-xs text-body/70 underline-offset-4 hover:text-dusty-rose hover:underline"
+        >
+          Berry Bump ♡
+        </Link>
       </ScrollReveal>
       <p className="mx-auto mt-8 max-w-6xl text-center font-sans text-xs text-body">
         © {new Date().getFullYear()} Studio Amrita. All rights reserved.

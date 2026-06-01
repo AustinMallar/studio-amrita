@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 64">
+  <!-- Drop shadow -->
+  <ellipse cx="28" cy="63" rx="13" ry="3" fill="rgba(0,0,0,0.14)"/>
+  <!-- Body -->
+  <ellipse cx="28" cy="50" rx="14" ry="15" fill="#e8b8c0"/>
+  <path d="M15 44 Q28 41 41 44" stroke="#cc8f9a" stroke-width="1.1" fill="none" opacity="0.55"/>
+  <path d="M14 49 Q28 46 42 49" stroke="#cc8f9a" stroke-width="1.1" fill="none" opacity="0.55"/>
+  <path d="M15 54 Q28 51 41 54" stroke="#cc8f9a" stroke-width="1.1" fill="none" opacity="0.5"/>
+  <path d="M16 59 Q28 57 40 59" stroke="#cc8f9a" stroke-width="1" fill="none" opacity="0.4"/>
+  <!-- Arms -->
+  <ellipse cx="10" cy="46" rx="7" ry="5" fill="#e8b8c0" transform="rotate(-18,10,46)"/>
+  <ellipse cx="46" cy="46" rx="7" ry="5" fill="#e8b8c0" transform="rotate(18,46,46)"/>
+  <!-- Legs -->
+  <ellipse cx="21" cy="62" rx="8" ry="5" fill="#e0acb4"/>
+  <ellipse cx="35" cy="62" rx="8" ry="5" fill="#e0acb4"/>
+  <!-- Head -->
+  <circle cx="28" cy="21" r="17" fill="#e8b8c0"/>
+  <path d="M12 16 Q28 12 44 16" stroke="#cc8f9a" stroke-width="1.1" fill="none" opacity="0.45"/>
+  <path d="M11 22 Q28 18 45 22" stroke="#cc8f9a" stroke-width="1.1" fill="none" opacity="0.45"/>
+  <path d="M12 28 Q28 25 44 28" stroke="#cc8f9a" stroke-width="1" fill="none" opacity="0.4"/>
+  <!-- Ears -->
+  <circle cx="12" cy="8" r="7" fill="#e8b8c0"/>
+  <circle cx="44" cy="8" r="7" fill="#e8b8c0"/>
+  <circle cx="12" cy="8" r="4.2" fill="#d4a0aa"/>
+  <circle cx="44" cy="8" r="4.2" fill="#d4a0aa"/>
+  <!-- Muzzle shadow -->
+  <circle cx="29" cy="30" r="10" fill="#cc8f9a" opacity="0.28"/>
+  <!-- Muzzle -->
+  <circle cx="28" cy="29" r="9" fill="#f5ede8"/>
+  <circle cx="25.5" cy="26.5" r="3.5" fill="white" opacity="0.5"/>
+  <!-- Eyes -->
+  <circle cx="21" cy="18" r="4.2" fill="#0a0808"/>
+  <circle cx="35" cy="18" r="4.2" fill="#0a0808"/>
+  <circle cx="19.5" cy="16.5" r="1.6" fill="white"/>
+  <circle cx="33.5" cy="16.5" r="1.6" fill="white"/>
+  <!-- Nose/mouth stitch -->
+  <path d="M26 28 Q28 30.5 30 28" stroke="#c8966e" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <line x1="28" y1="28" x2="28" y2="32" stroke="#c8966e" stroke-width="1.4" stroke-linecap="round"/>
+</svg>
