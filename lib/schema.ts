@@ -1,4 +1,5 @@
 import type { FaqItem } from "./faq-content";
+import { htmlToPlainText } from "./html-text";
 import { SOCIAL_LINKS } from "./social-links";
 import { absoluteUrl, SITE } from "./site";
 import type { ProductDetailView } from "@/types/product-detail";
@@ -24,7 +25,7 @@ const COLLECTION_NAMES: Record<string, string> = {
 };
 
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return htmlToPlainText(html, { collapseWhitespace: true });
 }
 
 /** Parse the first numeric amount from a formatted price label. */

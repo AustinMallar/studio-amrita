@@ -17,6 +17,7 @@ import { ProductDetailGallery } from "@/components/ProductDetailGallery";
 import { ProductDetailVideo } from "@/components/ProductDetailVideo";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
+import { htmlToPlainText } from "@/lib/html-text";
 import { optionToSwatchColor } from "@/lib/product-swatches";
 import { productPageSchemas } from "@/lib/schema";
 import Link from "next/link";
@@ -42,9 +43,7 @@ export default async function ProductPage({
     ? await getGlowBearBundleSiblings(product.slug)
     : [];
 
-  const descriptionText = String(product.descriptionHtml ?? "")
-    .replace(/<[^>]+>/g, "")
-    .trim();
+  const descriptionText = htmlToPlainText(String(product.descriptionHtml ?? ""));
 
   const isVariableWithColours =
     product.variations.length > 0 && /variable/i.test(String(product.productType || ""));
