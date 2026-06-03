@@ -20,10 +20,10 @@ export const KIRBY = {
 } as const;
 
 export const PLAYER_LANE_COLORS: Record<BearId, string> = {
-  matcha: "#58c040",
-  sakura: "#f04858",
-  honey: "#f0a020",
-  cloud: "#60b0e8",
+  matcha: "#BDCAB7",
+  sakura: "#E6B9BC",
+  honey: "#AA9183",
+  cloud: "#CAC8C4",
 };
 
 export function drawKirbySky(
