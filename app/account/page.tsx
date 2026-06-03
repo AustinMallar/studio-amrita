@@ -84,7 +84,7 @@ export default async function AccountPage() {
         <div id="overview" className="scroll-mt-28">
           <h1 className="font-heading text-3xl text-heading">Your account</h1>
           <p className="mt-2 max-w-2xl font-sans text-sm text-body">
-            Manage your profile, addresses, password, and review orders from WooCommerce.
+            Manage your profile, addresses, password, and review your orders.
           </p>
         </div>
 
@@ -110,8 +110,7 @@ export default async function AccountPage() {
 
             {wcMissing ? (
               <p className="rounded-2xl border border-black/[0.08] bg-white/50 px-4 py-3 font-sans text-sm text-heading">
-                WooCommerce customer data was not returned. Confirm WPGraphQL for WooCommerce is
-                active and your user is linked as a customer.
+                Account data could not be loaded. Please try signing out and back in, or contact support if the issue persists.
               </p>
             ) : null}
 
