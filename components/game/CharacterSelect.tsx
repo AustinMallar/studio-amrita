@@ -29,15 +29,16 @@ export function CharacterSelect({ onSelect }: Props) {
             key={bear.id}
             type="button"
             onClick={() => onSelect(bear.id)}
-            className="group flex flex-col items-center gap-3 rounded-2xl border border-black/[0.06] bg-cream/80 p-4 transition hover:border-dusty-rose/40 hover:bg-blush/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-dusty-rose"
+            className="group flex flex-col items-center gap-2 rounded-2xl border border-black/[0.06] bg-cream/80 px-4 pb-4 pt-5 transition hover:border-dusty-rose/40 hover:bg-blush/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-dusty-rose"
           >
-            <span
-              className="flex h-16 w-16 items-center justify-center rounded-full shadow-[inset_0_2px_8px_rgba(92,77,77,0.12)] transition group-hover:scale-105"
-              style={{ backgroundColor: bear.hex }}
+            <img
+              src={`/game/sprites/bear-${bear.id}.svg`}
+              alt={bear.name}
+              width={72}
+              height={82}
+              className="transition group-hover:scale-105 drop-shadow-sm"
               aria-hidden
-            >
-              <span className="block h-8 w-8 rounded-full bg-white/25" />
-            </span>
+            />
             <span className="font-heading text-sm text-heading">{bear.name}</span>
           </button>
         ))}
