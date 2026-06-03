@@ -15,16 +15,25 @@ import { toUiProducts } from "@/lib/ui-products";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  title: "Studio Amrita | Crochet Bear Keychain & Handmade Glow Bears",
+  description:
+    "Shop Studio Amrita's handmade crochet bear keychains and Glow Bears — kawaii amigurumi gifts, thoughtfully crafted and gift-ready. Free shipping on orders over $75 CAD.",
   openGraph: {
+    title: "Studio Amrita | Crochet Bear Keychain & Handmade Glow Bears",
+    description:
+      "Handmade crochet bear keychains and Glow Bears from Studio Amrita. Kawaii amigurumi gifts, beautifully packaged and ready to give.",
     images: [
       {
         url: SITE.defaultOgImage,
-        alt: "Studio Amrita Glow Bears in gift-ready packaging",
+        alt: "Studio Amrita Glow Bear crochet bear keychains in gift-ready packaging",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
+    title: "Studio Amrita | Crochet Bear Keychain & Handmade Glow Bears",
+    description:
+      "Handmade crochet bear keychains and Glow Bears from Studio Amrita. Kawaii amigurumi gifts, beautifully packaged and ready to give.",
     images: [SITE.defaultOgImage],
   },
 };

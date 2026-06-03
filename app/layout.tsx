@@ -29,7 +29,7 @@ const quicksand = Quicksand({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: "Studio Amrita | Handmade Glow Bears & Gifts",
+  title: "Studio Amrita | Crochet Bear Keychain & Handmade Gifts",
   description: SITE.description,
 };
 

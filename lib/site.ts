@@ -3,7 +3,7 @@ export const SITE = {
   name: "Studio Amrita",
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://studioamrita.ca").replace(/\/$/, ""),
   description:
-    "Handmade crochet bears and skincare minis, thoughtfully gift-ready pieces from Studio Amrita.",
+    "Handmade crochet bear keychains and Glow Bears from Studio Amrita — kawaii amigurumi gifts, thoughtfully crafted and gift-ready.",
   email: "shop@studioamrita.ca",
   logoPath: "/Studio-Amrita-Logo.png",
   defaultOgImage: "https://studioamrita.ca/category-essential-glow-bear.jpg",
