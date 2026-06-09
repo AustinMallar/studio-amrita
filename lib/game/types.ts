@@ -22,6 +22,9 @@ export type BearState = {
   moveDir: -1 | 0 | 1;
   bumpCooldown: number;
   bumpAnim: number;
+  /** Jump arc progress: 0 = grounded, (0, 1) = airborne */
+  jumpT: number;
+  jumpCooldown: number;
 };
 
 export type DropEntity = {
@@ -51,4 +54,5 @@ export type InputState = {
   left: boolean;
   right: boolean;
   bump: boolean;
+  jump: boolean;
 };

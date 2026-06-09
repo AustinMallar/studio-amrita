@@ -67,6 +67,14 @@ export function updateCpuInput(
   const others = bears.filter((b) => b.id !== bear.id);
   const neighbor = adjacentBear(bear, others);
   let bump = false;
+  let jump = false;
+
+  if (neighbor && bear.jumpT === 0 && bear.jumpCooldown <= 0 && moveDir !== 0) {
+    const neighborDir = neighbor.x > bear.x ? 1 : -1;
+    if (neighborDir === moveDir && rng() < 0.18) {
+      jump = true;
+    }
+  }
 
   if (neighbor && bear.bumpCooldown <= 0) {
     const blockingPlayer =
@@ -86,6 +94,7 @@ export function updateCpuInput(
     left: moveDir === -1,
     right: moveDir === 1,
     bump,
+    jump,
   };
 }
 

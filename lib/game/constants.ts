@@ -45,6 +45,10 @@ export const GAME_CONFIG = {
   bearSeparationFactor: 0.72,
   /** Max distance (px) at which a bump connects with a neighbor */
   bumpRange: 76,
+  /** Peak height (px) of a jump arc */
+  jumpHeight: 52,
+  jumpDurationMs: 400,
+  jumpCooldownMs: 550,
   adjacencyGap: 8,
   groundPadding: 16,
   treeHeightRatio: 0.32,

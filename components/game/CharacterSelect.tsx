@@ -19,7 +19,7 @@ export function CharacterSelect({ onSelect }: Props) {
         </h2>
         <p className="mt-3 font-sans text-sm leading-relaxed text-body">
           Catch crochet strawberries in your basket. Dodge yarn bombs (−3 points). Bump rivals to
-          steal their spot — hold still to push, move to swap!
+          shove them aside, or jump to hop right over them!
         </p>
       </div>
 
@@ -47,10 +47,16 @@ export function CharacterSelect({ onSelect }: Props) {
       <div className="rounded-2xl border border-black/[0.06] bg-blush/30 px-5 py-4 text-left font-sans text-xs leading-relaxed text-body">
         <p className="font-semibold text-heading">Controls</p>
         <p className="mt-1">
-          <strong className="text-heading">Desktop:</strong> ← → move, Space bump
+          <strong className="text-heading">Move:</strong> ← → or A / D
         </p>
         <p className="mt-1">
-          <strong className="text-heading">Mobile:</strong> on-screen arrows + bump button
+          <strong className="text-heading">Bump:</strong> Space — shove the nearest rival
+        </p>
+        <p className="mt-1">
+          <strong className="text-heading">Jump:</strong> ↑ or W — hop over other bears
+        </p>
+        <p className="mt-2 text-dusty-rose">
+          On-screen buttons work on touch and mouse too.
         </p>
       </div>
     </div>

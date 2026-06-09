@@ -51,8 +51,9 @@ export class GameEngine {
   private bears: BearState[] = [];
   private drops: DropEntity[] = [];
   private playerBearId: BearId = "matcha";
-  private input: InputState = { left: false, right: false, bump: false };
+  private input: InputState = { left: false, right: false, bump: false, jump: false };
   private bumpRequested = false;
+  private jumpRequested = false;
   private dropIdCounter = 0;
   private strawberriesSpawned = 0;
   private bombsSpawned = 0;
@@ -97,6 +98,7 @@ export class GameEngine {
   setInput(input: InputState): void {
     this.input = input;
     if (input.bump) this.bumpRequested = true;
+    if (input.jump) this.jumpRequested = true;
   }
 
   getSnapshot(): GameSnapshot {
@@ -138,6 +140,8 @@ export class GameEngine {
       moveDir: 0,
       bumpCooldown: 0,
       bumpAnim: 0,
+      jumpT: 0,
+      jumpCooldown: 0,
     }));
     this.drops = [];
     this.effects = [];
@@ -271,12 +275,22 @@ export class GameEngine {
     }
   }
 
+  private isAirborne(bear: BearState): boolean {
+    return bear.jumpT > 0 && bear.jumpT < 1;
+  }
+
+  private jumpOffset(bear: BearState): number {
+    if (!this.isAirborne(bear)) return 0;
+    return Math.sin(Math.PI * bear.jumpT) * GAME_CONFIG.jumpHeight;
+  }
+
   private basketRect(bear: BearState): { x: number; y: number; w: number; h: number } {
     const w = GAME_CONFIG.basketWidth;
     const h = GAME_CONFIG.basketHeight;
+    const lift = this.jumpOffset(bear);
     return {
       x: bear.x - w / 2,
-      y: bear.y - GAME_CONFIG.bearHeight + 8,
+      y: bear.y - GAME_CONFIG.bearHeight + 8 - lift,
       w,
       h,
     };
@@ -318,14 +332,39 @@ export class GameEngine {
     return [...this.bears].sort((a, b) => a.x - b.x);
   }
 
+  /** Grounded bears first; airborne bears draw on top so jumps read clearly. */
+  private sortedBearsForRender(): BearState[] {
+    return [...this.bears].sort((a, b) => {
+      const aAir = this.isAirborne(a) ? 1 : 0;
+      const bAir = this.isAirborne(b) ? 1 : 0;
+      if (aAir !== bAir) return aAir - bAir;
+      return a.x - b.x;
+    });
+  }
+
   /**
    * Impulse-based bump: the bumper shoves the nearest bear in range, sending
    * it flying with a decaying knockback velocity. The bumper takes a small
    * recoil in the opposite direction. Bumping while moving toward the target
    * hits harder ("charged" bump).
    */
+  private performJump(jumper: BearState): void {
+    if (jumper.jumpT > 0 || jumper.jumpCooldown > 0) return;
+    jumper.jumpT = 0.001;
+    jumper.jumpCooldown = GAME_CONFIG.jumpCooldownMs / 1000;
+  }
+
+  private updateJump(dt: number): void {
+    const duration = GAME_CONFIG.jumpDurationMs / 1000;
+    for (const bear of this.bears) {
+      if (bear.jumpT <= 0) continue;
+      bear.jumpT += dt / duration;
+      if (bear.jumpT >= 1) bear.jumpT = 0;
+    }
+  }
+
   private performBump(bumper: BearState): void {
-    if (bumper.bumpCooldown > 0) return;
+    if (bumper.bumpCooldown > 0 || this.isAirborne(bumper)) return;
 
     let neighbor: BearState | null = null;
     let bestDist = Infinity;
@@ -401,6 +440,7 @@ export class GameEngine {
       const b = sorted[i + 1];
       const overlap = minGap - (b.x - a.x);
       if (overlap <= 0) continue;
+      if (this.isAirborne(a) || this.isAirborne(b)) continue;
 
       a.x -= overlap / 2;
       b.x += overlap / 2;
@@ -432,20 +472,27 @@ export class GameEngine {
       this.bumpRequested = false;
       this.performBump(player);
     }
+    if (this.jumpRequested) {
+      this.jumpRequested = false;
+      this.performJump(player);
+    }
 
     for (const bear of this.bears) {
       if (bear.isPlayer) continue;
       const cpuInput = updateCpuInput(bear, this.bears, this.drops, player, this.rng);
       applyMovementInput(bear, cpuInput, dt, this.width);
       if (cpuInput.bump) this.performBump(bear);
+      if (cpuInput.jump) this.performJump(bear);
     }
 
+    this.updateJump(dt);
     this.applyKnockback(dt);
     this.separateBears();
 
     for (const bear of this.bears) {
       bear.bumpCooldown = Math.max(0, bear.bumpCooldown - dt);
       bear.bumpAnim = Math.max(0, bear.bumpAnim - dt);
+      bear.jumpCooldown = Math.max(0, bear.jumpCooldown - dt);
     }
 
     for (const effect of this.effects) {
@@ -495,7 +542,7 @@ export class GameEngine {
       this.drawDrop(ctx, drop);
     }
 
-    for (const bear of this.sortedBearsByX()) {
+    for (const bear of this.sortedBearsForRender()) {
       this.drawBear(ctx, bear);
     }
 
@@ -543,9 +590,18 @@ export class GameEngine {
     const w = GAME_CONFIG.bearWidth;
     const h = GAME_CONFIG.bearHeight;
     const bob = this.reducedMotion ? 0 : Math.sin(Date.now() * 0.012 + bear.x) * 2;
+    const lift = this.jumpOffset(bear);
     const scale = 1 + bear.bumpAnim * 0.16;
     const x = bear.x;
-    const y = bear.y + bob;
+    const y = bear.y + bob - lift;
+
+    if (lift > 2) {
+      const shadowScale = 1 - (lift / GAME_CONFIG.jumpHeight) * 0.5;
+      ctx.fillStyle = "rgba(0,0,0,0.14)";
+      ctx.beginPath();
+      ctx.ellipse(x, bear.y + bob + 2, w * 0.34 * shadowScale, 3 * shadowScale, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
     // Lean into movement and away from knockback hits
     const lean = this.reducedMotion
       ? 0

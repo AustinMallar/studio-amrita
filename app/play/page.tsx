@@ -33,8 +33,8 @@ export default function PlayPage() {
             </p>
             <h1 className="mt-3 font-heading text-3xl text-heading sm:text-4xl">Berry Bump</h1>
             <p className="mx-auto mt-3 max-w-lg font-sans text-sm leading-relaxed text-body">
-              Pick your Glow Bear, catch falling strawberries, dodge yarn bombs, and bump your
-              rivals for the win.
+              Pick your Glow Bear, catch falling strawberries, dodge yarn bombs, bump rivals
+              aside, and jump over them for the win.
             </p>
           </ScrollReveal>
 
