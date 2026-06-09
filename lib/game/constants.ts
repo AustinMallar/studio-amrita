@@ -28,8 +28,23 @@ export const GAME_CONFIG = {
   basketHeight: 28,
   dropSize: 26,
   dropSpeed: 120,
-  bumpCooldownMs: 400,
-  bumpPushForce: 140,
+  bumpCooldownMs: 500,
+  /** Initial knockback velocity (px/s) applied to a bumped bear */
+  bumpPushForce: 460,
+  /** Fraction of the push applied back to the bumper as recoil */
+  bumpRecoilFactor: 0.35,
+  /** Bonus multiplier when bumping while moving toward the target */
+  bumpChargeBonus: 1.4,
+  /** Exponential decay rate of knockback velocity (per second) */
+  knockFriction: 5.5,
+  /** Energy kept when knocked into an arena wall */
+  wallBounce: 0.45,
+  /** Brief cooldown applied to the victim so they can't instantly retaliate */
+  bumpVictimStunMs: 250,
+  /** Bears closer than bearWidth * this fraction get pushed apart */
+  bearSeparationFactor: 0.72,
+  /** Max distance (px) at which a bump connects with a neighbor */
+  bumpRange: 76,
   adjacencyGap: 8,
   groundPadding: 16,
   treeHeightRatio: 0.32,

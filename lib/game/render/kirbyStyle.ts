@@ -72,20 +72,46 @@ export function drawKirbyGround(
   }
 }
 
+type CanopyLobe = { dx: number; dy: number; r: number };
+
+/** Trace the union of all canopy lobes as a single fillable path. */
+function traceCanopy(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  lobes: CanopyLobe[],
+  inflate = 0,
+): void {
+  ctx.beginPath();
+  for (const lobe of lobes) {
+    const lx = cx + lobe.dx;
+    const ly = cy + lobe.dy;
+    ctx.moveTo(lx + lobe.r + inflate, ly);
+    ctx.arc(lx, ly, lobe.r + inflate, 0, Math.PI * 2);
+  }
+}
+
+/** Berry positions within a canopy, relative to the canopy center (× R). */
+const BERRY_SPOTS: ReadonlyArray<readonly [number, number]> = [
+  [-0.72, 0.18],
+  [-0.25, -0.55],
+  [0.34, -0.28],
+  [0.78, 0.3],
+  [0.05, 0.52],
+  [-0.42, 0.62],
+];
+
 /**
- * Draw 4 individual Kirby-style round trees.
+ * Draw one Kirby-style berry tree per lane.
  *
- * Each tree is a circle (R ≈ 65% of lane width) drawn in layered passes so
- * overlapping fills merge naturally:
- *   Pass 1 – all shadows   (no outlines yet)
- *   Pass 2 – dark border   (circle at R+3 in canopyDark, gives outer edge)
- *   Pass 3 – main fill     (circle at R in canopyMid, covers inner border area)
- *   Pass 4 – highlight     (small ellipse clipped to each canopy)
- *   Pass 5 – trunks        (short rectangles below canopy bottom)
+ * Each tree:
+ *   - tapered trunk with flared roots (drawn first, behind the canopy)
+ *   - fluffy canopy built from 5 overlapping circle lobes, drawn in passes:
+ *     drop shadow → dark rim → main fill → bottom shading → highlight → berries
+ *   - per-tree size/height variation so the row reads as a forest, not a wall
  *
- * With the shorter canvas (width * 0.55) and higher groundY (65% of playH), the
- * ratio of treeH:laneWidth is now ~1.3:1, letting R = 0.65 * laneWidth produce
- * a nearly circular canopy that fills the vertical space naturally.
+ * `shakeAmt` sways the canopies (not the trunks) — berries fall from the
+ * leaves, so that's what should be shaking.
  */
 export function drawKirbyForest(
   ctx: CanvasRenderingContext2D,
@@ -96,186 +122,154 @@ export function drawKirbyForest(
   laneWidth: number,
   shakeAmt: number,
 ): void {
-  // Circle radius: large enough to fill the height, small enough to keep shape round
-  const R = laneWidth * 0.65;
-  // Center y: circle starts at playTop (top of canvas)
-  const cy = playTop + R;
-  const canopyBottom = cy + R;
+  const treeH = groundY - playTop;
+  const sizeVariants = [1, 0.88, 1.05, 0.92] as const;
 
-  const trunkW = Math.max(16, laneWidth * 0.18);
-  const trunkH = Math.max(8, groundY - canopyBottom);
-  const trunkTop = canopyBottom;
-
-  // ── Pass 1: Drop shadows ───────────────────────────────────────────────────
-  ctx.fillStyle = KIRBY.canopyDark;
-  for (const lx of laneX) {
-    ctx.beginPath();
-    ctx.arc(lx + 5, cy + 7, R, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // ── Pass 2: Dark-border circles (gives natural outline on exposed edges) ───
-  ctx.fillStyle = KIRBY.canopyDark;
-  for (const lx of laneX) {
-    ctx.beginPath();
-    ctx.arc(lx, cy, R + 3, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // ── Pass 3: Main canopy fills (covers the inner part of the border) ────────
-  ctx.fillStyle = KIRBY.canopyMid;
-  for (const lx of laneX) {
-    ctx.beginPath();
-    ctx.arc(lx, cy, R, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // ── Pass 4: Per-tree highlight (small glint at upper-left, clipped) ────────
-  for (const lx of laneX) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(lx, cy, R, 0, Math.PI * 2);
-    ctx.clip();
-
-    ctx.fillStyle = KIRBY.canopyLight;
-    ctx.beginPath();
-    ctx.ellipse(lx - R * 0.3, cy - R * 0.3, R * 0.32, R * 0.22, -0.3, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.restore();
-  }
-
-  // ── Pass 5: Trunks ─────────────────────────────────────────────────────────
   for (let i = 0; i < laneX.length; i++) {
-    if (trunkH <= 0) continue;
-    const shake = (i % 2 === 0 ? 1 : -0.7) * shakeAmt;
-    const tx = (laneX[i] ?? 0) + shake;
+    const cx = laneX[i] ?? 0;
+    const v = sizeVariants[i % sizeVariants.length];
+    const R = Math.min(laneWidth * 0.48, treeH * 0.34) * v;
+    const cy = playTop + R * 1.18 + (i % 2) * treeH * 0.03;
+    const sway = shakeAmt * (i % 2 === 0 ? 1 : -0.8);
+
+    const lobes: CanopyLobe[] = [
+      { dx: 0, dy: -R * 0.35, r: R * 0.8 },
+      { dx: -R * 0.58, dy: R * 0.1, r: R * 0.68 },
+      { dx: R * 0.58, dy: R * 0.1, r: R * 0.68 },
+      { dx: -R * 0.28, dy: R * 0.45, r: R * 0.6 },
+      { dx: R * 0.28, dy: R * 0.45, r: R * 0.6 },
+    ];
+    const canopyBottom = cy + R * 1.05;
+
+    // ── Trunk (behind canopy) ──────────────────────────────────────────────
+    const tw = Math.max(8, laneWidth * 0.08) * v;
+    const trunkTop = canopyBottom - R * 0.45;
+    const trunkBottom = groundY + 4;
+    const midY = trunkTop + (trunkBottom - trunkTop) * 0.45;
 
     ctx.fillStyle = KIRBY.trunk;
     ctx.strokeStyle = KIRBY.outline;
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.roundRect(tx - trunkW / 2, trunkTop, trunkW, trunkH, [0, 0, 4, 4]);
+    ctx.moveTo(cx - tw * 0.85, trunkTop);
+    ctx.bezierCurveTo(cx - tw * 0.95, midY, cx - tw, trunkBottom - 14, cx - tw * 1.6, trunkBottom);
+    ctx.lineTo(cx + tw * 1.6, trunkBottom);
+    ctx.bezierCurveTo(cx + tw, trunkBottom - 14, cx + tw * 0.95, midY, cx + tw * 0.85, trunkTop);
+    ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
-    // Knot marks along the trunk
-    for (const kp of [0.28, 0.65] as const) {
-      ctx.fillStyle = KIRBY.trunkKnot;
+    // Bark shading along the right edge + knot
+    ctx.fillStyle = KIRBY.trunkDark;
+    ctx.beginPath();
+    ctx.moveTo(cx + tw * 0.35, trunkTop);
+    ctx.bezierCurveTo(cx + tw * 0.45, midY, cx + tw * 0.5, trunkBottom - 14, cx + tw * 1.1, trunkBottom);
+    ctx.lineTo(cx + tw * 1.6, trunkBottom);
+    ctx.bezierCurveTo(cx + tw, trunkBottom - 14, cx + tw * 0.95, midY, cx + tw * 0.85, trunkTop);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = KIRBY.trunkKnot;
+    ctx.beginPath();
+    ctx.ellipse(cx - tw * 0.25, midY, tw * 0.22, tw * 0.32, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // ── Canopy (swaying) ───────────────────────────────────────────────────
+    const sx = cx + sway;
+
+    // Drop shadow, offset to bottom-right
+    ctx.fillStyle = KIRBY.canopyDark;
+    traceCanopy(ctx, sx + 4, cy + 6, lobes, 2);
+    ctx.fill();
+
+    // Dark rim (acts as a soft outline on all exposed edges)
+    traceCanopy(ctx, sx, cy, lobes, 3);
+    ctx.fill();
+
+    // Main fill
+    ctx.fillStyle = KIRBY.canopyMid;
+    traceCanopy(ctx, sx, cy, lobes);
+    ctx.fill();
+
+    // Bottom shading + top highlight, clipped to the canopy
+    ctx.save();
+    traceCanopy(ctx, sx, cy, lobes);
+    ctx.clip();
+
+    ctx.globalAlpha = 0.4;
+    ctx.fillStyle = KIRBY.canopyDark;
+    ctx.beginPath();
+    ctx.ellipse(sx, cy + R * 0.85, R * 1.45, R * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = KIRBY.canopyLight;
+    ctx.beginPath();
+    ctx.ellipse(sx - R * 0.35, cy - R * 0.55, R * 0.52, R * 0.34, -0.35, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(sx + R * 0.42, cy - R * 0.62, R * 0.14, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    // Berries dotted through the leaves
+    const berryR = Math.max(3, R * 0.08);
+    for (let b = 0; b < BERRY_SPOTS.length; b++) {
+      // Skip one spot per tree so berry patterns differ between trees
+      if (b === i % BERRY_SPOTS.length) continue;
+      const [bdx, bdy] = BERRY_SPOTS[b];
+      const bx = sx + bdx * R;
+      const by = cy + bdy * R;
+
+      ctx.fillStyle = "#b03048";
       ctx.beginPath();
-      ctx.arc(tx - trunkW * 0.1, trunkTop + kp * trunkH, Math.max(2, trunkH * 0.07), 0, Math.PI * 2);
+      ctx.arc(bx, by, berryR + 1.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#e05a6e";
+      ctx.beginPath();
+      ctx.arc(bx, by, berryR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.55)";
+      ctx.beginPath();
+      ctx.arc(bx - berryR * 0.3, by - berryR * 0.3, berryR * 0.32, 0, Math.PI * 2);
       ctx.fill();
     }
   }
 }
 
-export function drawKirbyTree(
+/** Cartoon impact burst shown where two bears collide. t goes 0 → 1. */
+export function drawKirbyBumpStar(
   ctx: CanvasRenderingContext2D,
-  tx: number,
-  groundY: number,
-  playTop: number,
-  laneWidth: number,
-  shakeX: number,
+  x: number,
+  y: number,
+  t: number,
 ): void {
-  const x = tx + shakeX;
-  const treeRegionH = groundY - playTop;
+  const fade = 1 - t;
+  const r = 8 + t * 24;
 
-  // n bumps + straight walls prevent sky showing through V-notch gaps
-  const n = 4;
-  // R chosen so canopy fills ~78% of tree height:
-  // canopyBottom = playTop + R + wallH + bumpR = playTop + R + 2*(R/n)
-  // = playTop + R*(1 + 2/n) → for n=4: playTop + 1.5*R
-  // We want 1.5*R = treeRegionH*0.78 → R = treeRegionH*0.52
-  const R = Math.max(laneWidth * 0.62, treeRegionH * 0.52);
-  const cy = playTop + R;
-  const bumpR = R / n;
-  const wallH = bumpR; // straight side walls = same height as bumps
-  const canopyBottom = cy + wallH + bumpR;
-
-  const trunkTop = canopyBottom - 4;
-  const trunkH = groundY - trunkTop;
-  const trunkW = Math.max(18, laneWidth * 0.17);
-
-  // ── Shadow ───────────────────────────────────────────────────────────────
-  ctx.fillStyle = KIRBY.canopyDark;
-  traceWaisted(ctx, x, cy + 7, R, wallH, bumpR, n);
-  ctx.fill();
-
-  // ── Main canopy ──────────────────────────────────────────────────────────
-  ctx.fillStyle = KIRBY.canopyMid;
-  traceWaisted(ctx, x, cy, R, wallH, bumpR, n);
-  ctx.fill();
-
-  // ── Highlight (clipped) ──────────────────────────────────────────────────
   ctx.save();
-  traceWaisted(ctx, x, cy, R, wallH, bumpR, n);
-  ctx.clip();
-  ctx.fillStyle = KIRBY.canopyLight;
-  ctx.beginPath();
-  ctx.ellipse(x - R * 0.28, cy - R * 0.25, R * 0.44, R * 0.36, -0.3, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
+  ctx.lineCap = "round";
 
-  // ── Outline (dark green so overlapping trees blend smoothly) ─────────────
-  ctx.strokeStyle = KIRBY.canopyDark;
-  ctx.lineWidth = 2.5;
-  traceWaisted(ctx, x, cy, R, wallH, bumpR, n);
+  // Expanding ring
+  ctx.strokeStyle = `rgba(255,255,255,${0.85 * fade})`;
+  ctx.lineWidth = Math.max(0.5, 3.5 * fade);
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.stroke();
 
-  // ── Trunk ────────────────────────────────────────────────────────────────
-  ctx.fillStyle = KIRBY.trunk;
-  ctx.strokeStyle = KIRBY.outline;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.roundRect(x - trunkW / 2, trunkTop, trunkW, trunkH, 4);
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.fillStyle = KIRBY.trunkDark;
-  ctx.beginPath();
-  ctx.roundRect(x - trunkW / 2 + 3, groundY - 12, trunkW - 6, 9, 3);
-  ctx.fill();
-
-  for (const kp of [0.2, 0.5, 0.75] as const) {
-    ctx.fillStyle = KIRBY.trunkKnot;
+  // Radiating spikes
+  ctx.strokeStyle = `rgba(255,210,62,${fade})`;
+  ctx.lineWidth = Math.max(0.5, 3 * fade);
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI / 3) * i + Math.PI / 6;
     ctx.beginPath();
-    ctx.arc(x - trunkW * 0.1, trunkTop + kp * trunkH, treeRegionH * 0.016, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(x + Math.cos(a) * r * 0.55, y + Math.sin(a) * r * 0.55);
+    ctx.lineTo(x + Math.cos(a) * r * 1.15, y + Math.sin(a) * r * 1.15);
+    ctx.stroke();
   }
-}
 
-/**
- * Trace the "waisted canopy" path:
- *
- *   smooth arc over the top
- *   │                │   ← straight walls of height wallH (fills V-notch gaps)
- *   ∪ ∪ ∪ ∪         ← n downward bumps of radius bumpR
- *
- * The walls are critical — without them, sky shows through the gaps between
- * adjacent scallop bumps, creating unwanted arch/cathedral effects.
- */
-function traceWaisted(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  R: number,
-  wallH: number,
-  bumpR: number,
-  n: number,
-): void {
-  ctx.beginPath();
-  // Top smooth arc: CCW from (cx+R, cy) → over the top → to (cx-R, cy)
-  ctx.arc(cx, cy, R, 0, Math.PI, true);
-  // Left wall: straight line DOWN from (cx-R, cy) to (cx-R, cy+wallH)
-  ctx.lineTo(cx - R, cy + wallH);
-  // Bottom bumps: n downward arcs from left to right at y = cy+wallH
-  for (let i = 0; i < n; i++) {
-    const bx = cx - R + (2 * i + 1) * bumpR;
-    ctx.arc(bx, cy + wallH, bumpR, Math.PI, 0, false);
-  }
-  // Right wall: straight line UP from (cx+R, cy+wallH) to (cx+R, cy)
-  ctx.lineTo(cx + R, cy);
-  ctx.closePath();
+  ctx.restore();
 }
 
 export function drawKirbyBushes(

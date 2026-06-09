@@ -17,6 +17,8 @@ export type BearState = {
   score: number;
   isPlayer: boolean;
   vx: number;
+  /** Knockback velocity from bumps — decays over time, independent of input */
+  knockVx: number;
   moveDir: -1 | 0 | 1;
   bumpCooldown: number;
   bumpAnim: number;

@@ -13,6 +13,11 @@ function wpHostname(): string | undefined {
 const host = wpHostname();
 
 const nextConfig: NextConfig = {
+  // Stray lockfiles in parent directories make Turbopack infer the wrong
+  // workspace root, breaking module resolution (e.g. tailwindcss).
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     remotePatterns: host
       ? [

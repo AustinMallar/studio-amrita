@@ -8,6 +8,7 @@ import {
   drawArcadeFrame,
   drawKirbyBasket,
   drawKirbyBomb,
+  drawKirbyBumpStar,
   drawKirbyBushes,
   drawKirbyForest,
   drawKirbyGround,
@@ -26,6 +27,13 @@ import type {
   InputState,
   RoundResult,
 } from "@/lib/game/types";
+
+type BumpEffect = {
+  x: number;
+  y: number;
+  age: number;
+  ttl: number;
+};
 
 function mulberry32(seed: number): () => number {
   return () => {
@@ -54,6 +62,7 @@ export class GameEngine {
   private roundComplete = false;
   private pendingBurst = 0;
   private rng: () => number = Math.random;
+  private effects: BumpEffect[] = [];
   private sprites: SpriteSheet | null = null;
   private reducedMotion = false;
   private paused = false;
@@ -125,11 +134,13 @@ export class GameEngine {
       score: 0,
       isPlayer: id === this.playerBearId,
       vx: 0,
+      knockVx: 0,
       moveDir: 0,
       bumpCooldown: 0,
       bumpAnim: 0,
     }));
     this.drops = [];
+    this.effects = [];
     this.strawberriesSpawned = 0;
     this.bombsSpawned = 0;
     this.spawnTimer = 0;
@@ -307,88 +318,104 @@ export class GameEngine {
     return [...this.bears].sort((a, b) => a.x - b.x);
   }
 
-  private resolveBump(): void {
-    if (!this.bumpRequested) return;
-    this.bumpRequested = false;
-
-    const player = this.bears.find((b) => b.isPlayer);
-    if (!player || player.bumpCooldown > 0) return;
-
-    const sorted = this.sortedBearsByX();
-    const idx = sorted.findIndex((b) => b.id === player.id);
-    if (idx < 0) return;
+  /**
+   * Impulse-based bump: the bumper shoves the nearest bear in range, sending
+   * it flying with a decaying knockback velocity. The bumper takes a small
+   * recoil in the opposite direction. Bumping while moving toward the target
+   * hits harder ("charged" bump).
+   */
+  private performBump(bumper: BearState): void {
+    if (bumper.bumpCooldown > 0) return;
 
     let neighbor: BearState | null = null;
-    if (idx > 0) {
-      const left = sorted[idx - 1];
-      if (Math.abs(left.x - player.x) <= GAME_CONFIG.bearWidth + GAME_CONFIG.adjacencyGap) {
-        neighbor = left;
+    let bestDist = Infinity;
+    for (const other of this.bears) {
+      if (other.id === bumper.id) continue;
+      const dist = Math.abs(other.x - bumper.x);
+      if (dist <= GAME_CONFIG.bumpRange && dist < bestDist) {
+        bestDist = dist;
+        neighbor = other;
       }
     }
-    if (!neighbor && idx < sorted.length - 1) {
-      const right = sorted[idx + 1];
-      if (Math.abs(right.x - player.x) <= GAME_CONFIG.bearWidth + GAME_CONFIG.adjacencyGap) {
-        neighbor = right;
-      }
-    }
-    if (!neighbor || neighbor.bumpCooldown > 0) return;
+    if (!neighbor) return;
 
-    const moving = player.moveDir !== 0;
-    if (moving) {
-      const tempX = player.x;
-      player.x = neighbor.x;
-      neighbor.x = tempX;
-    } else {
-      const dir = neighbor.x > player.x ? 1 : -1;
-      const push = GAME_CONFIG.bumpPushForce * 0.05;
-      neighbor.x += dir * push * 8;
-      const halfW = GAME_CONFIG.bearWidth / 2;
-      const minX = GAME_CONFIG.groundPadding + halfW;
-      const maxX = this.width - GAME_CONFIG.groundPadding - halfW;
-      neighbor.x = Math.max(minX, Math.min(maxX, neighbor.x));
-    }
+    const dir = neighbor.x >= bumper.x ? 1 : -1;
+    const charged = bumper.moveDir === dir;
+    const force = GAME_CONFIG.bumpPushForce * (charged ? GAME_CONFIG.bumpChargeBonus : 1);
+    // Closer contact transfers more energy
+    const proximity = 1 - (bestDist / GAME_CONFIG.bumpRange) * 0.35;
 
-    player.bumpCooldown = GAME_CONFIG.bumpCooldownMs / 1000;
-    neighbor.bumpCooldown = GAME_CONFIG.bumpCooldownMs / 1000;
-    player.bumpAnim = 0.2;
-    neighbor.bumpAnim = 0.2;
+    neighbor.knockVx += dir * force * proximity;
+    bumper.knockVx -= dir * force * GAME_CONFIG.bumpRecoilFactor;
+
+    bumper.bumpCooldown = GAME_CONFIG.bumpCooldownMs / 1000;
+    neighbor.bumpCooldown = Math.max(neighbor.bumpCooldown, GAME_CONFIG.bumpVictimStunMs / 1000);
+    bumper.bumpAnim = 0.2;
+    neighbor.bumpAnim = 0.3;
+
+    this.effects.push({
+      x: (bumper.x + neighbor.x) / 2,
+      y: this.groundY() - GAME_CONFIG.bearHeight * 0.55,
+      age: 0,
+      ttl: 0.28,
+    });
   }
 
-  private resolveCpuBumps(): void {
-    const player = this.bears.find((b) => b.isPlayer)!;
+  /** Integrate knockback velocity with friction and wall bounce. */
+  private applyKnockback(dt: number): void {
+    const halfW = GAME_CONFIG.bearWidth / 2;
+    const minX = GAME_CONFIG.groundPadding + halfW;
+    const maxX = this.width - GAME_CONFIG.groundPadding - halfW;
+
     for (const bear of this.bears) {
-      if (bear.isPlayer || bear.bumpCooldown > 0) continue;
-      const input = updateCpuInput(bear, this.bears, this.drops, player, this.rng);
-      if (!input.bump) continue;
+      if (bear.knockVx === 0) continue;
+      bear.x += bear.knockVx * dt;
 
-      const sorted = this.sortedBearsByX();
-      const idx = sorted.findIndex((b) => b.id === bear.id);
-      let neighbor: BearState | null = null;
-      if (idx > 0) {
-        const left = sorted[idx - 1];
-        if (Math.abs(left.x - bear.x) <= GAME_CONFIG.bearWidth + GAME_CONFIG.adjacencyGap) {
-          neighbor = left;
-        }
+      if (bear.x <= minX) {
+        bear.x = minX;
+        if (bear.knockVx < 0) bear.knockVx = -bear.knockVx * GAME_CONFIG.wallBounce;
+      } else if (bear.x >= maxX) {
+        bear.x = maxX;
+        if (bear.knockVx > 0) bear.knockVx = -bear.knockVx * GAME_CONFIG.wallBounce;
       }
-      if (!neighbor && idx < sorted.length - 1) {
-        const right = sorted[idx + 1];
-        if (Math.abs(right.x - bear.x) <= GAME_CONFIG.bearWidth + GAME_CONFIG.adjacencyGap) {
-          neighbor = right;
-        }
-      }
-      if (!neighbor || neighbor.bumpCooldown > 0) continue;
 
-      const moving = bear.moveDir !== 0;
-      if (moving) {
-        const tempX = bear.x;
-        bear.x = neighbor.x;
-        neighbor.x = tempX;
-      } else {
-        const dir = neighbor.x > bear.x ? 1 : -1;
-        neighbor.x += dir * GAME_CONFIG.bumpPushForce * 0.4;
+      bear.knockVx *= Math.exp(-GAME_CONFIG.knockFriction * dt);
+      if (Math.abs(bear.knockVx) < 6) bear.knockVx = 0;
+    }
+  }
+
+  /**
+   * Soft body collision: bears can't stand inside each other. Overlapping
+   * pairs get pushed apart and knockback momentum transfers between them,
+   * so one bear can be knocked into another (chain bumps).
+   */
+  private separateBears(): void {
+    const minGap = GAME_CONFIG.bearWidth * GAME_CONFIG.bearSeparationFactor;
+    const halfW = GAME_CONFIG.bearWidth / 2;
+    const minX = GAME_CONFIG.groundPadding + halfW;
+    const maxX = this.width - GAME_CONFIG.groundPadding - halfW;
+    const sorted = this.sortedBearsByX();
+
+    for (let i = 0; i < sorted.length - 1; i++) {
+      const a = sorted[i];
+      const b = sorted[i + 1];
+      const overlap = minGap - (b.x - a.x);
+      if (overlap <= 0) continue;
+
+      a.x -= overlap / 2;
+      b.x += overlap / 2;
+
+      // Transfer momentum when one bear is flying into the other
+      const relative = a.knockVx - b.knockVx;
+      if (relative > 0) {
+        const transfer = relative * 0.5;
+        a.knockVx -= transfer;
+        b.knockVx += transfer;
       }
-      bear.bumpCooldown = GAME_CONFIG.bumpCooldownMs / 1000;
-      neighbor.bumpCooldown = GAME_CONFIG.bumpCooldownMs / 1000;
+    }
+
+    for (const bear of this.bears) {
+      bear.x = Math.max(minX, Math.min(maxX, bear.x));
     }
   }
 
@@ -401,20 +428,30 @@ export class GameEngine {
 
     const player = this.bears.find((b) => b.isPlayer)!;
     applyMovementInput(player, this.input, dt, this.width);
+    if (this.bumpRequested) {
+      this.bumpRequested = false;
+      this.performBump(player);
+    }
 
     for (const bear of this.bears) {
       if (bear.isPlayer) continue;
       const cpuInput = updateCpuInput(bear, this.bears, this.drops, player, this.rng);
       applyMovementInput(bear, cpuInput, dt, this.width);
+      if (cpuInput.bump) this.performBump(bear);
     }
 
-    this.resolveBump();
-    this.resolveCpuBumps();
+    this.applyKnockback(dt);
+    this.separateBears();
 
     for (const bear of this.bears) {
       bear.bumpCooldown = Math.max(0, bear.bumpCooldown - dt);
       bear.bumpAnim = Math.max(0, bear.bumpAnim - dt);
     }
+
+    for (const effect of this.effects) {
+      effect.age += dt;
+    }
+    this.effects = this.effects.filter((e) => e.age < e.ttl);
 
     this.trySpawn(dt);
     this.updateDrops(dt);
@@ -462,6 +499,10 @@ export class GameEngine {
       this.drawBear(ctx, bear);
     }
 
+    for (const effect of this.effects) {
+      drawKirbyBumpStar(ctx, effect.x, effect.y, effect.age / effect.ttl);
+    }
+
     drawKirbyScoreHud(
       ctx,
       w,
@@ -502,12 +543,17 @@ export class GameEngine {
     const w = GAME_CONFIG.bearWidth;
     const h = GAME_CONFIG.bearHeight;
     const bob = this.reducedMotion ? 0 : Math.sin(Date.now() * 0.012 + bear.x) * 2;
-    const scale = 1 + bear.bumpAnim * 0.12;
+    const scale = 1 + bear.bumpAnim * 0.16;
     const x = bear.x;
     const y = bear.y + bob;
+    // Lean into movement and away from knockback hits
+    const lean = this.reducedMotion
+      ? 0
+      : Math.max(-0.16, Math.min(0.16, (bear.vx * 0.3 + bear.knockVx) * 0.00045));
 
     ctx.save();
     ctx.translate(x, y);
+    if (lean !== 0) ctx.rotate(lean);
     ctx.scale(scale, 2 - scale);
 
     const bearImg = this.sprites?.bears[bear.id];
