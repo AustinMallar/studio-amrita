@@ -1,0 +1,107 @@
+"use client";
+
+import Image from "next/image";
+import { useEffect, useRef } from "react";
+
+const IMAGE_WIDTH = 1024;
+const IMAGE_HEIGHT = 256;
+const MAX_OFFSET = 72;
+
+function applyParallax(
+  layer: HTMLDivElement,
+  progress: number,
+) {
+  layer.style.opacity = String(progress);
+  layer.style.transform = `translate3d(0, ${MAX_OFFSET * (1 - progress)}px, 0)`;
+}
+
+function applyStatic(layer: HTMLDivElement) {
+  layer.style.opacity = "1";
+  layer.style.transform = "translate3d(0, 0, 0)";
+}
+
+export function FooterParallaxBears() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const layerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    const layer = layerRef.current;
+    if (!el || !layer) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (reducedMotion.matches) {
+      applyStatic(layer);
+      return;
+    }
+
+    let raf = 0;
+
+    const update = () => {
+      const rect = el.getBoundingClientRect();
+      const viewH = window.innerHeight;
+      const start = viewH * 0.92;
+      const end = viewH * 0.35;
+      const range = start - end;
+      const progress = Math.min(1, Math.max(0, (start - rect.top) / range));
+      applyParallax(layer, progress);
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
+    const onMotionChange = () => {
+      if (reducedMotion.matches) {
+        applyStatic(layer);
+        cancelAnimationFrame(raf);
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onScroll);
+      } else {
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll);
+        update();
+      }
+    };
+    reducedMotion.addEventListener("change", onMotionChange);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      reducedMotion.removeEventListener("change", onMotionChange);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative h-24 overflow-hidden sm:h-32 lg:h-40"
+      aria-hidden
+    >
+      <div
+        ref={layerRef}
+        className="footer-parallax-bears-layer absolute inset-x-0 bottom-0 will-change-transform"
+        style={{
+          opacity: 0,
+          transform: `translate3d(0, ${MAX_OFFSET}px, 0)`,
+        }}
+      >
+        <Image
+          src="/footer-bears.png"
+          alt=""
+          width={IMAGE_WIDTH}
+          height={IMAGE_HEIGHT}
+          className="h-auto w-full object-cover object-bottom"
+          sizes="100vw"
+        />
+      </div>
+    </div>
+  );
+}

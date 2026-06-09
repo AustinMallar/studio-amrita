@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { FooterParallaxBears } from "@/components/FooterParallaxBears";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SocialLinks } from "@/components/SocialLinks";
 
@@ -54,35 +55,38 @@ export function FooterValues() {
   ] as const;
 
   return (
-    <footer className="border-t border-black/[0.06] bg-cream px-4 py-14 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-        {blocks.map((item, i) => (
-          <ScrollReveal key={item.title} delayMs={i * 44}>
-            <Value title={item.title} body={item.body} icon={item.icon} />
-          </ScrollReveal>
-        ))}
-      </div>
-      <ScrollReveal className="mx-auto mt-12 flex max-w-6xl flex-col items-center gap-4">
-        <p className="font-sans text-xs font-semibold uppercase tracking-[0.2em] text-body">
-          Follow us
+    <footer className="border-t border-black/[0.06] bg-cream">
+      <div className="px-4 py-14 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {blocks.map((item, i) => (
+            <ScrollReveal key={item.title} delayMs={i * 44}>
+              <Value title={item.title} body={item.body} icon={item.icon} />
+            </ScrollReveal>
+          ))}
+        </div>
+        <ScrollReveal className="mx-auto mt-12 flex max-w-6xl flex-col items-center gap-4">
+          <p className="font-sans text-xs font-semibold uppercase tracking-[0.2em] text-body">
+            Follow us
+          </p>
+          <SocialLinks />
+          <a
+            href="mailto:shop@studioamrita.ca"
+            className="font-sans text-sm text-body underline-offset-4 hover:text-dusty-rose hover:underline"
+          >
+            Contact us
+          </a>
+          <Link
+            href="/play"
+            className="font-sans text-xs text-body/70 underline-offset-4 hover:text-dusty-rose hover:underline"
+          >
+            Berry Bump ♡
+          </Link>
+        </ScrollReveal>
+        <p className="mx-auto mt-8 max-w-6xl text-center font-sans text-xs text-body">
+          © {new Date().getFullYear()} Studio Amrita. All rights reserved.
         </p>
-        <SocialLinks />
-        <a
-          href="mailto:shop@studioamrita.ca"
-          className="font-sans text-sm text-body underline-offset-4 hover:text-dusty-rose hover:underline"
-        >
-          Contact us
-        </a>
-        <Link
-          href="/play"
-          className="font-sans text-xs text-body/70 underline-offset-4 hover:text-dusty-rose hover:underline"
-        >
-          Berry Bump ♡
-        </Link>
-      </ScrollReveal>
-      <p className="mx-auto mt-8 max-w-6xl text-center font-sans text-xs text-body">
-        © {new Date().getFullYear()} Studio Amrita. All rights reserved.
-      </p>
+      </div>
+      <FooterParallaxBears />
     </footer>
   );
 }

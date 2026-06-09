@@ -64,6 +64,11 @@ body {
     transition: none !important;
   }
 
+  .footer-parallax-bears-layer {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   .animate-pulse {
     animation: none !important;
   }
