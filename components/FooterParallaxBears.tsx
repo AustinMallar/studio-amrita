@@ -85,27 +85,30 @@ export function FooterParallaxBears() {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative aspect-[4/1] w-full overflow-hidden"
-      aria-hidden
-    >
+    <div className="px-4 sm:px-6 lg:px-8">
       <div
-        ref={layerRef}
-        className="footer-parallax-bears-layer absolute inset-x-0 bottom-0 will-change-transform"
-        style={{
-          opacity: 0,
-          transform: `translate3d(0, ${MAX_OFFSET}px, 0)`,
-        }}
+        ref={containerRef}
+        className="relative mx-auto aspect-[4/1] w-full max-w-md overflow-hidden sm:max-w-lg lg:max-w-xl"
+        aria-hidden
       >
-        <Image
-          src="/footer-bears.png"
-          alt=""
-          width={IMAGE_WIDTH}
-          height={IMAGE_HEIGHT}
-          className="h-auto w-full"
-          sizes="100vw"
-        />
+        <div
+          ref={layerRef}
+          className="footer-parallax-bears-layer absolute inset-x-0 bottom-0 will-change-transform"
+          style={{
+            opacity: 0,
+            transform: `translate3d(0, ${MAX_OFFSET}px, 0)`,
+          }}
+        >
+          <Image
+            src="/footer-bears.png"
+            alt=""
+            width={IMAGE_WIDTH}
+            height={IMAGE_HEIGHT}
+            className="h-auto w-full"
+            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 512px, 576px"
+            quality={90}
+          />
+        </div>
       </div>
     </div>
   );
