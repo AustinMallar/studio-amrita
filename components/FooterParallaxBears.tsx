@@ -5,12 +5,23 @@ import { useEffect, useRef } from "react";
 
 const IMAGE_WIDTH = 1024;
 const IMAGE_HEIGHT = 256;
-const MAX_OFFSET = 72;
+const MAX_OFFSET = 48;
 
-function applyParallax(
-  layer: HTMLDivElement,
-  progress: number,
-) {
+function parallaxProgress(el: HTMLElement) {
+  const viewH = window.innerHeight;
+  const rect = el.getBoundingClientRect();
+  const travel = rect.height + MAX_OFFSET;
+  const belowViewport = Math.max(0, rect.bottom - viewH);
+  let progress = Math.min(1, Math.max(0, 1 - belowViewport / travel));
+
+  const atPageBottom =
+    window.scrollY + viewH >= document.documentElement.scrollHeight - 2;
+  if (atPageBottom) progress = 1;
+
+  return progress;
+}
+
+function applyParallax(layer: HTMLDivElement, progress: number) {
   layer.style.opacity = String(progress);
   layer.style.transform = `translate3d(0, ${MAX_OFFSET * (1 - progress)}px, 0)`;
 }
@@ -39,13 +50,7 @@ export function FooterParallaxBears() {
     let raf = 0;
 
     const update = () => {
-      const rect = el.getBoundingClientRect();
-      const viewH = window.innerHeight;
-      const start = viewH * 0.92;
-      const end = viewH * 0.35;
-      const range = start - end;
-      const progress = Math.min(1, Math.max(0, (start - rect.top) / range));
-      applyParallax(layer, progress);
+      applyParallax(layer, parallaxProgress(el));
     };
 
     const onScroll = () => {
@@ -82,7 +87,7 @@ export function FooterParallaxBears() {
   return (
     <div
       ref={containerRef}
-      className="relative h-24 overflow-hidden sm:h-32 lg:h-40"
+      className="relative aspect-[4/1] w-full overflow-hidden"
       aria-hidden
     >
       <div
@@ -98,7 +103,7 @@ export function FooterParallaxBears() {
           alt=""
           width={IMAGE_WIDTH}
           height={IMAGE_HEIGHT}
-          className="h-auto w-full object-cover object-bottom"
+          className="h-auto w-full"
           sizes="100vw"
         />
       </div>
