@@ -50,7 +50,9 @@ export function BumperCropGame({ showCharacterIntro = true }: Props) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div
+      className={`mx-auto w-full max-w-3xl${phase === "playing" ? " min-h-[70dvh]" : ""}`}
+    >
       {phase === "select" && (
         <CharacterSelect onSelect={handleSelect} showIntro={showCharacterIntro} />
       )}

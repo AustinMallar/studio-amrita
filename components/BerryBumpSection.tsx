@@ -21,7 +21,7 @@ export function BerryBumpSection() {
           <GameDiscountTeaser className="mt-5" />
         </ScrollReveal>
 
-        <ScrollReveal className="mt-10 min-h-[70dvh]" delayMs={70}>
+        <ScrollReveal className="mt-10" delayMs={70}>
           <BumperCropGame showCharacterIntro={false} />
         </ScrollReveal>
       </div>

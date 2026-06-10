@@ -38,7 +38,7 @@ export default function PlayPage() {
             </p>
           </ScrollReveal>
 
-          <ScrollReveal className="mt-10 min-h-[70dvh]" delayMs={70}>
+          <ScrollReveal className="mt-10" delayMs={70}>
             <BumperCropGame />
           </ScrollReveal>
         </div>
