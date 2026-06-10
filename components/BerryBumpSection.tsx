@@ -1,4 +1,5 @@
 import { BumperCropGame } from "@/components/game/BumperCropGame";
+import { GameDiscountTeaser } from "@/components/game/GameDiscountTeaser";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
 export function BerryBumpSection() {
@@ -17,6 +18,7 @@ export function BerryBumpSection() {
             Pick your Glow Bear, catch falling strawberries, dodge yarn bombs, bump rivals aside,
             and jump over them for the win.
           </p>
+          <GameDiscountTeaser className="mt-5" />
         </ScrollReveal>
 
         <ScrollReveal className="mt-10 min-h-[70dvh]" delayMs={70}>

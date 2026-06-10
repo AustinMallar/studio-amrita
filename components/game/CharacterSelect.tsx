@@ -1,5 +1,6 @@
 "use client";
 
+import { GameDiscountTeaser } from "@/components/game/GameDiscountTeaser";
 import { GLOW_BEARS } from "@/lib/game/constants";
 import type { BearId } from "@/lib/game/types";
 
@@ -23,6 +24,7 @@ export function CharacterSelect({ onSelect, showIntro = true }: Props) {
             Catch crochet strawberries in your basket. Dodge yarn bombs (−3 points). Bump rivals to
             shove them aside, or jump to hop right over them!
           </p>
+          <GameDiscountTeaser className="mt-4" />
         </div>
       ) : (
         <div>
