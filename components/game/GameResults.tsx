@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { GameWinCoupon } from "@/components/game/GameWinCoupon";
 import { BEAR_BY_ID } from "@/lib/game/constants";
 import type { BearId, RoundResult } from "@/lib/game/types";
 
@@ -33,6 +34,8 @@ export function GameResults({ result, onPlayAgain, onRematch }: Props) {
             : `Nice try, ${playerName}! ${winnerName} had the fullest basket.`}
         </p>
       </div>
+
+      {playerWon ? <GameWinCoupon /> : null}
 
       <ol className="w-full rounded-2xl border border-black/[0.06] bg-cream/80 px-5 py-4 text-left">
         {ranked.map(([id, score], i) => (

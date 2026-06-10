@@ -67,3 +67,6 @@ export function bearSpeedForScore(baseSpeed: number, score: number): number {
 export function otherBearIds(playerId: BearId): BearId[] {
   return GLOW_BEARS.filter((b) => b.id !== playerId).map((b) => b.id);
 }
+
+/** WooCommerce coupon code awarded when the player wins Berry Bump. */
+export const BERRY_BUMP_WIN_COUPON = "GLOW15";
