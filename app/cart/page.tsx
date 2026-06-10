@@ -1,3 +1,4 @@
+import { CartCouponForm } from "@/components/CartCouponForm";
 import { CartLineThumb } from "@/components/CartLineThumb";
 import { CartShippingSelector } from "@/components/CartShippingSelector";
 import { RemoveFromCartButton } from "@/components/RemoveFromCartButton";
@@ -21,6 +22,8 @@ export default async function CartPage() {
   const { cart, gqlErrors, sessionSyncNeeded } = await loadCartPageData(session, jwt);
 
   const lines = (cart?.contents?.nodes ?? []).filter(Boolean);
+  const appliedCoupons = (cart?.appliedCoupons ?? []).filter((c) => c?.code?.trim());
+  const discountTotal = cart?.discountTotal?.trim() ?? "";
   const flatRates = flattenShippingRates(cart?.availableShippingMethods);
   const shippingLabel = cart?.shippingTotal?.trim() ?? "";
   const hasShippingAmount = shippingLabel.length > 0;
@@ -80,6 +83,10 @@ export default async function CartPage() {
           </ul>
         ) : null}
 
+        {lines.length > 0 ? (
+          <CartCouponForm appliedCoupons={appliedCoupons} />
+        ) : null}
+
         {lines.length > 0 && flatRates.length > 0 ? (
           <CartShippingSelector
             rates={flatRates}
@@ -112,6 +119,12 @@ export default async function CartPage() {
                       ? formatShippingCostForDisplay(flatRates[0].cost)
                       : "N/A"}
                 </span>
+              </p>
+            ) : null}
+            {discountTotal ? (
+              <p className="flex justify-between text-body">
+                <span>Discount</span>
+                <span>−{discountTotal}</span>
               </p>
             ) : null}
             {cart?.total ? (

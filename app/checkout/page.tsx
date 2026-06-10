@@ -1,3 +1,4 @@
+import { CartCouponForm } from "@/components/CartCouponForm";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { FooterValues } from "@/components/FooterValues";
 import { PromoBar } from "@/components/PromoBar";
@@ -20,6 +21,7 @@ export default async function CheckoutPage() {
   const { cart, gqlErrors, sessionSyncNeeded } = await loadCartPageData(session, jwt);
 
   const lines = (cart?.contents?.nodes ?? []).filter(Boolean);
+  const appliedCoupons = (cart?.appliedCoupons ?? []).filter((c) => c?.code?.trim());
   if (lines.length === 0 && gqlErrors.length === 0) {
     redirect("/cart");
   }
@@ -37,9 +39,11 @@ export default async function CheckoutPage() {
   }
 
   const shippingLabel = cart?.shippingTotal?.trim() ?? "";
+  const discountTotal = cart?.discountTotal?.trim() ?? "";
   const cartSummary = {
     subtotal: cart?.subtotal ?? null,
     shipping: shippingLabel.length > 0 ? shippingLabel : null,
+    discount: discountTotal.length > 0 ? discountTotal : null,
     total: cart?.total ?? null,
   };
 
@@ -69,6 +73,7 @@ export default async function CheckoutPage() {
               Pay with PayPal on the next step. You’ll leave this site briefly to approve payment,
               then return when it’s complete.
             </p>
+            <CartCouponForm appliedCoupons={appliedCoupons} />
             <CheckoutForm
               flatRates={flatRates}
               chosenShippingMethods={cart?.chosenShippingMethods}

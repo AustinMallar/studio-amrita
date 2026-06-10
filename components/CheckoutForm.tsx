@@ -33,6 +33,7 @@ type Props = {
   cartSummary: {
     subtotal: string | null;
     shipping: string | null;
+    discount: string | null;
     total: string | null;
   };
   /** When set, email field is hidden and this address is used at checkout. */
@@ -202,6 +203,12 @@ export function CheckoutForm({
             <div className="flex justify-between gap-4">
               <dt className="text-body">Shipping</dt>
               <dd>{cartSummary.shipping}</dd>
+            </div>
+          ) : null}
+          {cartSummary.discount ? (
+            <div className="flex justify-between gap-4">
+              <dt className="text-body">Discount</dt>
+              <dd>−{cartSummary.discount}</dd>
             </div>
           ) : null}
           {cartSummary.total ? (

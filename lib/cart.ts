@@ -55,6 +55,12 @@ const CART_SELECTION_FIELDS = `
   }
   total
   subtotal
+  discountTotal
+  appliedCoupons {
+    code
+    discountAmount
+    discountTax
+  }
   shippingTotal
   needsShippingAddress
   chosenShippingMethods
@@ -107,6 +113,22 @@ export const UPDATE_SHIPPING_METHOD_MUTATION = `
   }
 `;
 
+export const APPLY_COUPON_MUTATION = `
+  mutation ApplyCoupon($input: ApplyCouponInput!) {
+    applyCoupon(input: $input) {
+      ${CART_MUTATION_PAYLOAD}
+    }
+  }
+`;
+
+export const REMOVE_COUPONS_MUTATION = `
+  mutation RemoveCoupons($input: RemoveCouponsInput!) {
+    removeCoupons(input: $input) {
+      ${CART_MUTATION_PAYLOAD}
+    }
+  }
+`;
+
 /** WooCommerce GraphQL cart subset used by the storefront. */
 export type CartShippingRate = {
   id?: string | null;
@@ -116,6 +138,12 @@ export type CartShippingRate = {
 
 export type CartShippingPackage = {
   rates?: CartShippingRate[] | null;
+};
+
+export type AppliedCoupon = {
+  code?: string | null;
+  discountAmount?: string | null;
+  discountTax?: string | null;
 };
 
 export type CartQueryShape = {
@@ -131,6 +159,8 @@ export type CartQueryShape = {
   } | null;
   total?: string | null;
   subtotal?: string | null;
+  discountTotal?: string | null;
+  appliedCoupons?: AppliedCoupon[] | null;
   shippingTotal?: string | null;
   needsShippingAddress?: boolean | null;
   chosenShippingMethods?: string[] | null;
@@ -179,6 +209,40 @@ export async function removeItemsFromCartMutation(
       cart?: CartQueryShape | null;
     };
   }>(REMOVE_ITEMS_FROM_CART_MUTATION, { input: payload }, sessionToken, authToken);
+}
+
+export async function applyCouponMutation(
+  sessionToken: string | null | undefined,
+  code: string,
+  authToken?: string | null
+) {
+  const payload = {
+    clientMutationId: `next-coupon-${Date.now()}`,
+    code: code.trim(),
+  };
+
+  return wpGraphQLWithJwtRecovery<{
+    applyCoupon?: {
+      cart?: CartQueryShape | null;
+    };
+  }>(APPLY_COUPON_MUTATION, { input: payload }, sessionToken, authToken);
+}
+
+export async function removeCouponsMutation(
+  sessionToken: string | null | undefined,
+  codes: string[],
+  authToken?: string | null
+) {
+  const payload = {
+    clientMutationId: `next-remove-coupon-${Date.now()}`,
+    codes: codes.map((c) => c.trim()).filter(Boolean),
+  };
+
+  return wpGraphQLWithJwtRecovery<{
+    removeCoupons?: {
+      cart?: CartQueryShape | null;
+    };
+  }>(REMOVE_COUPONS_MUTATION, { input: payload }, sessionToken, authToken);
 }
 
 export async function updateShippingMethodMutation(
