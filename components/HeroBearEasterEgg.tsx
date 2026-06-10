@@ -31,7 +31,7 @@ export function HeroBearEasterEgg({ src, alt, width, height, sizes, priority }: 
       /* ignore */
     }
     setToast(true);
-    setTimeout(() => router.push("/play"), 600);
+    setTimeout(() => router.push("/#berry-bump"), 600);
   }, [router]);
 
   const registerClick = useCallback(() => {

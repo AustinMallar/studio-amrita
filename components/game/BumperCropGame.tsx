@@ -7,7 +7,12 @@ import { GameHUD } from "@/components/game/GameHUD";
 import { GameResults } from "@/components/game/GameResults";
 import type { BearId, GamePhase, GameSnapshot, RoundResult } from "@/lib/game/types";
 
-export function BumperCropGame() {
+type Props = {
+  /** When false, character select skips the duplicate section header (homepage embed). */
+  showCharacterIntro?: boolean;
+};
+
+export function BumperCropGame({ showCharacterIntro = true }: Props) {
   const [phase, setPhase] = useState<GamePhase>("select");
   const [playerBearId, setPlayerBearId] = useState<BearId>("matcha");
   const [result, setResult] = useState<RoundResult | null>(null);
@@ -46,7 +51,9 @@ export function BumperCropGame() {
 
   return (
     <div className="mx-auto w-full max-w-3xl">
-      {phase === "select" && <CharacterSelect onSelect={handleSelect} />}
+      {phase === "select" && (
+        <CharacterSelect onSelect={handleSelect} showIntro={showCharacterIntro} />
+      )}
 
       {phase === "playing" && (
         <div className="flex flex-col gap-3">

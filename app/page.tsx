@@ -1,4 +1,5 @@
 import { getHomepageCollections } from "@/lib/api";
+import { BerryBumpSection } from "@/components/BerryBumpSection";
 import { InstagramFeedSection } from "@/components/InstagramFeedSection";
 import { BrandStorySection } from "@/components/BrandStorySection";
 import { CollectionsIntro } from "@/components/CollectionsIntro";
@@ -136,6 +137,7 @@ export default async function Home() {
           );
         })}
         <InstagramFeedSection />
+        <BerryBumpSection />
         <BrandStorySection />
       </main>
       <FooterValues />

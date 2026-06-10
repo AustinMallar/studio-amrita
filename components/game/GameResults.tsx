@@ -59,20 +59,20 @@ export function GameResults({ result, onPlayAgain, onRematch }: Props) {
         <button
           type="button"
           onClick={onRematch}
-          className="inline-flex items-center justify-center rounded-full bg-dusty-rose px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-dusty-rose/90"
+          className="inline-flex select-none touch-manipulation items-center justify-center rounded-full bg-dusty-rose px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-dusty-rose/90"
         >
           Rematch
         </button>
         <button
           type="button"
           onClick={onPlayAgain}
-          className="inline-flex items-center justify-center rounded-full border border-dusty-rose/40 px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-heading transition hover:border-dusty-rose hover:text-dusty-rose"
+          className="inline-flex select-none touch-manipulation items-center justify-center rounded-full border border-dusty-rose/40 px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-heading transition hover:border-dusty-rose hover:text-dusty-rose"
         >
           New bear
         </button>
         <Link
           href="/#choose-your-glow"
-          className="inline-flex items-center justify-center rounded-full border border-black/[0.08] px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-body transition hover:text-dusty-rose"
+          className="inline-flex select-none touch-manipulation items-center justify-center rounded-full border border-black/[0.08] px-8 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-body transition hover:text-dusty-rose"
         >
           Shop bears ♡
         </Link>

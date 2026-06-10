@@ -76,7 +76,7 @@ export function FooterValues() {
             Contact us
           </a>
           <Link
-            href="/play"
+            href="/#berry-bump"
             className="font-sans text-xs text-body/70 underline-offset-4 hover:text-dusty-rose hover:underline"
           >
             Berry Bump ♡

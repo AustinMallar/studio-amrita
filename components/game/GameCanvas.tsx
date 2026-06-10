@@ -230,12 +230,12 @@ function GameControls({
   onJump: () => void;
 }) {
   return (
-    <div className="rounded-2xl border-2 border-[#a87840]/60 bg-cream/90 px-4 py-4 shadow-sm">
+    <div className="select-none touch-manipulation rounded-2xl border-2 border-[#a87840]/60 bg-cream/90 px-5 py-5 shadow-sm sm:px-4 sm:py-4">
       <p className="text-center font-sans text-sm font-semibold text-heading">
         Catch berries — bump rivals, jump over them
       </p>
 
-      <div className="mt-3 flex items-center justify-center gap-2 sm:gap-3">
+      <div className="mt-4 flex items-center justify-center gap-3 sm:mt-3 sm:gap-2">
         <MoveButton label="Move left" onStart={() => onMoveLeft(true)} onEnd={() => onMoveLeft(false)}>
           ←
         </MoveButton>
@@ -243,7 +243,7 @@ function GameControls({
         <ActionButton
           label="Jump over bears"
           onTrigger={onJump}
-          className="min-w-[4.5rem] border-[#5cb838]/40 bg-[#e8f5e0] text-[#2a6018] hover:bg-[#d4edc8] active:bg-[#b8e0a8]"
+          className="h-14 min-w-[5.5rem] border-[#5cb838]/40 bg-[#e8f5e0] px-6 text-base text-[#2a6018] hover:bg-[#d4edc8] active:bg-[#b8e0a8] sm:h-12 sm:min-w-[4.5rem] sm:px-5 sm:text-sm"
         >
           Jump
         </ActionButton>
@@ -253,11 +253,11 @@ function GameControls({
         </MoveButton>
       </div>
 
-      <div className="mt-3 flex justify-center">
+      <div className="mt-4 flex justify-center sm:mt-3">
         <ActionButton
           label="Bump rival bear"
           onTrigger={onBump}
-          className="h-14 min-w-[10rem] bg-dusty-rose text-base font-bold uppercase tracking-widest text-white shadow-md hover:bg-dusty-rose/90 active:scale-[0.98] sm:min-w-[12rem] sm:text-lg"
+          className="h-16 min-w-[12rem] bg-dusty-rose text-lg font-bold uppercase tracking-widest text-white shadow-md hover:bg-dusty-rose/90 active:scale-[0.98] sm:h-14 sm:min-w-[12rem] sm:text-lg"
         >
           Bump!
         </ActionButton>
@@ -282,11 +282,11 @@ function ControlHint({
   highlight?: boolean;
 }) {
   return (
-    <span className="inline-flex items-center gap-1.5">
+    <span className="inline-flex select-none items-center gap-1.5">
       {keys.map((key) => (
         <kbd
           key={key}
-          className={`inline-flex min-w-[1.6rem] items-center justify-center rounded border px-1.5 py-0.5 font-mono text-[0.7rem] font-semibold shadow-sm ${
+          className={`inline-flex min-w-[1.6rem] select-none items-center justify-center rounded border px-1.5 py-0.5 font-mono text-[0.7rem] font-semibold shadow-sm ${
             highlight
               ? "border-dusty-rose/50 bg-dusty-rose text-white"
               : "border-black/10 bg-white text-heading"
@@ -315,7 +315,7 @@ function MoveButton({
     <button
       type="button"
       aria-label={label}
-      className="flex h-12 w-12 items-center justify-center rounded-full border border-black/[0.08] bg-white font-sans text-xl text-heading shadow-sm active:bg-blush sm:h-14 sm:w-14"
+      className="flex h-16 w-16 select-none touch-manipulation items-center justify-center rounded-full border border-black/[0.08] bg-white font-sans text-2xl text-heading shadow-sm active:bg-blush sm:h-14 sm:w-14 sm:text-xl"
       onTouchStart={(e) => {
         e.preventDefault();
         onStart();
@@ -349,7 +349,7 @@ function ActionButton({
     <button
       type="button"
       aria-label={label}
-      className={`flex h-12 items-center justify-center rounded-full border border-black/[0.08] px-5 font-sans text-sm font-semibold transition active:scale-[0.97] sm:h-12 ${className}`}
+      className={`flex select-none touch-manipulation items-center justify-center rounded-full border border-black/[0.08] px-5 font-sans text-sm font-semibold transition active:scale-[0.97] sm:h-12 ${className}`}
       onTouchStart={(e) => {
         e.preventDefault();
         onTrigger();
