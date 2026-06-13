@@ -1,4 +1,5 @@
 import { WC_CURRENCY, WC_DEFAULT_STATUS, WC_DEFAULT_VARIATION_STOCK } from "./config.js";
+import { shippingClassForListing } from "./shipping.js";
 import {
   etsyPriceToString,
   hasMeaningfulVariations,
@@ -271,6 +272,11 @@ export function mapListingToWoo(
       payload.sku = parentSku(listing.listing_id);
       warnings.push(`Generated parent SKU: ${payload.sku}`);
     }
+  }
+
+  const shippingClass = shippingClassForListing(listing.wc_category_slug, listing.title);
+  if (shippingClass) {
+    payload.shipping_class = shippingClass;
   }
 
   return {

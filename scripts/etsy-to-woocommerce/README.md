@@ -162,7 +162,7 @@ Category hero images are frontend overrides in [`lib/category-images.ts`](../../
 
 ### Manual follow-up (not automated)
 
-- WooCommerce shipping zones and rates (Etsy shipping profiles are not imported)
+- WooCommerce shipping zones and rates (Etsy shipping profiles are not imported). Glow Bear products should use the **Glow Bear** shipping class (`glow-bear`) for free shipping within Canada — the importer assigns this automatically for glow-bear category listings.
 - Processing times / policies (copy to product meta or site pages)
 - Product weight and dimensions for shipping calculations
 - Digital download files (if applicable)

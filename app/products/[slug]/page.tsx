@@ -16,8 +16,10 @@ import { ProductDetailGallery } from "@/components/ProductDetailGallery";
 import { ProductDetailVideo } from "@/components/ProductDetailVideo";
 import { ProductDescription } from "@/components/ProductDescription";
 import { ProductDigitalCallout } from "@/components/ProductDigitalCallout";
+import { ProductShippingCallout } from "@/components/ProductShippingCallout";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
+import { productQualifiesForGlowBearFreeShipping } from "@/lib/shipping";
 import { optionToSwatchColor } from "@/lib/product-swatches";
 import { productPageSchemas } from "@/lib/schema";
 import Link from "next/link";
@@ -48,6 +50,9 @@ export default async function ProductPage({
     product.variations.length > 0 && /variable/i.test(String(product.productType || ""));
 
   const detailClip = getFrontendHoverVideo(product.slug);
+  const showGlowBearFreeShipping = productQualifiesForGlowBearFreeShipping(
+    product.categorySlugs
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
@@ -75,6 +80,9 @@ export default async function ProductPage({
             galleryImages={product.galleryImages}
           >
             {product.downloadable ? <ProductDigitalCallout /> : null}
+            {!product.downloadable && showGlowBearFreeShipping ? (
+              <ProductShippingCallout />
+            ) : null}
             {descriptionHtml ? (
               <ProductDescription html={descriptionHtml} />
             ) : null}
@@ -143,6 +151,9 @@ export default async function ProductPage({
               ) : null}
 
               {product.downloadable ? <ProductDigitalCallout /> : null}
+              {!product.downloadable && showGlowBearFreeShipping ? (
+                <ProductShippingCallout />
+              ) : null}
 
               {product.databaseId > 0 ? (
                 <AddToCartButton productId={product.databaseId} />

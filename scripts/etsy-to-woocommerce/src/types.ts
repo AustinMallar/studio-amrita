@@ -118,6 +118,8 @@ export type WooProductPayload = {
   attributes?: WooAttributePayload[];
   meta_data: Array<{ key: string; value: string | number }>;
   variations?: WooVariationPayload[];
+  /** WooCommerce shipping class slug (e.g. glow-bear). */
+  shipping_class?: string;
 };
 
 export type MappedListing = {

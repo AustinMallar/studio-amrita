@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FooterParallaxBears } from "@/components/FooterParallaxBears";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SocialLinks } from "@/components/SocialLinks";
+import { SHIPPING_COPY } from "@/lib/shipping";
 
 function Value({
   icon,
@@ -25,8 +26,8 @@ function Value({
 export function FooterValues() {
   const blocks = [
     {
-      title: "Free Shipping",
-      body: "On all orders.",
+      title: SHIPPING_COPY.footerTitle,
+      body: SHIPPING_COPY.footerBody,
       icon: (
         <svg className="mx-auto h-8 w-8 sm:mx-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.15} stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0z" />

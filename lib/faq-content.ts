@@ -1,3 +1,5 @@
+import { SHIPPING_COPY } from "./shipping";
+
 export type FaqItem = {
   question: string;
   answer: string;
@@ -21,8 +23,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question: "What’s your shipping policy?",
-    answer:
-      "We offer free shipping on all orders. If there’s ever an issue, our customer service is ready to help.",
+    answer: SHIPPING_COPY.faqAnswer,
   },
   {
     question: "Is the packaging gift-ready?",
