@@ -66,6 +66,13 @@ const NO_CARD_SWATCHES_BY_SLUG = new Set([
   "the-petal-pouch-crochet-pouch-with-flap-pdf-pattern-only",
 ]);
 
+/** Fixed swatch label when WooCommerce has no colour attribute. */
+const CARD_SWATCH_LABEL_BY_SLUG: Record<string, string> = {
+  "the-glow-sun-charm-beauty-of-joseon-relief-sunscreen-korean-skincare-keychain-bag-accessory":
+    "Cloud Cream",
+  "the-glow-berry-handmade-crochet-pink-strawberry-keychain-bag-charm": "Sakura Pink",
+};
+
 /** Standard Studio Amrita yarn shades — when most options match, show all on the card. */
 function isStudioColourPalette(options: string[]): boolean {
   if (options.length < 2) return false;
@@ -85,6 +92,9 @@ export function swatchLabelsForProduct(
   slug?: string
 ): string[] {
   if (slug && NO_CARD_SWATCHES_BY_SLUG.has(slug)) return [];
+
+  const fixedLabel = slug ? CARD_SWATCH_LABEL_BY_SLUG[slug] : undefined;
+  if (fixedLabel) return [fixedLabel];
 
   const name = productName.trim();
   const opts = attributeOptions.filter(Boolean);
