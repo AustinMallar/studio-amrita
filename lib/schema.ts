@@ -22,7 +22,7 @@ export type SchemaBreadcrumbItem = {
 const COLLECTION_NAMES: Record<string, string> = {
   "essential-glow-bear": "Essential Glow Bear",
   "classic-glow-bear": "Classic Glow Bear",
-  "glow-bears": "Baby Glow Bear",
+  "baby-glow-bear": "Baby Glow Bear",
   accessories: "Accessories",
   "skincare-charms": "Skincare Charms",
   "crochet-patterns": "Crochet Patterns",
