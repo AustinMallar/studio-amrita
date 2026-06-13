@@ -3,12 +3,14 @@
  * Map by WooCommerce category slug.
  */
 
+import { PRODUCT_NAMES } from "./product-names";
+
 export type FrontendCategoryImage = { url: string; alt: string };
 
 export const CATEGORY_IMAGE_BY_SLUG: Record<string, FrontendCategoryImage> = {
   "essential-glow-bear": {
     url: "/category-essential-glow-bear.jpg",
-    alt: "Essential Glow Bear gift sets in sakura pink, cloud cream, honey brown, and matcha green",
+    alt: `Four ${PRODUCT_NAMES.essentialGlowBear} gift sets in sakura pink, cloud cream, honey brown, and matcha green`,
   },
 };
 
