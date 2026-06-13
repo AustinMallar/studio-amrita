@@ -1,4 +1,4 @@
-import { getCartQuery } from "@/lib/cart";
+import { getCartWithOptimalShipping } from "@/lib/sync-cart-shipping";
 import { setWooSessionCookie } from "@/lib/cart-cookie";
 import { clearJwtAuthCookie } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
@@ -12,7 +12,7 @@ export async function GET() {
     const session = cookieStore.get(WOOCOMMERCE_SESSION_COOKIE)?.value ?? null;
     const jwt = await getJwtAuthToken();
 
-    const result = await getCartQuery(session, jwt);
+    const result = await getCartWithOptimalShipping(session, jwt);
     const nodes = result.data?.cart?.contents?.nodes?.filter(Boolean) ?? [];
     const itemCount = nodes.reduce((acc, line) => acc + (line?.quantity ?? 0), 0);
 

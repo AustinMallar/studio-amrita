@@ -1,9 +1,10 @@
 import "server-only";
 
+import type { CartQueryShape } from "./cart";
 import { tryDeleteJwtAuthCookieServer } from "./auth-cookie";
-import { getCartQuery, type CartQueryShape } from "./cart";
 import { trySetWooSessionCookieServer } from "./cart-cookie";
 import { uniqueGraphQLErrorMessages } from "./jwt-auth-errors";
+import { getCartWithOptimalShipping } from "./sync-cart-shipping";
 
 export type CartPageData = {
   cart: CartQueryShape | null;
@@ -32,7 +33,7 @@ export async function loadCartPageData(
   let sessionSyncNeeded = false;
 
   try {
-    const result = await getCartQuery(session, jwt);
+    const result = await getCartWithOptimalShipping(session, jwt);
 
     if (result.sessionHeader?.trim()) {
       const persisted = await trySetWooSessionCookieServer(result.sessionHeader);

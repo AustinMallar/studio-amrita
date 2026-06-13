@@ -1,8 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { formatShippingCostForDisplay, type FlatShippingRate } from "@/lib/cart-shipping-utils";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  cheapestFlatRate,
+  formatShippingCostForDisplay,
+  type FlatShippingRate,
+} from "@/lib/cart-shipping-utils";
 
 type Props = {
   rates: FlatShippingRate[];
@@ -13,38 +17,51 @@ export function CartShippingSelector({ rates, chosenShippingMethods }: Props) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  if (rates.length === 0) return null;
+  const autoSelectAttempted = useRef(false);
 
   const chosenList = chosenShippingMethods ?? [];
   const selectedFromSession = rates.find((r) => chosenList.includes(r.id))?.id ?? null;
+  const cheapest = useMemo(() => cheapestFlatRate(rates), [rates]);
 
-  async function selectRate(rateId: string) {
-    if (pending) return;
-    if (chosenList.includes(rateId)) return;
+  const selectRate = useCallback(
+    async (rateId: string) => {
+      if (pending) return;
+      if (chosenList.includes(rateId)) return;
 
-    setPending(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/cart/shipping-method", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shippingMethods: [rateId] }),
-      });
-      const json = (await res.json()) as { error?: string };
-      if (!res.ok) {
-        setError(json.error ?? "Could not update shipping");
-        return;
+      setPending(true);
+      setError(null);
+      try {
+        const res = await fetch("/api/cart/shipping-method", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ shippingMethods: [rateId] }),
+        });
+        const json = (await res.json()) as { error?: string };
+        if (!res.ok) {
+          setError(json.error ?? "Could not update shipping");
+          return;
+        }
+        window.dispatchEvent(new Event("cart:updated"));
+        router.refresh();
+      } catch {
+        setError("Could not update shipping");
+      } finally {
+        setPending(false);
       }
-      window.dispatchEvent(new Event("cart:updated"));
-      router.refresh();
-    } catch {
-      setError("Could not update shipping");
-    } finally {
-      setPending(false);
-    }
-  }
+    },
+    [chosenList, pending, router]
+  );
+
+  useEffect(() => {
+    if (autoSelectAttempted.current || pending || rates.length === 0) return;
+    const hasValidChoice = rates.some((r) => chosenList.includes(r.id));
+    if (hasValidChoice || !cheapest) return;
+    autoSelectAttempted.current = true;
+    void selectRate(cheapest.id);
+  }, [rates, chosenList, cheapest, pending, selectRate]);
+
+  if (rates.length === 0) return null;
 
   return (
     <div className="rounded-2xl border border-black/[0.06] bg-white/50 px-4 py-4">

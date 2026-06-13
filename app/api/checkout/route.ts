@@ -1,4 +1,5 @@
 import { getCartQuery } from "@/lib/cart";
+import { getCartWithOptimalShipping } from "@/lib/sync-cart-shipping";
 import { setWooSessionCookie } from "@/lib/cart-cookie";
 import {
   checkoutMutation,
@@ -99,12 +100,12 @@ export async function POST(req: Request) {
       adoptSession(warm.sessionHeader);
     }
 
-    let cartResult = await getCartQuery(session, jwt);
+    let cartResult = await getCartWithOptimalShipping(session, jwt);
     adoptSession(cartResult.sessionHeader);
     if (isInvalidCartTokenError(cartResult.errors)) {
       const warm = await getCartQuery(null, jwt);
       adoptSession(warm.sessionHeader);
-      cartResult = await getCartQuery(session, jwt);
+      cartResult = await getCartWithOptimalShipping(session, jwt);
       adoptSession(cartResult.sessionHeader);
     }
 
