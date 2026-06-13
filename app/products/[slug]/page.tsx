@@ -43,7 +43,7 @@ export default async function ProductPage({
 
   const descriptionHtml = String(product.descriptionHtml ?? "");
 
-  const isVariableWithColours =
+  const isVariableProduct =
     product.variations.length > 0 && /variable/i.test(String(product.productType || ""));
 
   const detailClip = getFrontendHoverVideo(product.slug);
@@ -62,13 +62,14 @@ export default async function ProductPage({
           </nav>
         </ScrollReveal>
 
-        {isVariableWithColours ? (
+        {isVariableProduct ? (
           <VariableProductImagePicker
             productDatabaseId={product.databaseId}
             productName={product.name}
             fallbackImageUrl={product.imageUrl}
             fallbackImageAlt={product.imageAlt}
             fallbackPrice={product.priceLabel}
+            variationAttributes={product.variationAttributes}
             variations={product.variations}
             galleryImages={product.galleryImages}
           >

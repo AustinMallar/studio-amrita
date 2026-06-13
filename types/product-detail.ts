@@ -3,12 +3,25 @@ export type ProductGalleryImage = {
   alt: string;
 };
 
+export type ProductVariationAttribute = {
+  /** WooCommerce attribute slug (e.g. choose-your-glow). */
+  name: string;
+  label: string;
+  options: string[];
+};
+
+export type ProductVariationAttributeValue = {
+  name: string;
+  value: string;
+};
+
 export type ProductVariationView = {
   id: string;
   label: string;
   price: string;
   imageUrl: string;
   imageAlt: string;
+  attributeValues: ProductVariationAttributeValue[];
 };
 
 export type ProductDetailView = {
@@ -22,6 +35,8 @@ export type ProductDetailView = {
   priceLabel: string;
   productType: string;
   colorOptions: string[];
+  /** Variable-product attribute definitions for option dropdowns. */
+  variationAttributes: ProductVariationAttribute[];
   variations: ProductVariationView[];
   /** WooCommerce category slugs for this product */
   categorySlugs: string[];
