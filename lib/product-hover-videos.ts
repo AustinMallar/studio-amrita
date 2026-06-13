@@ -12,18 +12,27 @@
 
 export type FrontendHoverVideo = { url: string; kind: "video" };
 
-export const HOVER_VIDEO_BY_SLUG: Record<string, string> = {
-  "the-matcha-glow-bear-handmade-crochet-teddy-keychain-bag-charm-with-hand-cream-lip-balm":
-    "/product-hover/matcha-green.mp4",
-};
+export const HOVER_VIDEO_BY_SLUG: Record<string, string> = {};
 
 /** Match long Etsy-style slugs when an exact slug map entry is missing. */
-const HOVER_VIDEO_BY_SLUG_FRAGMENT: Record<string, string> = {
-  "matcha-glow-bear": "/product-hover/matcha-green.mp4",
-};
+const HOVER_VIDEO_BY_SLUG_FRAGMENT: Record<string, string> = {};
+
+/** Exact WooCommerce slugs that must never show hover or PDP video. */
+const HOVER_VIDEO_EXCLUDED_SLUGS = new Set([
+  "the-matcha-glow-bear-handmade-crochet-teddy-keychain-bag-charm-with-hand-cream-lip-balm",
+]);
+
+/** Slug fragments that must never show hover or PDP video. */
+const HOVER_VIDEO_EXCLUDED_SLUG_FRAGMENTS = ["matcha-glow-bear"];
+
+export function isHoverVideoExcluded(slug: string): boolean {
+  if (!slug) return false;
+  if (HOVER_VIDEO_EXCLUDED_SLUGS.has(slug)) return true;
+  return HOVER_VIDEO_EXCLUDED_SLUG_FRAGMENTS.some((fragment) => slug.includes(fragment));
+}
 
 export function getFrontendHoverVideo(slug: string): FrontendHoverVideo | null {
-  if (!slug) return null;
+  if (!slug || isHoverVideoExcluded(slug)) return null;
   const path =
     HOVER_VIDEO_BY_SLUG[slug] ??
     Object.entries(HOVER_VIDEO_BY_SLUG_FRAGMENT).find(([fragment]) =>
