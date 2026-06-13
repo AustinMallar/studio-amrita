@@ -117,7 +117,7 @@ export function VariableProductImagePicker({
     <div className="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-14">
       <div className="flex flex-col gap-4">
         <ScrollReveal
-          className="relative aspect-square w-full overflow-hidden rounded-3xl bg-blush"
+          className="relative hidden aspect-square w-full overflow-hidden rounded-3xl bg-blush lg:block"
           rootMargin="0px 0px 12% 0px"
         >
           {displayImageUrl ? (
@@ -136,7 +136,7 @@ export function VariableProductImagePicker({
                 alt={displayImageAlt}
                 fill
                 className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                sizes="50vw"
                 priority
               />
             )
@@ -146,9 +146,12 @@ export function VariableProductImagePicker({
             </div>
           )}
         </ScrollReveal>
-        {galleryImages.length > 0 ? (
-          <ProductDetailGallery galleryImages={galleryImages} />
-        ) : null}
+        <ProductDetailGallery
+          mainImageUrl={displayImageUrl || undefined}
+          mainImageAlt={displayImageAlt}
+          galleryImages={galleryImages}
+          mainShownSeparatelyOnDesktop
+        />
       </div>
 
       <div className="lg:sticky lg:top-28 lg:self-start">
