@@ -1,6 +1,6 @@
 import { GLOW_BEAR_LINE_NAMES, PRODUCT_NAMES } from "./product-names";
 
-/** WooCommerce shipping class slug — products in this class ship free within Canada. */
+/** WooCommerce shipping class slug — products in this class ship free worldwide. */
 export const GLOW_BEAR_SHIPPING_CLASS_SLUG = "glow-bear";
 
 /** Storefront category slugs whose products use the Glow Bear shipping class. */
@@ -12,13 +12,13 @@ export const GLOW_BEAR_CATEGORY_SLUGS = new Set([
 ]);
 
 export const SHIPPING_COPY = {
-  promoBar: `Free shipping on ${PRODUCT_NAMES.glowBears} within Canada. Shop now ♡`,
+  promoBar: `Free shipping on ${PRODUCT_NAMES.glowBears} worldwide. Shop now ♡`,
   footerTitle: "Free Shipping",
-  footerBody: `On ${PRODUCT_NAMES.glowBears} within Canada.`,
+  footerBody: `On ${PRODUCT_NAMES.glowBears} worldwide.`,
   faqAnswer:
-    `${PRODUCT_NAMES.glowBear} products (${GLOW_BEAR_LINE_NAMES}) ship free within Canada. Shipping for all other items is calculated at checkout based on your address. If there’s ever an issue, our customer service is ready to help.`,
-  pdpCallout: `Free shipping within Canada on this ${PRODUCT_NAMES.glowBear}.`,
-  metaSuffix: `Free shipping on ${PRODUCT_NAMES.glowBears} within Canada.`,
+    `${PRODUCT_NAMES.glowBear} products (${GLOW_BEAR_LINE_NAMES}) ship free worldwide. Shipping for all other items is calculated at checkout based on your address. If there’s ever an issue, our customer service is ready to help.`,
+  pdpCallout: `Free shipping worldwide on this ${PRODUCT_NAMES.glowBear}.`,
+  metaSuffix: `Free shipping on ${PRODUCT_NAMES.glowBears} worldwide.`,
 } as const;
 
 export function productQualifiesForGlowBearFreeShipping(

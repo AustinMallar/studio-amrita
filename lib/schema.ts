@@ -155,10 +155,6 @@ function freeShippingDetails(): Record<string, unknown> {
       value: 0,
       currency: SITE.currency,
     },
-    shippingDestination: {
-      "@type": "DefinedRegion",
-      addressCountry: "CA",
-    },
   };
 }
 
