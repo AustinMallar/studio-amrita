@@ -44,13 +44,36 @@ export function decodeHtmlEntities(input: string): string {
   });
 }
 
+/** Block-level HTML tags become paragraph breaks before tags are stripped. */
+function htmlWithBlockBreaks(html: string): string {
+  return html
+    .replace(/<\s*br\s*\/?>/gi, "\n")
+    .replace(/<\/\s*p\s*>/gi, "\n\n")
+    .replace(/<\/\s*(div|li|h[1-6]|tr|blockquote)\s*>/gi, "\n\n")
+    .replace(/<[^>]+>/g, "");
+}
+
+/** Split WooCommerce HTML description into plain-text paragraphs. */
+export function htmlToParagraphs(html: string): string[] {
+  if (!html.trim()) return [];
+
+  const decoded = decodeHtmlEntities(htmlWithBlockBreaks(html)).replace(/\r\n/g, "\n");
+
+  return decoded
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.replace(/[ \t]+/g, " ").trim())
+    .filter(Boolean);
+}
+
 /** Strip HTML tags and decode entities for plain-text display. */
 export function htmlToPlainText(
   html: string,
   options?: { collapseWhitespace?: boolean },
 ): string {
-  const tagReplacement = options?.collapseWhitespace ? " " : "";
-  const withoutTags = html.replace(/<[^>]+>/g, tagReplacement);
-  const decoded = decodeHtmlEntities(withoutTags);
-  return options?.collapseWhitespace ? decoded.replace(/\s+/g, " ").trim() : decoded.trim();
+  if (options?.collapseWhitespace) {
+    const withoutTags = html.replace(/<[^>]+>/g, " ");
+    return decodeHtmlEntities(withoutTags).replace(/\s+/g, " ").trim();
+  }
+
+  return htmlToParagraphs(html).join("\n\n");
 }

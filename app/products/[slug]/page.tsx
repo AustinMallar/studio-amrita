@@ -14,9 +14,9 @@ import { VariableProductImagePicker } from "@/components/VariableProductImagePic
 import { FooterValues } from "@/components/FooterValues";
 import { ProductDetailGallery } from "@/components/ProductDetailGallery";
 import { ProductDetailVideo } from "@/components/ProductDetailVideo";
+import { ProductDescription } from "@/components/ProductDescription";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
-import { htmlToPlainText } from "@/lib/html-text";
 import { optionToSwatchColor } from "@/lib/product-swatches";
 import { productPageSchemas } from "@/lib/schema";
 import Link from "next/link";
@@ -41,7 +41,7 @@ export default async function ProductPage({
     ? await getGlowBearBundleSiblings(product.slug)
     : [];
 
-  const descriptionText = htmlToPlainText(String(product.descriptionHtml ?? ""));
+  const descriptionHtml = String(product.descriptionHtml ?? "");
 
   const isVariableWithColours =
     product.variations.length > 0 && /variable/i.test(String(product.productType || ""));
@@ -72,8 +72,8 @@ export default async function ProductPage({
             variations={product.variations}
             galleryImages={product.galleryImages}
           >
-            {descriptionText ? (
-              <p className="font-sans leading-relaxed text-body">{descriptionText}</p>
+            {descriptionHtml ? (
+              <ProductDescription html={descriptionHtml} />
             ) : null}
           </VariableProductImagePicker>
         ) : (
@@ -143,8 +143,8 @@ export default async function ProductPage({
                 <AddToCartButton productId={product.databaseId} />
               ) : null}
 
-              {descriptionText ? (
-                <p className="font-sans leading-relaxed text-body">{descriptionText}</p>
+              {descriptionHtml ? (
+                <ProductDescription html={descriptionHtml} />
               ) : null}
               </ScrollReveal>
             </div>
