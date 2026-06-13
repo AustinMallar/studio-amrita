@@ -36,6 +36,11 @@ const LEGACY_NAMED: Record<string, string> = {
   cloud: "#CAC8C4",
   "cloud cream": "#CAC8C4",
   "rose gold": "#e4a8a8",
+  /** Skincare charm scent / flavour swatches */
+  almond: "#909869",
+  vanilla: "#D0B1AE",
+  coconut: "#9B7C62",
+  berry: "#E4A8A6",
 };
 
 function normalizeBlob(option: string, productName?: string): string {
