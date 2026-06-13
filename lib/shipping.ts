@@ -12,13 +12,13 @@ export const GLOW_BEAR_CATEGORY_SLUGS = new Set([
 ]);
 
 export const SHIPPING_COPY = {
-  promoBar: `Free shipping on ${PRODUCT_NAMES.glowBears} worldwide. Shop now ♡`,
+  promoBar: `Free shipping on all ${PRODUCT_NAMES.glowBears} worldwide. Shop now ♡`,
   footerTitle: "Free Shipping",
   footerBody: `On ${PRODUCT_NAMES.glowBears} worldwide.`,
   faqAnswer:
     `${PRODUCT_NAMES.glowBear} products (${GLOW_BEAR_LINE_NAMES}) ship free worldwide. Shipping for all other items is calculated at checkout based on your address. If there’s ever an issue, our customer service is ready to help.`,
   pdpCallout: `Free shipping worldwide on this ${PRODUCT_NAMES.glowBear}.`,
-  metaSuffix: `Free shipping on ${PRODUCT_NAMES.glowBears} worldwide.`,
+  metaSuffix: `Free shipping on all ${PRODUCT_NAMES.glowBears} worldwide.`,
 } as const;
 
 export function productQualifiesForGlowBearFreeShipping(
