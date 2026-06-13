@@ -48,7 +48,6 @@ type HomepageRowConfig = {
   layoutType: LayoutType;
   shopHref: string;
   shopLabel: string;
-  displayPrice: string;
   fallbackDescription: string;
   data: {
     name?: string;
@@ -127,7 +126,6 @@ export default async function Home() {
               categoryName={row.data?.name ?? row.categoryName}
               layoutType={row.layoutType}
               description={description}
-              priceLabel={row.displayPrice}
               shopHref={row.shopHref}
               shopLabel={row.shopLabel}
               products={products}

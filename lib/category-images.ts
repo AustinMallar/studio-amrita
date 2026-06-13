@@ -12,6 +12,10 @@ export const CATEGORY_IMAGE_BY_SLUG: Record<string, FrontendCategoryImage> = {
     url: "/category-essential-glow-bear.jpg",
     alt: `Four ${PRODUCT_NAMES.essentialGlowBear} gift sets in sakura pink, cloud cream, honey brown, and matcha green`,
   },
+  "skincare-charms": {
+    url: "/category-skincare-charms.jpg",
+    alt: "Skincare Charms — Klavuu lip sleeping packs in vanilla, coconut, and berry on gold keychain hardware",
+  },
 };
 
 export function getFrontendCategoryImage(slug: string): FrontendCategoryImage | null {

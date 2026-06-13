@@ -99,11 +99,6 @@ export default async function ShopCollectionPage(props: Props) {
                 {description}
               </p>
             ) : null}
-            {collection.minPriceFormatted ? (
-              <p className="mt-4 font-sans text-lg font-semibold text-heading">
-                From {collection.minPriceFormatted}
-              </p>
-            ) : null}
           </div>
         </section>
 

@@ -102,7 +102,6 @@ function CollectionCard({ row }: { row: HomepageRow }) {
         <div>
           <h2 className="font-heading text-2xl text-heading">{name}</h2>
           <p className="mt-3 font-sans text-sm leading-relaxed text-body">{description}</p>
-          <p className="mt-4 font-sans text-lg font-semibold text-heading">{row.displayPrice}</p>
         </div>
 
         {previewProducts.length > 0 ? (

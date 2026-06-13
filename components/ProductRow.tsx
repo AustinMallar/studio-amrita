@@ -9,7 +9,6 @@ export type ProductRowProps = {
   categoryName: string;
   layoutType: "grid" | "lifestyle";
   description: string;
-  priceLabel: string;
   shopHref: string;
   shopLabel: string;
   products: UiProduct[];
@@ -23,7 +22,6 @@ export function ProductRow({
   categoryName,
   layoutType,
   description,
-  priceLabel,
   shopHref,
   shopLabel,
   products,
@@ -47,7 +45,6 @@ export function ProductRow({
         <ScrollReveal className="flex flex-col gap-4 lg:col-span-1">
           <h3 className="text-2xl text-heading sm:text-3xl">{categoryName}</h3>
           <p className="font-sans text-base leading-relaxed text-body">{description}</p>
-          <p className="font-sans text-lg font-semibold text-heading">{priceLabel}</p>
           <Link
             href={shopHref}
             className="mt-2 inline-flex w-fit items-center font-sans text-sm font-semibold uppercase tracking-wide text-dusty-rose hover:underline"
