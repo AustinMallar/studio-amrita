@@ -90,8 +90,8 @@ export function HeroSection() {
         >
           <HeroBearEasterEgg
             src="/hero-bear.jpg"
-            alt="Four Essential Glow Bear gift sets in cream, matcha green, sakura pink, and honey brown"
-            width={681}
+            alt="Two Essential Glow Bear gift sets in sakura pink and honey brown on satin packaging"
+            width={737}
             height={1024}
             sizes="(max-width: 1024px) 100vw, 480px"
             priority
