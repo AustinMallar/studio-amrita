@@ -1,3 +1,5 @@
+import { parseGlowBearColor } from "@/lib/product-display";
+
 /**
  * Studio Amrita Glow Bear palette — match product titles / attribute labels to swatch colours.
  * WooCommerce often exposes every global “Colour” option on each simple product; we infer the
@@ -87,6 +89,9 @@ export function swatchLabelsForProduct(productName: string, attributeOptions: st
 
   if (opts.length > 1 && name && /\b(sakura|matcha|honey|cloud)\b/i.test(name))
     return [name.trim()];
+
+  const color = parseGlowBearColor(name);
+  if (color) return [color];
 
   return opts.length ? opts : name ? [name] : [];
 }

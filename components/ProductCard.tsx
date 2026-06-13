@@ -10,6 +10,8 @@ export type UiProduct = {
   /** WooCommerce URL slug — when set, the whole card links to `/products/[slug]`. */
   slug?: string;
   name: string;
+  /** Shorter card label when the WooCommerce title is verbose (e.g. "Matcha"). */
+  displayName?: string;
   price: string;
   imageUrl: string;
   imageAlt: string;
@@ -65,7 +67,7 @@ export function ProductCard({ product }: { product: UiProduct }) {
         </div>
       )}
       <div className="space-y-1 px-0.5 pt-0.5 text-center">
-        <h3 className="text-base font-semibold text-heading">{product.name}</h3>
+        <h3 className="text-base font-semibold text-heading">{product.displayName ?? product.name}</h3>
         <p className="font-sans text-sm text-body">{product.price}</p>
         {product.swatches.length > 0 ? (
           <div className="flex justify-center gap-2 pt-1">

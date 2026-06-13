@@ -5,6 +5,7 @@ export type RawCatalogProduct = {
   id: string;
   slug?: string;
   name: string;
+  displayName?: string;
   price: string;
   imageUrl: string;
   imageAlt: string;
@@ -19,6 +20,7 @@ export function toUiProducts(list: RawCatalogProduct[]): UiProduct[] {
     id: p.id,
     slug: p.slug,
     name: p.name,
+    displayName: p.displayName,
     price: p.price,
     imageUrl: p.imageUrl,
     imageAlt: p.imageAlt,

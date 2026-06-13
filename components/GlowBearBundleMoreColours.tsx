@@ -6,6 +6,7 @@ import { optionToSwatchColor } from "@/lib/product-swatches";
 export type BundleSibling = {
   slug: string;
   name: string;
+  displayName?: string;
   imageUrl: string;
   imageAlt: string;
 };
@@ -60,7 +61,7 @@ export function GlowBearBundleMoreColours({ siblings }: { siblings: BundleSiblin
                   )}
                 </div>
                 <span className="font-sans text-sm font-semibold text-heading group-hover:text-dusty-rose">
-                  {s.name}
+                  {s.displayName ?? s.name}
                 </span>
                 <span className="flex justify-center">
                   <span

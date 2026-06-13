@@ -33,6 +33,11 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Etsy → WooCommerce import script artifacts
+scripts/etsy-to-woocommerce/data/*
+!scripts/etsy-to-woocommerce/data/.gitkeep
+scripts/etsy-to-woocommerce/.etsy-tokens.json
+
 # vercel
 .vercel
 

@@ -1,0 +1,36 @@
+{
+  "categories": {
+    "glow-bears": "Glow Bears",
+    "skincare-charms": "Skincare Charms",
+    "accessories": "Accessories",
+    "crochet-patterns": "Crochet Patterns"
+  },
+  "listing_ids": {
+    "466251967": "crochet-patterns",
+    "123079506": "glow-bears",
+    "714568333": "glow-bears",
+    "1354679156": "glow-bears",
+    "971111399": "glow-bears",
+    "1049150724": "glow-bears",
+    "1972978661": "skincare-charms",
+    "82293497": "skincare-charms",
+    "107783618": "skincare-charms",
+    "1449155438": "glow-bears",
+    "250028996": "glow-bears",
+    "1565531756": "accessories",
+    "1324739316": "accessories",
+    "210986911": "accessories"
+  },
+  "title_contains": [
+    { "contains": "pdf pattern", "wc_slug": "crochet-patterns" },
+    { "contains": "pattern only", "wc_slug": "crochet-patterns" },
+    { "contains": "glow sun charm", "wc_slug": "skincare-charms" },
+    { "contains": "glow skin charm", "wc_slug": "skincare-charms" },
+    { "contains": "glow lip balm charm", "wc_slug": "skincare-charms" },
+    { "contains": "glow berry", "wc_slug": "accessories" },
+    { "contains": "glow bow", "wc_slug": "accessories" },
+    { "contains": "petal pouch", "wc_slug": "accessories" },
+    { "contains": "glow bear", "wc_slug": "glow-bears" },
+    { "contains": "essential glow bear", "wc_slug": "glow-bears" }
+  ]
+}

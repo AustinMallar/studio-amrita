@@ -1,0 +1,11 @@
+{
+  "_comment": "Map Etsy taxonomy_id (string key) to WooCommerce category. Discover taxonomy_id values from export output or Etsy listing editor.",
+  "123456789": {
+    "wc_slug": "essential-glow-bear",
+    "wc_name": "Essential Glow Bear"
+  },
+  "987654321": {
+    "wc_slug": "glow-bow-charms",
+    "wc_name": "Glow Bow Charms"
+  }
+}

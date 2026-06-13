@@ -19,7 +19,7 @@ import { notFound } from "next/navigation";
 
 const FALLBACK_DESCRIPTION: Record<string, string> = {
   [CATEGORY_SLUGS["Essential Glow Bear"]]:
-    "Four collectible bears paired with glow minis.",
+    "Four handmade crochet bag charms, each paired with Klavuu lip balm and L'Occitane hand cream in gift-ready packaging.",
   [CATEGORY_SLUGS["Glow Bow Charms"]]:
     "Petite bows to clip, gift, or collect. Tiny accents with big personality.",
 };
