@@ -1,8 +1,10 @@
 import { ThankYouCartSync } from "./ThankYouCartSync";
 import { OrderThankYouSummary } from "@/components/OrderThankYouSummary";
+import { OrderDownloadsNotice } from "@/components/OrderDownloadsNotice";
 import { FooterValues } from "@/components/FooterValues";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
+import { fetchCustomerDownloadables } from "@/lib/downloadables";
 import { fetchThankYouOrderView } from "@/lib/order-thank-you";
 import { getJwtAuthToken } from "@/lib/auth-session";
 import { WOOCOMMERCE_SESSION_COOKIE } from "@/lib/session-cookie";
@@ -32,6 +34,8 @@ export default async function CheckoutThankYouPage({
   const cookieStore = await cookies();
   const session = cookieStore.get(WOOCOMMERCE_SESSION_COOKIE)?.value ?? null;
   const jwt = await getJwtAuthToken();
+  const downloadsResult = jwt ? await fetchCustomerDownloadables(jwt) : null;
+  const downloads = downloadsResult?.items ?? [];
 
   let result: Awaited<ReturnType<typeof fetchThankYouOrderView>> | null = null;
 
@@ -77,6 +81,7 @@ export default async function CheckoutThankYouPage({
               Your payment was received. Here&apos;s a summary of your order.
             </p>
             <OrderThankYouSummary view={result.view} />
+            <OrderDownloadsNotice downloads={downloads} signedIn={Boolean(jwt)} />
           </>
         ) : (
           <>

@@ -42,4 +42,7 @@ export type ProductDetailView = {
   categorySlugs: string[];
   /** Additional stills from the WooCommerce product gallery (excludes featured + videos). */
   galleryImages: ProductGalleryImage[];
+  /** WooCommerce downloadable flag (e.g. PDF patterns). */
+  downloadable: boolean;
+  virtual: boolean;
 };

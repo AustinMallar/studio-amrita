@@ -15,6 +15,7 @@ import { FooterValues } from "@/components/FooterValues";
 import { ProductDetailGallery } from "@/components/ProductDetailGallery";
 import { ProductDetailVideo } from "@/components/ProductDetailVideo";
 import { ProductDescription } from "@/components/ProductDescription";
+import { ProductDigitalCallout } from "@/components/ProductDigitalCallout";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { optionToSwatchColor } from "@/lib/product-swatches";
@@ -73,6 +74,7 @@ export default async function ProductPage({
             variations={product.variations}
             galleryImages={product.galleryImages}
           >
+            {product.downloadable ? <ProductDigitalCallout /> : null}
             {descriptionHtml ? (
               <ProductDescription html={descriptionHtml} />
             ) : null}
@@ -139,6 +141,8 @@ export default async function ProductPage({
                   </ul>
                 </div>
               ) : null}
+
+              {product.downloadable ? <ProductDigitalCallout /> : null}
 
               {product.databaseId > 0 ? (
                 <AddToCartButton productId={product.databaseId} />

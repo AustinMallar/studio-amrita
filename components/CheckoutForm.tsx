@@ -38,6 +38,8 @@ type Props = {
   };
   /** When set, email field is hidden and this address is used at checkout. */
   accountEmail?: string | null;
+  /** False when the cart contains only virtual/downloadable items (no shipping). */
+  needsShippingAddress?: boolean;
 };
 
 export function CheckoutForm({
@@ -45,6 +47,7 @@ export function CheckoutForm({
   chosenShippingMethods,
   cartSummary,
   accountEmail,
+  needsShippingAddress = true,
 }: Props) {
   const [billing, setBilling] = useState(emptyAddr);
   const [shipping, setShipping] = useState(emptyAddr);
@@ -106,24 +109,31 @@ export function CheckoutForm({
       return;
     }
 
-    const billErr = validateAddressSide("billing", { ...billing, email: emailResolved });
-    if (billErr) {
-      setError(billErr);
+    if (!billing.firstName.trim() || !billing.lastName.trim()) {
+      setError("Please enter your first and last name.");
       return;
     }
 
-    if (shippingDifferent) {
-      const ship = { ...shipping };
-      const shipErr = validateAddressSide("shipping", ship);
-      if (shipErr) {
-        setError(shipErr);
+    if (needsShippingAddress) {
+      const billErr = validateAddressSide("billing", { ...billing, email: emailResolved });
+      if (billErr) {
+        setError(billErr);
         return;
       }
-    }
 
-    if (flatRates.length > 1 && !shippingRateId) {
-      setError("Choose a shipping method.");
-      return;
+      if (shippingDifferent) {
+        const ship = { ...shipping };
+        const shipErr = validateAddressSide("shipping", ship);
+        if (shipErr) {
+          setError(shipErr);
+          return;
+        }
+      }
+
+      if (flatRates.length > 1 && !shippingRateId) {
+        setError("Choose a shipping method.");
+        return;
+      }
     }
     if (!acceptTerms) {
       setError("Please accept the terms and conditions.");
@@ -132,22 +142,27 @@ export function CheckoutForm({
 
     setPending(true);
     try {
-      const billingPayload = {
-        ...billing,
-        email: emailResolved,
-      };
+      const billingPayload = needsShippingAddress
+        ? { ...billing, email: emailResolved }
+        : {
+            firstName: billing.firstName.trim(),
+            lastName: billing.lastName.trim(),
+            email: emailResolved,
+            country: billing.country.trim() || "CA",
+          };
 
       const body: Record<string, unknown> = {
         billing: billingPayload,
-        shipToDifferentAddress: shippingDifferent,
+        shipToDifferentAddress: needsShippingAddress ? shippingDifferent : false,
         customerNote: customerNote.trim(),
+        needsShippingAddress,
       };
-      if (shippingDifferent) {
+      if (needsShippingAddress && shippingDifferent) {
         const ship = { ...shipping };
         delete ship.email;
         body.shipping = ship;
       }
-      if (flatRates.length > 0 && shippingRateId) {
+      if (needsShippingAddress && flatRates.length > 0 && shippingRateId) {
         body.shippingMethods = [shippingRateId];
       }
 
@@ -226,7 +241,7 @@ export function CheckoutForm({
         </p>
       ) : null}
 
-      {flatRates.length > 1 ? (
+      {needsShippingAddress && flatRates.length > 1 ? (
         <div className="rounded-2xl border border-black/[0.06] bg-white/50 px-4 py-4">
           <p className="font-sans text-xs font-semibold uppercase tracking-[0.2em] text-body">
             Shipping method
@@ -256,11 +271,21 @@ export function CheckoutForm({
       ) : null}
 
       <div className="space-y-4">
-        <h3 className="font-heading text-lg text-heading">Billing address</h3>
+        <h3 className="font-heading text-lg text-heading">
+          {needsShippingAddress ? "Billing address" : "Contact details"}
+        </h3>
+        {!needsShippingAddress ? (
+          <p className="font-sans text-sm text-body">
+            Digital order — no shipping address needed. We&apos;ll email your download link after
+            payment.
+          </p>
+        ) : null}
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="First name" id="co-bill-fn" value={billing.firstName} onChange={(v) => setBill("firstName", v)} />
           <Field label="Last name" id="co-bill-ln" value={billing.lastName} onChange={(v) => setBill("lastName", v)} />
         </div>
+        {needsShippingAddress ? (
+          <>
         <Field label="Company (optional)" id="co-bill-co" value={billing.company} onChange={(v) => setBill("company", v)} />
         <Field label="Address line 1" id="co-bill-a1" value={billing.address1} onChange={(v) => setBill("address1", v)} />
         <Field label="Address line 2" id="co-bill-a2" value={billing.address2} onChange={(v) => setBill("address2", v)} />
@@ -336,6 +361,8 @@ export function CheckoutForm({
           />
           <Field label="Phone" id="co-bill-phone" type="tel" autoComplete="tel" value={billing.phone} onChange={(v) => setBill("phone", v)} />
         </div>
+          </>
+        ) : null}
 
         {accountEmail ? (
           <div className="rounded-xl border border-black/[0.08] bg-cream/80 px-4 py-3 font-sans text-sm text-heading">
@@ -354,6 +381,7 @@ export function CheckoutForm({
         )}
       </div>
 
+      {needsShippingAddress ? (
       <div className="border-t border-black/[0.06] pt-8">
         <label className="flex cursor-pointer items-start gap-3 font-sans text-sm text-heading">
           <input
@@ -365,8 +393,9 @@ export function CheckoutForm({
           <span>Shipping address is different from billing</span>
         </label>
       </div>
+      ) : null}
 
-      {shippingDifferent ? (
+      {needsShippingAddress && shippingDifferent ? (
         <div className="space-y-4">
           <h3 className="font-heading text-lg text-heading">Shipping address</h3>
           <div className="grid gap-4 sm:grid-cols-2">

@@ -27,6 +27,7 @@ export default async function CheckoutPage() {
   }
 
   const flatRates = flattenShippingRates(cart?.availableShippingMethods);
+  const needsShippingAddress = cart?.needsShippingAddress !== false;
 
   let accountEmail: string | null = null;
   if (jwt) {
@@ -70,8 +71,9 @@ export default async function CheckoutPage() {
         {lines.length > 0 ? (
           <>
             <p className="font-sans text-sm text-body">
-              Pay with PayPal on the next step. You’ll leave this site briefly to approve payment,
-              then return when it’s complete.
+              {needsShippingAddress
+                ? "Pay with PayPal on the next step. You’ll leave this site briefly to approve payment, then return when it’s complete."
+                : "Instant digital download — no shipping. Pay with PayPal on the next step, then check your email and account for download links."}
             </p>
             <CartCouponForm appliedCoupons={appliedCoupons} />
             <CheckoutForm
@@ -79,6 +81,7 @@ export default async function CheckoutPage() {
               chosenShippingMethods={cart?.chosenShippingMethods}
               cartSummary={cartSummary}
               accountEmail={accountEmail}
+              needsShippingAddress={needsShippingAddress}
             />
           </>
         ) : null}

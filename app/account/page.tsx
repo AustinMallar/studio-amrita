@@ -1,6 +1,7 @@
 import { AccountSubNav } from "@/components/account/AccountSubNav";
 import { BillingShippingForms } from "@/components/account/BillingShippingForms";
 import { ChangePasswordForm } from "@/components/account/ChangePasswordForm";
+import { DownloadsSection } from "@/components/account/DownloadsSection";
 import { OrdersSection } from "@/components/account/OrdersSection";
 import { ProfileDetailsForm } from "@/components/account/ProfileDetailsForm";
 import { FooterValues } from "@/components/FooterValues";
@@ -13,6 +14,7 @@ import {
 } from "@/lib/account-data";
 import { tryDeleteJwtAuthCookieServer } from "@/lib/auth-cookie";
 import { getJwtAuthToken } from "@/lib/auth-session";
+import { fetchCustomerDownloadables } from "@/lib/downloadables";
 import { uniqueGraphQLErrorMessages } from "@/lib/jwt-auth-errors";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -24,6 +26,8 @@ export default async function AccountPage() {
   }
 
   const overview = await fetchAccountOverview(token);
+  const downloadsResult = await fetchCustomerDownloadables(token);
+  const downloads = downloadsResult.items;
 
   if (overview.jwtInvalid) {
     await tryDeleteJwtAuthCookieServer();
@@ -84,7 +88,7 @@ export default async function AccountPage() {
         <div id="overview" className="scroll-mt-28">
           <h1 className="font-heading text-3xl text-heading">Your account</h1>
           <p className="mt-2 max-w-2xl font-sans text-sm text-body">
-            Manage your profile, addresses, password, and review your orders.
+            Manage your profile, addresses, password, orders, and digital downloads.
           </p>
         </div>
 
@@ -164,6 +168,16 @@ export default async function AccountPage() {
             <section id="orders" className="scroll-mt-28 space-y-4">
               <h2 className="font-heading text-xl text-heading">Recent orders</h2>
               <OrdersSection orders={orders} />
+            </section>
+
+            <section id="downloads" className="scroll-mt-28 space-y-4">
+              <div>
+                <h2 className="font-heading text-xl text-heading">Downloads</h2>
+                <p className="mt-1 font-sans text-sm text-body">
+                  PDF patterns and other digital products you&apos;ve purchased while signed in.
+                </p>
+              </div>
+              <DownloadsSection items={downloads} />
             </section>
 
             {!wcMissing ? (

@@ -80,57 +80,6 @@ export async function POST(req: Request) {
     const record = body && typeof body === "object" ? (body as Record<string, unknown>) : {};
     const jwt = await getJwtAuthToken();
 
-    const billingRaw = pickAddress(record.billing);
-    let billingEmail = billingRaw?.email?.trim() ?? "";
-    if (!billingEmail && jwt) {
-      try {
-        const vr = await wpFetchViewer(jwt);
-        billingEmail = vr.data?.viewer?.email?.trim() ?? "";
-      } catch {
-        billingEmail = "";
-      }
-    }
-
-    if (!billingRaw || !billingEmail) {
-      return NextResponse.json(
-        { error: "Billing address and email are required." },
-        { status: 400 }
-      );
-    }
-
-    const billingWithEmail: Record<string, string> = { ...billingRaw, email: billingEmail };
-    if (!billingWithEmail.firstName || !billingWithEmail.lastName || !billingWithEmail.address1) {
-      return NextResponse.json(
-        { error: "Please enter your name and street address." },
-        { status: 400 }
-      );
-    }
-    if (!billingWithEmail.city || !billingWithEmail.postcode || !billingWithEmail.country) {
-      return NextResponse.json(
-        { error: "City, postal code, and country are required." },
-        { status: 400 }
-      );
-    }
-
-    const shipToDifferent =
-      typeof record.shipToDifferentAddress === "boolean" ? record.shipToDifferentAddress : false;
-    const shippingRaw = shipToDifferent ? pickAddress(record.shipping) : null;
-    if (shipToDifferent) {
-      if (
-        !shippingRaw?.firstName ||
-        !shippingRaw?.lastName ||
-        !shippingRaw?.address1 ||
-        !shippingRaw?.city ||
-        !shippingRaw?.postcode ||
-        !shippingRaw?.country
-      ) {
-        return NextResponse.json(
-          { error: "Please complete the shipping address." },
-          { status: 400 }
-        );
-      }
-    }
-
     const customerNote =
       typeof record.customerNote === "string" ? record.customerNote.trim().slice(0, 2000) : "";
 
@@ -165,16 +114,85 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Your cart is empty." }, { status: 400 });
     }
 
+    const needsShipping = cart?.needsShippingAddress !== false;
+
+    const billingRaw = pickAddress(record.billing);
+    let billingEmail = billingRaw?.email?.trim() ?? "";
+    if (!billingEmail && jwt) {
+      try {
+        const vr = await wpFetchViewer(jwt);
+        billingEmail = vr.data?.viewer?.email?.trim() ?? "";
+      } catch {
+        billingEmail = "";
+      }
+    }
+
+    if (!billingRaw || !billingEmail) {
+      return NextResponse.json(
+        { error: "Billing address and email are required." },
+        { status: 400 }
+      );
+    }
+
+    const billingWithEmail: Record<string, string> = { ...billingRaw, email: billingEmail };
+    if (!billingWithEmail.firstName || !billingWithEmail.lastName) {
+      return NextResponse.json({ error: "Please enter your first and last name." }, { status: 400 });
+    }
+
+    if (needsShipping) {
+      if (!billingWithEmail.address1) {
+        return NextResponse.json(
+          { error: "Please enter your name and street address." },
+          { status: 400 }
+        );
+      }
+      if (!billingWithEmail.city || !billingWithEmail.postcode || !billingWithEmail.country) {
+        return NextResponse.json(
+          { error: "City, postal code, and country are required." },
+          { status: 400 }
+        );
+      }
+    } else {
+      if (!billingWithEmail.country) billingWithEmail.country = "CA";
+      if (!billingWithEmail.address1) billingWithEmail.address1 = "Digital download";
+      if (!billingWithEmail.city) billingWithEmail.city = "N/A";
+      if (!billingWithEmail.postcode) billingWithEmail.postcode = "00000";
+      if (!billingWithEmail.state && billingWithEmail.country === "CA") {
+        billingWithEmail.state = "ON";
+      }
+    }
+
+    let shipToDifferent =
+      needsShipping &&
+      typeof record.shipToDifferentAddress === "boolean" &&
+      record.shipToDifferentAddress;
+    const shippingRaw = shipToDifferent ? pickAddress(record.shipping) : null;
+    if (shipToDifferent) {
+      if (
+        !shippingRaw?.firstName ||
+        !shippingRaw?.lastName ||
+        !shippingRaw?.address1 ||
+        !shippingRaw?.city ||
+        !shippingRaw?.postcode ||
+        !shippingRaw?.country
+      ) {
+        return NextResponse.json(
+          { error: "Please complete the shipping address." },
+          { status: 400 }
+        );
+      }
+    }
+
     const flatRates = flattenShippingRates(cart?.availableShippingMethods);
     let chosen = [...(cart?.chosenShippingMethods ?? [])].filter(Boolean) as string[];
 
-    if (shippingMethodsBody.length > 0) {
+    if (needsShipping && shippingMethodsBody.length > 0) {
       chosen = shippingMethodsBody;
     }
-    if (flatRates.length > 0 && chosen.length === 0 && flatRates.length === 1) {
+    if (needsShipping && flatRates.length > 0 && chosen.length === 0 && flatRates.length === 1) {
       chosen = [flatRates[0].id];
     }
-    if (flatRates.length > 0 && chosen.length === 0) {
+    if (needsShipping && flatRates.length > 0 && chosen.length === 0) {
       return NextResponse.json(
         {
           error:
@@ -194,7 +212,7 @@ export async function POST(req: Request) {
 
     const checkoutInput: CheckoutMutationInput = {
       paymentMethod,
-      shippingMethod: chosen.length > 0 ? chosen : undefined,
+      shippingMethod: needsShipping && chosen.length > 0 ? chosen : undefined,
       shipToDifferentAddress: shipToDifferent,
       billing: billingInput,
       shipping: shippingInput,
