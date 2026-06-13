@@ -5,15 +5,17 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { ABOUT_STORY_VIDEO, StorySectionVideo } from "@/components/StorySectionVideo";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SocialLinks } from "@/components/SocialLinks";
+import { PRODUCT_NAMES } from "@/lib/product-names";
 import { webPageSchema } from "@/lib/schema";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+const ABOUT_DESCRIPTION = `The story behind Studio Amrita: handmade crochet ${PRODUCT_NAMES.glowBears}, curated skincare minis, and gift-ready packaging made for slow, thoughtful gifting.`;
+
 export const metadata: Metadata = {
   title: "About | Studio Amrita",
-  description:
-    "The story behind Studio Amrita: handmade crochet glow bears, curated skincare minis, and gift-ready packaging made for slow, thoughtful gifting.",
+  description: ABOUT_DESCRIPTION,
 };
 
 function Pillar({
@@ -41,8 +43,7 @@ export default function AboutPage() {
         data={webPageSchema({
           path: "/about",
           name: "About | Studio Amrita",
-          description:
-            "The story behind Studio Amrita: handmade crochet glow bears, curated skincare minis, and gift-ready packaging made for slow, thoughtful gifting.",
+          description: ABOUT_DESCRIPTION,
           type: "AboutPage",
         })}
       />
@@ -80,7 +81,7 @@ export default function AboutPage() {
             <ScrollReveal rootMargin="0px 0px 12% 0px">
               <StorySectionVideo
                 src={ABOUT_STORY_VIDEO}
-                ariaLabel="Handmade glow bears being crafted and packaged at Studio Amrita"
+                ariaLabel={`Handmade ${PRODUCT_NAMES.glowBears} being crafted and packaged at Studio Amrita`}
               />
             </ScrollReveal>
             <ScrollReveal className="flex flex-col gap-6" delayMs={70} rootMargin="0px 0px 12% 0px">
@@ -93,7 +94,7 @@ export default function AboutPage() {
                 rushed, always intentional.
               </p>
               <p className="font-sans text-base leading-relaxed text-body">
-                Every glow bear is crocheted by hand with premium matte chenille yarn for a soft,
+                Every {PRODUCT_NAMES.glowBear} is crocheted by hand with premium matte chenille yarn for a soft,
                 huggable texture. It takes about two hours to make each one, and no two are exactly
                 alike.
               </p>
@@ -168,7 +169,7 @@ export default function AboutPage() {
           <ScrollReveal className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
             <h2 className="font-heading text-2xl text-heading sm:text-3xl">Ready to find your glow?</h2>
             <p className="font-sans text-sm leading-relaxed text-body">
-              Explore our glow bear bundles, or read our FAQ
+              Explore our {PRODUCT_NAMES.glowBear} bundles, or read our FAQ
               for shipping, skincare, and packaging details.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">

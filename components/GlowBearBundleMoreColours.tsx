@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { PRODUCT_NAMES } from "@/lib/product-names";
 import { optionToSwatchColor } from "@/lib/product-swatches";
 
 export type BundleSibling = {
@@ -18,10 +19,10 @@ export function GlowBearBundleMoreColours({ siblings }: { siblings: BundleSiblin
     <section className="border-t border-black/[0.06] pt-10 lg:pt-12">
       <ScrollReveal className="max-w-2xl">
         <h2 className="font-heading text-2xl text-heading sm:text-3xl">
-          More colours in the Essential Glow Bear
+          More colours in the {PRODUCT_NAMES.essentialGlowBear}
         </h2>
         <p className="mt-2 font-sans text-base leading-relaxed text-body">
-          This essential glow bear is available in every shade below. Open another colour to see its
+          This {PRODUCT_NAMES.essentialGlowBear} is available in every shade below. Open another colour to see its
           full product page.
         </p>
       </ScrollReveal>

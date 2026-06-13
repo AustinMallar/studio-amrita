@@ -3,14 +3,14 @@ import { JsonLd } from "@/components/JsonLd";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { FAQ_ITEMS } from "@/lib/faq-content";
+import { PRODUCT_NAMES } from "@/lib/product-names";
 import { faqPageSchema } from "@/lib/schema";
 import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "FAQ | Studio Amrita",
-  description:
-    "Questions about our crochet glow bears, skincare minis, shipping, and gift-ready packaging.",
+  description: `Questions about our crochet ${PRODUCT_NAMES.glowBears}, skincare minis, shipping, and gift-ready packaging.`,
 };
 
 export default function FaqPage() {

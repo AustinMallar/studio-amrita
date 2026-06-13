@@ -1,5 +1,6 @@
 import type { FaqItem } from "./faq-content";
 import { htmlToPlainText } from "./html-text";
+import { PRODUCT_NAMES } from "./product-names";
 import { productQualifiesForGlowBearFreeShipping } from "./shipping";
 import { SOCIAL_LINKS } from "./social-links";
 import { absoluteUrl, SITE } from "./site";
@@ -21,9 +22,9 @@ export type SchemaBreadcrumbItem = {
 };
 
 const COLLECTION_NAMES: Record<string, string> = {
-  "essential-glow-bear": "Essential Glow Bear",
-  "classic-glow-bear": "Classic Glow Bear",
-  "baby-glow-bear": "Baby Glow Bear",
+  "essential-glow-bear": PRODUCT_NAMES.essentialGlowBear,
+  "classic-glow-bear": PRODUCT_NAMES.classicGlowBear,
+  "baby-glow-bear": PRODUCT_NAMES.babyGlowBear,
   accessories: "Accessories",
   "skincare-charms": "Skincare Charms",
   "crochet-patterns": "Crochet Patterns",
@@ -132,7 +133,7 @@ export function faqPageSchema(items: FaqItem[], path = "/faq"): Record<string, u
     ...webPageSchema({
       path,
       name: "FAQ | Studio Amrita",
-      description: "Questions about our crochet glow bears, skincare minis, shipping, and gift-ready packaging.",
+      description: `Questions about our crochet ${PRODUCT_NAMES.glowBears}, skincare minis, shipping, and gift-ready packaging.`,
       type: "FAQPage",
     }),
     mainEntity: items.map((item) => ({

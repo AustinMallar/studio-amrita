@@ -1,4 +1,5 @@
 import { SHIPPING_COPY } from "./shipping";
+import { PRODUCT_NAMES } from "./product-names";
 
 export type FaqItem = {
   question: string;
@@ -7,7 +8,7 @@ export type FaqItem = {
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
-    question: "What inspired the crochet bears and skincare pairing?",
+    question: `What inspired the ${PRODUCT_NAMES.glowBears} and skincare pairing?`,
     answer:
       "We wanted to bring something cute and joyful together with everyday self-care; so each bear comes with a mini glow-up.",
   },

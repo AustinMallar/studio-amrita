@@ -6,16 +6,18 @@ import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { absoluteUrl } from "@/lib/site";
+import { PRODUCT_NAMES } from "@/lib/product-names";
 import { collectionPageSchemas } from "@/lib/schema";
 import { toUiProducts } from "@/lib/ui-products";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+const SHOP_DESCRIPTION = `Shop handmade crochet ${PRODUCT_NAMES.glowBears} and gift bundles from Studio Amrita.`;
+
 export const metadata: Metadata = {
   title: "Shop | Studio Amrita",
-  description:
-    "Shop handmade crochet glow bears and gift bundles from Studio Amrita.",
+  description: SHOP_DESCRIPTION,
 };
 
 type HomepageRow = Awaited<ReturnType<typeof getHomepageCollections>>["rows"][number];
@@ -144,8 +146,7 @@ export default async function ShopPage() {
         data={collectionPageSchemas({
           path: "/shop",
           name: "Shop | Studio Amrita",
-          description:
-            "Shop handmade crochet glow bears and gift bundles from Studio Amrita.",
+          description: SHOP_DESCRIPTION,
           products: productItems,
         })}
       />
@@ -168,7 +169,7 @@ export default async function ShopPage() {
               </p>
               <h1 className="mt-3 font-heading text-3xl text-heading sm:text-4xl">Shop</h1>
               <p className="mt-4 font-sans text-base leading-relaxed text-body">
-                Handmade crochet glow bears and bundles, each paired with curated skincare minis
+                Handmade crochet {PRODUCT_NAMES.glowBears} and bundles, each paired with curated skincare minis
                 and gift-ready packaging.
               </p>
             </ScrollReveal>

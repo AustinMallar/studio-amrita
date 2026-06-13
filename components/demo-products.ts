@@ -1,3 +1,5 @@
+import { PRODUCT_NAMES } from "@/lib/product-names";
+
 /** Fallback catalog when WooCommerce returns no nodes — keeps layout reviewable without WP. */
 export const DEMO_GRID_PRODUCTS = [
   {
@@ -7,7 +9,7 @@ export const DEMO_GRID_PRODUCTS = [
     price: "$79.00",
     rawPrice: "79",
     imageUrl: "/hero-bear.png",
-    imageAlt: "Glow bear in gift box",
+    imageAlt: `${PRODUCT_NAMES.glowBear} in gift box`,
     swatches: ["Matcha"],
   },
   {
@@ -17,7 +19,7 @@ export const DEMO_GRID_PRODUCTS = [
     price: "$79.00",
     rawPrice: "79",
     imageUrl: "/hero-bear.png",
-    imageAlt: "Glow bear in gift box",
+    imageAlt: `${PRODUCT_NAMES.glowBear} in gift box`,
     swatches: ["Sakura"],
   },
   {
@@ -27,7 +29,7 @@ export const DEMO_GRID_PRODUCTS = [
     price: "$79.00",
     rawPrice: "79",
     imageUrl: "/hero-bear.png",
-    imageAlt: "Glow bear in gift box",
+    imageAlt: `${PRODUCT_NAMES.glowBear} in gift box`,
     swatches: ["Honey"],
   },
   {
@@ -37,7 +39,7 @@ export const DEMO_GRID_PRODUCTS = [
     price: "$79.00",
     rawPrice: "79",
     imageUrl: "/hero-bear.png",
-    imageAlt: "Glow bear in gift box",
+    imageAlt: `${PRODUCT_NAMES.glowBear} in gift box`,
     swatches: ["Cloud"],
   },
 ];

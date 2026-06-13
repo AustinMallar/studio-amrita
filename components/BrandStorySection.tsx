@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { HOMEPAGE_STORY_VIDEO, StorySectionVideo } from "@/components/StorySectionVideo";
+import { PRODUCT_NAMES } from "@/lib/product-names";
 
 export function BrandStorySection() {
   return (
@@ -9,7 +10,7 @@ export function BrandStorySection() {
         <ScrollReveal rootMargin="0px 0px 12% 0px">
           <StorySectionVideo
             src={HOMEPAGE_STORY_VIDEO}
-            ariaLabel="Studio Amrita glow bears and gift-ready packaging"
+            ariaLabel={`Studio Amrita ${PRODUCT_NAMES.glowBears} and gift-ready packaging`}
           />
         </ScrollReveal>
         <ScrollReveal className="flex flex-col gap-6" delayMs={70} rootMargin="0px 0px 12% 0px">
