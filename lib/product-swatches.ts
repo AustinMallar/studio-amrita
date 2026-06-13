@@ -61,15 +61,37 @@ export function optionToSwatchColor(option: string, productName?: string): strin
   return `hsl(${hue} 38% 68%)`;
 }
 
+/** Products that should not show colour dots on catalog cards. */
+const NO_CARD_SWATCHES_BY_SLUG = new Set([
+  "the-petal-pouch-crochet-pouch-with-flap-pdf-pattern-only",
+]);
+
+/** Standard Studio Amrita yarn shades — when most options match, show all on the card. */
+function isStudioColourPalette(options: string[]): boolean {
+  if (options.length < 2) return false;
+  const colourLike = options.filter((o) =>
+    /\b(matcha|sakura|honey|cloud|pink|green|brown|cream)\b/i.test(o)
+  );
+  return colourLike.length >= Math.min(4, options.length);
+}
+
 /**
  * Decide which attribute labels to render as dots on a card.
  * When WooCommerce returns the full global option list on every SKU, prefer the title match.
  */
-export function swatchLabelsForProduct(productName: string, attributeOptions: string[]): string[] {
+export function swatchLabelsForProduct(
+  productName: string,
+  attributeOptions: string[],
+  slug?: string
+): string[] {
+  if (slug && NO_CARD_SWATCHES_BY_SLUG.has(slug)) return [];
+
   const name = productName.trim();
   const opts = attributeOptions.filter(Boolean);
 
   if (opts.length === 1) return opts;
+
+  if (isStudioColourPalette(opts)) return opts.slice(0, 4);
 
   if (opts.length > 1 && name) {
     const n = name.toLowerCase();
@@ -93,5 +115,5 @@ export function swatchLabelsForProduct(productName: string, attributeOptions: st
   const color = parseGlowBearColor(name);
   if (color) return [color];
 
-  return opts.length ? opts : name ? [name] : [];
+  return opts.length ? opts.slice(0, 4) : [];
 }
