@@ -7,7 +7,7 @@ import type { ShopMegaMenuTile } from "./shop-mega-menu-types";
 export type { ShopMegaMenuTile };
 
 /**
- * Same three storefront rows as the homepage — includes category / product imagery for the mega menu.
+ * Storefront category rows from WooCommerce — includes category / product imagery for the mega menu.
  */
 export async function getShopMegaMenuTiles(): Promise<ShopMegaMenuTile[]> {
   const { rows } = await getHomepageCollections();

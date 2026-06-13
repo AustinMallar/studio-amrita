@@ -1,8 +1,8 @@
 import {
-  CATEGORY_SLUGS,
+  categoryFallbackDescription,
   getProductCategoryCollection,
+  getShopCategorySlugs,
   isShopCollectionSlugVisible,
-  visibleShopCollectionSlugs,
 } from "@/lib/api";
 import { FooterValues } from "@/components/FooterValues";
 import { JsonLd } from "@/components/JsonLd";
@@ -17,17 +17,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-const FALLBACK_DESCRIPTION: Record<string, string> = {
-  [CATEGORY_SLUGS["Essential Glow Bear"]]:
-    "Four handmade crochet bag charms, each paired with Klavuu lip balm and L'Occitane hand cream in gift-ready packaging.",
-  [CATEGORY_SLUGS["Glow Bow Charms"]]:
-    "Petite bows to clip, gift, or collect. Tiny accents with big personality.",
-};
-
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return Object.values(CATEGORY_SLUGS).map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  const slugs = await getShopCategorySlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -40,7 +34,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     title: `${collection.name} | Studio Amrita`,
     description:
       collection.description ||
-      FALLBACK_DESCRIPTION[slug] ||
+      categoryFallbackDescription(slug) ||
       `Shop ${collection.name} at Studio Amrita.`,
   };
 }
@@ -61,7 +55,7 @@ export default async function ShopCollectionPage(props: Props) {
   const description =
     collection.description && collection.description.length > 0
       ? collection.description
-      : FALLBACK_DESCRIPTION[slug] ?? "";
+      : categoryFallbackDescription(slug);
 
   const products = toUiProducts(collection.products ?? []);
   const productItems = products

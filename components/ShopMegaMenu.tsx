@@ -64,7 +64,7 @@ export function ShopMegaMenu({ collections }: { collections: ShopMegaMenuTile[] 
         aria-hidden={!open}
       >
         <div className="rounded-2xl border border-black/[0.08] bg-cream/98 p-3 shadow-[0_14px_44px_rgba(92,77,77,0.14)] backdrop-blur-md">
-          <ul className="grid grid-cols-3 gap-2 sm:gap-3">
+          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
             {collections.map((c) => (
               <li key={c.href} className="min-w-0">
                 <Link

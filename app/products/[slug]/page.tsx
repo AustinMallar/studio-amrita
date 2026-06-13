@@ -2,7 +2,6 @@ import {
   CATEGORY_SLUGS,
   getGlowBearBundleSiblings,
   getProductBySlug,
-  isProductVisible,
   mapProductDetail,
 } from "@/lib/api";
 import { getFrontendHoverVideo } from "@/lib/product-hover-videos";
@@ -34,7 +33,6 @@ export default async function ProductPage({
   const raw = data?.product;
   const product = mapProductDetail(raw) as ProductDetailView | null;
   if (!product || !product.slug) notFound();
-  if (!isProductVisible(product.slug, product.categorySlugs)) notFound();
 
   const bundleCatSlug = CATEGORY_SLUGS["Essential Glow Bear"];
   const showBundleSiblings =
