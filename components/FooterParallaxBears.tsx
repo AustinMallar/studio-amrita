@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
-const IMAGE_WIDTH = 1024;
-const IMAGE_HEIGHT = 256;
+const IMAGE_WIDTH = 1886;
+const IMAGE_HEIGHT = 580;
 const MAX_OFFSET = 48;
 
 function parallaxProgress(el: HTMLElement) {
@@ -88,7 +88,7 @@ export function FooterParallaxBears() {
     <div className="px-4 sm:px-6 lg:px-8">
       <div
         ref={containerRef}
-        className="relative mx-auto aspect-[4/1] w-full max-w-md overflow-hidden sm:max-w-lg lg:max-w-xl"
+        className="relative mx-auto aspect-[1886/580] w-full max-w-md overflow-hidden sm:max-w-lg lg:max-w-xl"
         aria-hidden
       >
         <div
@@ -100,7 +100,7 @@ export function FooterParallaxBears() {
           }}
         >
           <Image
-            src="/footer-bears.png"
+            src="/footer-bears.webp"
             alt=""
             width={IMAGE_WIDTH}
             height={IMAGE_HEIGHT}
