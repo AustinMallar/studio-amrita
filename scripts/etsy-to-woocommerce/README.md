@@ -151,12 +151,7 @@ Complete these checks before publishing products and enabling them on the Next.j
 ### Publish
 
 1. Bulk-select drafts in **WooCommerce → Products** and set status to **Published** (or add `WC_DEFAULT_STATUS=publish` for a second import pass).
-2. In [`lib/api.js`](../../lib/api.js), set visibility flags when collections are ready:
-
-```javascript
-const SHOW_CLASSIC_GLOW_BEAR = true;
-const SHOW_GLOW_BOW_CHARMS = true;
-```
+2. Shop, homepage, and nav pick up published categories that have products. Hidden slugs (`uncategorized`, `glow-bears`, `glow-bow-charms`) stay off the storefront.
 
 Category hero images are frontend overrides in [`lib/category-images.ts`](../../lib/category-images.ts); confirm category slugs match after import.
 

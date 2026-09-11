@@ -55,8 +55,6 @@ type HomepageRowConfig = {
     slug?: string;
     lifestyleImageUrl?: string | null;
     lifestyleImageAlt?: string;
-    /** Classic Glow Bear variable product — colour attribute options. */
-    swatches?: string[];
     products: RawCatalogProduct[];
   } | null;
 };
@@ -131,7 +129,6 @@ export default async function Home() {
               products={products}
               lifestyleImageUrl={row.data?.lifestyleImageUrl}
               lifestyleImageAlt={row.data?.lifestyleImageAlt}
-              lifestyleColorSwatches={row.key === "classic" ? row.data?.swatches : undefined}
             />
           );
         })}
