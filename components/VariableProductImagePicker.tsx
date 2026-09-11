@@ -57,7 +57,7 @@ function findVariationBySelection(
 
 function isGlowColourAttribute(attr: ProductVariationAttribute) {
   const blob = `${attr.name} ${attr.label}`.toLowerCase();
-  return /color|colour|shade|choose-your-glow|choose your glow/.test(blob);
+  return /color|colour|shade|choose-your-glow|choose your glow|bag colour|bag color/.test(blob);
 }
 
 const selectClassName =

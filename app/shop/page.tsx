@@ -13,7 +13,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-const SHOP_DESCRIPTION = `Shop handmade crochet ${PRODUCT_NAMES.glowBears} and gift bundles from Studio Amrita.`;
+const SHOP_DESCRIPTION = `Shop handmade crochet ${PRODUCT_NAMES.glowBears}, purses, and gift bundles from Studio Amrita.`;
 
 export const metadata: Metadata = {
   title: "Shop | Studio Amrita",
@@ -168,8 +168,8 @@ export default async function ShopPage() {
               </p>
               <h1 className="mt-3 font-heading text-3xl text-heading sm:text-4xl">Shop</h1>
               <p className="mt-4 font-sans text-base leading-relaxed text-body">
-                Handmade crochet {PRODUCT_NAMES.glowBears} and bundles, each paired with curated skincare minis
-                and gift-ready packaging.
+                Handmade crochet {PRODUCT_NAMES.glowBears}, purses, and accessories — each piece
+                crafted in small batches and gift-ready.
               </p>
             </ScrollReveal>
           </div>

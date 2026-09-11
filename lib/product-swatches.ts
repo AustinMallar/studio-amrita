@@ -41,6 +41,16 @@ const LEGACY_NAMED: Record<string, string> = {
   vanilla: "#D0B1AE",
   coconut: "#9B7C62",
   berry: "#E4A8A6",
+  /** Purse / bag colourways */
+  "light pink": "#E6B9BC",
+  "dusty rose": "#e4a8a8",
+  cream: "#CAC8C4",
+  beige: "#D4C4B0",
+  sandstone: "#C4A882",
+  black: "#2A2A2A",
+  "dark grey": "#5C5C5C",
+  "dark gray": "#5C5C5C",
+  "dark brown": "#5C4033",
 };
 
 function normalizeBlob(option: string, productName?: string): string {
@@ -76,6 +86,7 @@ const CARD_SWATCH_LABEL_BY_SLUG: Record<string, string> = {
   "the-glow-sun-charm-beauty-of-joseon-relief-sunscreen-korean-skincare-keychain-bag-accessory":
     "Cloud Cream",
   "the-glow-berry-handmade-crochet-pink-strawberry-keychain-bag-charm": "Sakura Pink",
+  "strawberry-crochet-keychain-handmade-bag-charm-pink": "Sakura Pink",
 };
 
 /** Standard Studio Amrita yarn shades — when most options match, show all on the card. */

@@ -1,6 +1,6 @@
 /** WooCommerce shipping class slug — must match the class created in WooCommerce admin. */
 export const GLOW_BEAR_SHIPPING_CLASS_SLUG =
-  process.env.WC_GLOW_BEAR_SHIPPING_CLASS?.trim() || "glow-bear";
+  process.env.WC_GLOW_BEAR_SHIPPING_CLASS?.trim() || "glow-bears";
 
 const GLOW_BEAR_CATEGORY_SLUGS = new Set([
   "essential-glow-bear",

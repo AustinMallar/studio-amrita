@@ -1,3 +1,5 @@
+import { decodeHtmlEntities } from "./html-text";
+
 /** Canonical colour order for Essential Glow Bear grid rows. */
 const GLOW_BEAR_COLOR_ORDER = ["matcha", "sakura", "honey", "cloud"] as const;
 
@@ -12,6 +14,19 @@ export function parseGlowBearColor(name: string): string | null {
 /** Short label for product cards and sibling links. */
 export function glowBearCardName(fullName: string): string {
   return parseGlowBearColor(fullName) ?? fullName.trim();
+}
+
+/**
+ * Storefront title from a WooCommerce/Etsy name: decode entities, drop SEO tails,
+ * then keep Glow Bear colour short names when the title is a colourway SKU.
+ */
+export function storefrontProductName(fullName: string): string {
+  const decoded = decodeHtmlEntities(String(fullName ?? "")).replace(/\s+/g, " ").trim();
+  if (!decoded) return "";
+
+  const primary = decoded.split(/\s*[|]\s*/)[0]?.trim() || decoded;
+  const withoutHandmadeTail = primary.replace(/\s+Handmade\b.+$/i, "").trim();
+  return glowBearCardName(withoutHandmadeTail || primary);
 }
 
 function glowBearSortIndex(name: string): number {

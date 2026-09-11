@@ -1,7 +1,7 @@
 import { GLOW_BEAR_LINE_NAMES, PRODUCT_NAMES } from "./product-names";
 
 /** WooCommerce shipping class slug — products in this class ship free worldwide. */
-export const GLOW_BEAR_SHIPPING_CLASS_SLUG = "glow-bear";
+export const GLOW_BEAR_SHIPPING_CLASS_SLUG = "glow-bears";
 
 /** Storefront category slugs whose products use the Glow Bear shipping class. */
 export const GLOW_BEAR_CATEGORY_SLUGS = new Set([

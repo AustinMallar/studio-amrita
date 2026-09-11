@@ -118,7 +118,7 @@ export type WooProductPayload = {
   attributes?: WooAttributePayload[];
   meta_data: Array<{ key: string; value: string | number }>;
   variations?: WooVariationPayload[];
-  /** WooCommerce shipping class slug (e.g. glow-bear). */
+  /** WooCommerce shipping class slug (e.g. glow-bears). */
   shipping_class?: string;
 };
 

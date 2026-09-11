@@ -25,6 +25,7 @@ const COLLECTION_NAMES: Record<string, string> = {
   "essential-glow-bear": PRODUCT_NAMES.essentialGlowBear,
   "classic-glow-bear": PRODUCT_NAMES.classicGlowBear,
   "baby-glow-bear": PRODUCT_NAMES.babyGlowBear,
+  purses: "Purses",
   accessories: "Accessories",
   "skincare-charms": "Skincare Charms",
   "crochet-patterns": "Crochet Patterns",
