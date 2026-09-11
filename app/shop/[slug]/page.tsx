@@ -8,7 +8,6 @@ import { FooterValues } from "@/components/FooterValues";
 import { JsonLd } from "@/components/JsonLd";
 import { ProductCard } from "@/components/ProductCard";
 import { toUiProducts } from "@/lib/ui-products";
-import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { absoluteUrl } from "@/lib/site";
@@ -76,7 +75,6 @@ export default async function ShopCollectionPage(props: Props) {
           products: productItems,
         })}
       />
-      <PromoBar />
       <SiteHeader />
       <main className="flex-1">
         <section className="border-b border-black/[0.04] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">

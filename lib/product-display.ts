@@ -41,6 +41,12 @@ export function isGlowColourAttributeName(name?: string, label?: string): boolea
   return /color|colour|shade|choose-your-glow|choose your glow/.test(blob);
 }
 
+/** “Choose your glow” only — not bag colour or Baby Glow Bear colour add-ons. */
+export function isGlowBearColourwayAttributeName(name?: string, label?: string): boolean {
+  const blob = `${name ?? ""} ${label ?? ""}`.toLowerCase();
+  return /choose-your-glow|choose your glow/.test(blob);
+}
+
 /** Stable query value for `/products/[slug]?colour=`. */
 export function glowColourParam(option: string): string {
   const short = parseGlowBearColor(option);

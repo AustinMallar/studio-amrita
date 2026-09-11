@@ -3,7 +3,6 @@ import { CartLineThumb } from "@/components/CartLineThumb";
 import { CartShippingSelector } from "@/components/CartShippingSelector";
 import { RemoveFromCartButton } from "@/components/RemoveFromCartButton";
 import { FooterValues } from "@/components/FooterValues";
-import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { imageFromCartProductNode } from "@/lib/cart-product-image";
 import { flattenShippingRates, formatShippingCostForDisplay } from "@/lib/cart-shipping-utils";
@@ -32,7 +31,6 @@ export default async function CartPage() {
   return (
     <div className="flex min-h-screen flex-col bg-cream">
       <WooSessionSync active={sessionSyncNeeded} />
-      <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6 lg:py-14">
         <nav className="font-sans text-sm text-body">

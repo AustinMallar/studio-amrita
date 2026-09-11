@@ -1,6 +1,5 @@
 import { BumperCropGame } from "@/components/game/BumperCropGame";
 import { FooterValues } from "@/components/FooterValues";
-import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { Metadata } from "next";
@@ -15,7 +14,6 @@ export const metadata: Metadata = {
 export default function PlayPage() {
   return (
     <div className="flex min-h-screen flex-col bg-cream">
-      <PromoBar />
       <SiteHeader />
       <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <div className="mx-auto max-w-3xl">

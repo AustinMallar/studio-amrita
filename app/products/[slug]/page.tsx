@@ -12,13 +12,11 @@ import { ProductDetailGallery } from "@/components/ProductDetailGallery";
 import { ProductDetailVideo } from "@/components/ProductDetailVideo";
 import { ProductDescription } from "@/components/ProductDescription";
 import { ProductDigitalCallout } from "@/components/ProductDigitalCallout";
-import { ProductShippingCallout } from "@/components/ProductShippingCallout";
-import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   GLOW_BEAR_COLOURWAY_CATEGORY_SLUGS,
   glowColourParam,
-  isGlowColourAttributeName,
+  isGlowBearColourwayAttributeName,
   matchGlowColourOption,
   parseGlowBearColor,
   sortEssentialGlowBearProducts,
@@ -26,7 +24,6 @@ import {
 import { getFrontendHoverVideo } from "@/lib/product-hover-videos";
 import { optionToSwatchColor } from "@/lib/product-swatches";
 import { productPageSchemas } from "@/lib/schema";
-import { productQualifiesForGlowBearFreeShipping } from "@/lib/shipping";
 import type { ProductDetailView } from "@/types/product-detail";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -48,14 +45,14 @@ export default async function ProductPage({
   if (!product || !product.slug) notFound();
 
   const colourAttr = product.variationAttributes.find((attr) =>
-    isGlowColourAttributeName(attr.name, attr.label)
+    isGlowBearColourwayAttributeName(attr.name, attr.label)
   );
   const isGlowBearLine = product.categorySlugs.some((categorySlug) =>
     GLOW_BEAR_COLOURWAY_CATEGORY_SLUGS.has(categorySlug)
   );
   const defaultColour =
     product.variations[0]?.attributeValues.find((attr) =>
-      isGlowColourAttributeName(attr.name, attr.name)
+      isGlowBearColourwayAttributeName(attr.name, attr.name)
     )?.value ?? colourAttr?.options[0];
   const selectedColour =
     (colourAttr && matchGlowColourOption(colourAttr.options, initialColour)) ||
@@ -70,7 +67,7 @@ export default async function ProductPage({
               const variation = product.variations.find((item) =>
                 item.attributeValues.some(
                   (attr) =>
-                    isGlowColourAttributeName(attr.name, attr.name) &&
+                    isGlowBearColourwayAttributeName(attr.name, attr.name) &&
                     glowColourParam(attr.value) === glowColourParam(option)
                 )
               );
@@ -93,14 +90,10 @@ export default async function ProductPage({
     product.variations.length > 0 && /variable/i.test(String(product.productType || ""));
 
   const detailClip = getFrontendHoverVideo(product.slug);
-  const showGlowBearFreeShipping = productQualifiesForGlowBearFreeShipping(
-    product.categorySlugs
-  );
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
       <JsonLd data={productPageSchemas(product)} />
-      <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 lg:gap-14 lg:py-14">
         <ScrollReveal rootMargin="0px 0px 18% 0px">
@@ -113,7 +106,7 @@ export default async function ProductPage({
 
         {isVariableProduct ? (
           <VariableProductImagePicker
-            key={initialColour ?? "default"}
+            key={isGlowBearLine ? (initialColour ?? "default") : "picker"}
             productDatabaseId={product.databaseId}
             productName={product.name}
             fallbackImageUrl={product.imageUrl}
@@ -125,9 +118,6 @@ export default async function ProductPage({
             initialColour={initialColour}
           >
             {product.downloadable ? <ProductDigitalCallout /> : null}
-            {!product.downloadable && showGlowBearFreeShipping ? (
-              <ProductShippingCallout />
-            ) : null}
             {descriptionHtml ? (
               <ProductDescription html={descriptionHtml} />
             ) : null}
@@ -196,9 +186,6 @@ export default async function ProductPage({
               ) : null}
 
               {product.downloadable ? <ProductDigitalCallout /> : null}
-              {!product.downloadable && showGlowBearFreeShipping ? (
-                <ProductShippingCallout />
-              ) : null}
 
               {product.databaseId > 0 ? (
                 <AddToCartButton productId={product.databaseId} />

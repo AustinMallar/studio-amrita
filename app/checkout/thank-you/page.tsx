@@ -2,7 +2,6 @@ import { ThankYouCartSync } from "./ThankYouCartSync";
 import { OrderThankYouSummary } from "@/components/OrderThankYouSummary";
 import { OrderDownloadsNotice } from "@/components/OrderDownloadsNotice";
 import { FooterValues } from "@/components/FooterValues";
-import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { fetchCustomerDownloadables } from "@/lib/downloadables";
 import { fetchThankYouOrderView } from "@/lib/order-thank-you";
@@ -59,7 +58,6 @@ export default async function CheckoutThankYouPage({
   return (
     <div className="flex min-h-screen flex-col bg-cream">
       <ThankYouCartSync />
-      <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-14 sm:px-6">
         <nav className="font-sans text-sm text-body">

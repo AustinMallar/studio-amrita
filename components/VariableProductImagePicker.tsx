@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { optionToSwatchColor } from "@/lib/product-swatches";
 import {
   glowColourParam,
+  isGlowBearColourwayAttributeName,
   isGlowColourAttributeName,
   matchGlowColourOption,
 } from "@/lib/product-display";
@@ -67,6 +68,10 @@ function isGlowColourAttribute(attr: ProductVariationAttribute) {
   return isGlowColourAttributeName(attr.name, attr.label);
 }
 
+function isGlowBearColourwayAttribute(attr: ProductVariationAttribute) {
+  return isGlowBearColourwayAttributeName(attr.name, attr.label);
+}
+
 function selectionFromColourParam(
   attributes: ProductVariationAttribute[],
   variations: ProductVariationView[],
@@ -75,7 +80,7 @@ function selectionFromColourParam(
   const base = initialAttributeSelection(attributes, variations);
   if (!colourParam) return base;
 
-  const colourAttr = attributes.find(isGlowColourAttribute);
+  const colourAttr = attributes.find(isGlowBearColourwayAttribute);
   if (!colourAttr) return base;
 
   const option = matchGlowColourOption(colourAttr.options, colourParam);
@@ -92,7 +97,7 @@ function selectionFromColourParam(
   const any = variations.find((variation) =>
     variation.attributeValues.some(
       (attr) =>
-        isGlowColourAttributeName(attr.name, attr.name) &&
+        isGlowBearColourwayAttributeName(attr.name, attr.name) &&
         matchGlowColourOption([attr.value], option),
     ),
   );
@@ -176,7 +181,7 @@ export function VariableProductImagePicker({
   function updateAttribute(name: string, value: string) {
     setAttributeSelection((current) => ({ ...current, [name]: value }));
     const attr = variationAttributes.find((item) => item.name === name);
-    if (attr && isGlowColourAttribute(attr)) {
+    if (attr && isGlowBearColourwayAttribute(attr)) {
       syncColourInUrl(value);
     }
   }
@@ -313,7 +318,7 @@ export function VariableProductImagePicker({
                         onChange={() => {
                           setSelectedId(v.id);
                           const colourValue = v.attributeValues.find((attr) =>
-                            isGlowColourAttributeName(attr.name, attr.name),
+                            isGlowBearColourwayAttributeName(attr.name, attr.name),
                           )?.value;
                           if (colourValue) syncColourInUrl(colourValue);
                         }}

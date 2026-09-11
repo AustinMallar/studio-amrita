@@ -1,6 +1,5 @@
 import { FooterValues } from "@/components/FooterValues";
 import { JsonLd } from "@/components/JsonLd";
-import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { ABOUT_STORY_VIDEO, StorySectionVideo } from "@/components/StorySectionVideo";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -47,7 +46,6 @@ export default function AboutPage() {
           type: "AboutPage",
         })}
       />
-      <PromoBar />
       <SiteHeader />
       <main className="flex-1">
         <section className="border-b border-black/[0.04] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">

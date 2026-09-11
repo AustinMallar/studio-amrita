@@ -1,5 +1,4 @@
 import { FooterValues } from "@/components/FooterValues";
-import { PromoBar } from "@/components/PromoBar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import type { ReactNode } from "react";
 
@@ -32,7 +31,6 @@ type Props = {
 export function PageLoadingShell({ children, mainClassName = "flex-1" }: Props) {
   return (
     <div className="flex min-h-screen flex-col bg-cream">
-      <PromoBar />
       <HeaderSkeleton />
       <main className={mainClassName}>{children}</main>
       <FooterValues />

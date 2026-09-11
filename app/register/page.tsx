@@ -1,5 +1,4 @@
 import { FooterValues } from "@/components/FooterValues";
-import { PromoBar } from "@/components/PromoBar";
 import { RegisterForm } from "@/components/RegisterForm";
 import { SiteHeader } from "@/components/SiteHeader";
 import { safeNextPath } from "@/lib/safe-next-path";
@@ -15,7 +14,6 @@ export default async function RegisterPage({
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
-      <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-8 px-4 py-10 sm:px-6 lg:py-14">
         <nav className="font-sans text-sm text-body">

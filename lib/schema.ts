@@ -1,7 +1,6 @@
 import type { FaqItem } from "./faq-content";
 import { htmlToPlainText } from "./html-text";
 import { PRODUCT_NAMES } from "./product-names";
-import { productQualifiesForGlowBearFreeShipping } from "./shipping";
 import { SOCIAL_LINKS } from "./social-links";
 import { absoluteUrl, SITE } from "./site";
 import type { ProductDetailView } from "@/types/product-detail";
@@ -148,22 +147,8 @@ export function faqPageSchema(items: FaqItem[], path = "/faq"): Record<string, u
   };
 }
 
-function freeShippingDetails(): Record<string, unknown> {
-  return {
-    "@type": "OfferShippingDetails",
-    shippingRate: {
-      "@type": "MonetaryAmount",
-      value: 0,
-      currency: SITE.currency,
-    },
-  };
-}
-
 function productOffers(product: ProductDetailView): Record<string, unknown> {
   const productUrl = absoluteUrl(`/products/${product.slug}`);
-  const shippingDetails = productQualifiesForGlowBearFreeShipping(product.categorySlugs)
-    ? freeShippingDetails()
-    : undefined;
   const variationPrices = product.variations
     .map((variation) => parsePriceAmount(variation.price))
     .filter((value): value is number => value != null);
@@ -179,7 +164,6 @@ function productOffers(product: ProductDetailView): Record<string, unknown> {
       highPrice: formatPriceAmount(high),
       offerCount: variationPrices.length,
       availability: "https://schema.org/InStock",
-      ...(shippingDetails ? { shippingDetails } : {}),
     };
   }
 
@@ -192,7 +176,6 @@ function productOffers(product: ProductDetailView): Record<string, unknown> {
     priceCurrency: SITE.currency,
     ...(price != null ? { price: formatPriceAmount(price) } : {}),
     availability: "https://schema.org/InStock",
-    ...(shippingDetails ? { shippingDetails } : {}),
   };
 }
 

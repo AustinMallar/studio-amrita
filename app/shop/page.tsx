@@ -2,7 +2,6 @@ import { getHomepageCollections } from "@/lib/api";
 import { FooterValues } from "@/components/FooterValues";
 import { JsonLd } from "@/components/JsonLd";
 import { ProductCard } from "@/components/ProductCard";
-import { PromoBar } from "@/components/PromoBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { absoluteUrl } from "@/lib/site";
@@ -151,7 +150,6 @@ export default async function ShopPage() {
           products: productItems,
         })}
       />
-      <PromoBar />
       <SiteHeader />
       <main className="flex-1">
         <section className="border-b border-black/[0.04] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">

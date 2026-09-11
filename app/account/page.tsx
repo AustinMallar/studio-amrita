@@ -6,7 +6,6 @@ import { OrdersSection } from "@/components/account/OrdersSection";
 import { ProfileDetailsForm } from "@/components/account/ProfileDetailsForm";
 import { FooterValues } from "@/components/FooterValues";
 import { LogoutButton } from "@/components/LogoutButton";
-import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   fetchAccountOverview,
@@ -76,7 +75,6 @@ export default async function AccountPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
-      <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 lg:py-14">
         <nav className="font-sans text-sm text-body">

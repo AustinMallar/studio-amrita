@@ -7,10 +7,8 @@ import { FooterValues } from "@/components/FooterValues";
 import { HeroSection } from "@/components/HeroSection";
 import { JsonLd } from "@/components/JsonLd";
 import { ProductRow } from "@/components/ProductRow";
-import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { collectionPageSchemas } from "@/lib/schema";
-import { SHIPPING_COPY } from "@/lib/shipping";
 import { absoluteUrl, SITE } from "@/lib/site";
 import type { RawCatalogProduct } from "@/lib/ui-products";
 import { toUiProducts } from "@/lib/ui-products";
@@ -19,7 +17,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Studio Amrita | Crochet Bear Keychain & Handmade Glow Bears",
   description:
-    `Shop Studio Amrita's handmade crochet bear keychains and Glow Bears — kawaii amigurumi gifts, thoughtfully crafted and gift-ready. ${SHIPPING_COPY.metaSuffix}`,
+    "Shop Studio Amrita's handmade crochet bear keychains and Glow Bears — kawaii amigurumi gifts, thoughtfully crafted and gift-ready.",
   openGraph: {
     title: "Studio Amrita | Crochet Bear Keychain & Handmade Glow Bears",
     description:
@@ -107,7 +105,6 @@ export default async function Home() {
           primaryImage: SITE.defaultOgImage,
         })}
       />
-      <PromoBar />
       <SiteHeader />
       <main className="flex-1">
         <HeroSection />

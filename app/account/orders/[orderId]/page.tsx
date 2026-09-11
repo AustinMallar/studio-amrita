@@ -1,5 +1,4 @@
 import { FooterValues } from "@/components/FooterValues";
-import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   collectGraphQLErrors,
@@ -63,7 +62,6 @@ export default async function AccountOrderPage({
   if (!order) {
     return (
       <div className="flex min-h-screen flex-col bg-cream">
-        <PromoBar />
         <SiteHeader />
         <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10 sm:px-6 lg:py-14">
           <Link href="/account" className="font-sans text-sm text-dusty-rose hover:underline">
@@ -88,7 +86,6 @@ export default async function AccountOrderPage({
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
-      <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6 lg:py-14">
         <nav className="font-sans text-sm text-body">

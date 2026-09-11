@@ -1,13 +1,11 @@
 import { FooterValues } from "@/components/FooterValues";
 import { ForgotPasswordForm } from "@/components/ForgotPasswordForm";
-import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen flex-col bg-cream">
-      <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-8 px-4 py-10 sm:px-6 lg:py-14">
         <nav className="font-sans text-sm text-body">

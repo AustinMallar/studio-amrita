@@ -1,6 +1,5 @@
 import { FooterValues } from "@/components/FooterValues";
 import { JsonLd } from "@/components/JsonLd";
-import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { FAQ_ITEMS } from "@/lib/faq-content";
 import { PRODUCT_NAMES } from "@/lib/product-names";
@@ -17,7 +16,6 @@ export default function FaqPage() {
   return (
     <div className="flex min-h-screen flex-col bg-cream">
       <JsonLd data={faqPageSchema(FAQ_ITEMS)} />
-      <PromoBar />
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 lg:py-14">
         <nav className="font-sans text-sm text-body">
