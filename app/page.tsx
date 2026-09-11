@@ -76,12 +76,12 @@ function homepageSchemaProducts(rows: HomepageRowConfig[]) {
     }
 
     for (const product of row.data?.products ?? []) {
-      const slug = product.slug?.trim();
-      if (!slug || seen.has(slug)) continue;
-      seen.add(slug);
+      const path = product.href || (product.slug?.trim() ? `/products/${product.slug}` : "");
+      if (!path || seen.has(path)) continue;
+      seen.add(path);
       items.push({
-        name: product.name,
-        url: absoluteUrl(`/products/${slug}`),
+        name: product.displayName ?? product.name,
+        url: absoluteUrl(path),
         image: product.imageUrl || undefined,
       });
     }

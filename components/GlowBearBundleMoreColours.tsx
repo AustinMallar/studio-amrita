@@ -6,6 +6,7 @@ import { optionToSwatchColor } from "@/lib/product-swatches";
 
 export type BundleSibling = {
   slug: string;
+  href?: string;
   name: string;
   displayName?: string;
   imageUrl: string;
@@ -18,22 +19,21 @@ export function GlowBearBundleMoreColours({ siblings }: { siblings: BundleSiblin
   return (
     <section className="border-t border-black/[0.06] pt-10 lg:pt-12">
       <ScrollReveal className="max-w-2xl">
-        <h2 className="font-heading text-2xl text-heading sm:text-3xl">
-          More colours in the {PRODUCT_NAMES.essentialGlowBear}
-        </h2>
+        <h2 className="font-heading text-2xl text-heading sm:text-3xl">More colours</h2>
         <p className="mt-2 font-sans text-base leading-relaxed text-body">
-          This {PRODUCT_NAMES.essentialGlowBear} is available in every shade below. Open another colour to see its
-          full product page.
+          This {PRODUCT_NAMES.glowBear} is available in every shade below. Open another colour to
+          change the selected option.
         </p>
       </ScrollReveal>
       <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-3">
         {siblings.map((s, i) => {
           const remote = Boolean(s.imageUrl && s.imageUrl.startsWith("http"));
+          const href = s.href ?? `/products/${s.slug}`;
           return (
-            <li key={s.slug}>
+            <li key={href}>
               <ScrollReveal className="h-full" delayMs={40 + i * 56}>
               <Link
-                href={`/products/${s.slug}`}
+                href={href}
                 className="group flex flex-col gap-3 rounded-2xl bg-white/60 p-3 text-center shadow-[0_2px_8px_rgba(92,77,77,0.07),0_1px_2px_rgba(92,77,77,0.04)] transition hover:shadow-[0_4px_14px_rgba(92,77,77,0.1)]"
               >
                 <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-blush/80">

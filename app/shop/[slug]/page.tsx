@@ -61,8 +61,8 @@ export default async function ShopCollectionPage(props: Props) {
   const productItems = products
     .filter((product) => product.slug)
     .map((product) => ({
-      name: product.name,
-      url: absoluteUrl(`/products/${product.slug}`),
+      name: product.displayName ?? product.name,
+      url: absoluteUrl(product.href || `/products/${product.slug}`),
       image: product.imageUrl || undefined,
     }));
 

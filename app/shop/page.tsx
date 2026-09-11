@@ -128,15 +128,17 @@ export default async function ShopPage() {
   const seen = new Set<string>();
   const productItems = rows.flatMap((row) =>
     toUiProducts(row.data?.products ?? [])
-      .filter((product) => product.slug && !seen.has(product.slug))
-      .map((product) => {
-        seen.add(product.slug!);
-        return {
-          name: product.name,
-          url: absoluteUrl(`/products/${product.slug}`),
-          image: product.imageUrl || undefined,
-        };
+      .filter((product) => {
+        const path = product.href || (product.slug ? `/products/${product.slug}` : "");
+        if (!path || seen.has(path)) return false;
+        seen.add(path);
+        return true;
       })
+      .map((product) => ({
+        name: product.displayName ?? product.name,
+        url: absoluteUrl(product.href || `/products/${product.slug}`),
+        image: product.imageUrl || undefined,
+      }))
   );
 
   return (

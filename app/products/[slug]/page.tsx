@@ -1,11 +1,7 @@
 import {
-  CATEGORY_SLUGS,
-  getGlowBearBundleSiblings,
   getProductBySlug,
   mapProductDetail,
 } from "@/lib/api";
-import { getFrontendHoverVideo } from "@/lib/product-hover-videos";
-import type { ProductDetailView } from "@/types/product-detail";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { GlowBearBundleMoreColours } from "@/components/GlowBearBundleMoreColours";
 import { JsonLd } from "@/components/JsonLd";
@@ -19,30 +15,77 @@ import { ProductDigitalCallout } from "@/components/ProductDigitalCallout";
 import { ProductShippingCallout } from "@/components/ProductShippingCallout";
 import { PromoBar } from "@/components/PromoBar";
 import { SiteHeader } from "@/components/SiteHeader";
-import { productQualifiesForGlowBearFreeShipping } from "@/lib/shipping";
+import {
+  GLOW_BEAR_COLOURWAY_CATEGORY_SLUGS,
+  glowColourParam,
+  isGlowColourAttributeName,
+  matchGlowColourOption,
+  parseGlowBearColor,
+  sortEssentialGlowBearProducts,
+} from "@/lib/product-display";
+import { getFrontendHoverVideo } from "@/lib/product-hover-videos";
 import { optionToSwatchColor } from "@/lib/product-swatches";
 import { productPageSchemas } from "@/lib/schema";
+import { productQualifiesForGlowBearFreeShipping } from "@/lib/shipping";
+import type { ProductDetailView } from "@/types/product-detail";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export default async function ProductPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ colour?: string }>;
 }) {
   const { slug } = await params;
+  const query = await searchParams;
+  const initialColour = typeof query.colour === "string" ? query.colour : undefined;
   const json = await getProductBySlug(slug);
   const data = json?.data as { product?: Record<string, unknown> } | null | undefined;
   const raw = data?.product;
   const product = mapProductDetail(raw) as ProductDetailView | null;
   if (!product || !product.slug) notFound();
 
-  const bundleCatSlug = CATEGORY_SLUGS["Essential Glow Bear"];
-  const showBundleSiblings =
-    Array.isArray(product.categorySlugs) && product.categorySlugs.includes(bundleCatSlug);
-  const bundleSiblings = showBundleSiblings
-    ? await getGlowBearBundleSiblings(product.slug)
-    : [];
+  const colourAttr = product.variationAttributes.find((attr) =>
+    isGlowColourAttributeName(attr.name, attr.label)
+  );
+  const isGlowBearLine = product.categorySlugs.some((categorySlug) =>
+    GLOW_BEAR_COLOURWAY_CATEGORY_SLUGS.has(categorySlug)
+  );
+  const defaultColour =
+    product.variations[0]?.attributeValues.find((attr) =>
+      isGlowColourAttributeName(attr.name, attr.name)
+    )?.value ?? colourAttr?.options[0];
+  const selectedColour =
+    (colourAttr && matchGlowColourOption(colourAttr.options, initialColour)) ||
+    defaultColour ||
+    "";
+  const bundleSiblings =
+    isGlowBearLine && colourAttr
+      ? sortEssentialGlowBearProducts(
+          colourAttr.options
+            .filter((option) => glowColourParam(option) !== glowColourParam(selectedColour))
+            .map((option) => {
+              const variation = product.variations.find((item) =>
+                item.attributeValues.some(
+                  (attr) =>
+                    isGlowColourAttributeName(attr.name, attr.name) &&
+                    glowColourParam(attr.value) === glowColourParam(option)
+                )
+              );
+              const shortName = parseGlowBearColor(option) ?? option;
+              return {
+                slug: `${product.slug}-${glowColourParam(option)}`,
+                href: `/products/${product.slug}?colour=${encodeURIComponent(glowColourParam(option))}`,
+                name: option,
+                displayName: shortName,
+                imageUrl: variation?.imageUrl || product.imageUrl,
+                imageAlt: variation?.imageAlt || `${product.name} — ${option}`,
+              };
+            })
+        )
+      : [];
 
   const descriptionHtml = String(product.descriptionHtml ?? "");
 
@@ -70,6 +113,7 @@ export default async function ProductPage({
 
         {isVariableProduct ? (
           <VariableProductImagePicker
+            key={initialColour ?? "default"}
             productDatabaseId={product.databaseId}
             productName={product.name}
             fallbackImageUrl={product.imageUrl}
@@ -78,6 +122,7 @@ export default async function ProductPage({
             variationAttributes={product.variationAttributes}
             variations={product.variations}
             galleryImages={product.galleryImages}
+            initialColour={initialColour}
           >
             {product.downloadable ? <ProductDigitalCallout /> : null}
             {!product.downloadable && showGlowBearFreeShipping ? (
@@ -177,7 +222,9 @@ export default async function ProductPage({
           </ScrollReveal>
         ) : null}
 
-        {showBundleSiblings ? <GlowBearBundleMoreColours siblings={bundleSiblings} /> : null}
+        {bundleSiblings.length > 0 ? (
+          <GlowBearBundleMoreColours siblings={bundleSiblings} />
+        ) : null}
       </main>
       <FooterValues />
     </div>

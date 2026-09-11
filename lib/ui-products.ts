@@ -4,6 +4,7 @@ import type { HoverMediaKind, UiProduct } from "@/components/ProductCard";
 export type RawCatalogProduct = {
   id: string;
   slug?: string;
+  href?: string;
   name: string;
   displayName?: string;
   price: string;
@@ -19,6 +20,7 @@ export function toUiProducts(list: RawCatalogProduct[]): UiProduct[] {
   return list.map((p) => ({
     id: p.id,
     slug: p.slug,
+    href: p.href,
     name: p.name,
     displayName: p.displayName,
     price: p.price,

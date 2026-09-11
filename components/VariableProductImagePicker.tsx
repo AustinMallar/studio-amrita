@@ -3,7 +3,13 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { useId, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { optionToSwatchColor } from "@/lib/product-swatches";
+import {
+  glowColourParam,
+  isGlowColourAttributeName,
+  matchGlowColourOption,
+} from "@/lib/product-display";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { ProductDetailGallery } from "@/components/ProductDetailGallery";
 import { ScrollReveal } from "@/components/ScrollReveal";
@@ -22,6 +28,8 @@ type Props = {
   variationAttributes: ProductVariationAttribute[];
   variations: ProductVariationView[];
   galleryImages?: ProductGalleryImage[];
+  /** Pre-select a colourway from `/products/[slug]?colour=matcha`. */
+  initialColour?: string | null;
   children?: ReactNode;
 };
 
@@ -56,8 +64,44 @@ function findVariationBySelection(
 }
 
 function isGlowColourAttribute(attr: ProductVariationAttribute) {
-  const blob = `${attr.name} ${attr.label}`.toLowerCase();
-  return /color|colour|shade|choose-your-glow|choose your glow|bag colour|bag color/.test(blob);
+  return isGlowColourAttributeName(attr.name, attr.label);
+}
+
+function selectionFromColourParam(
+  attributes: ProductVariationAttribute[],
+  variations: ProductVariationView[],
+  colourParam?: string | null,
+): Record<string, string> {
+  const base = initialAttributeSelection(attributes, variations);
+  if (!colourParam) return base;
+
+  const colourAttr = attributes.find(isGlowColourAttribute);
+  if (!colourAttr) return base;
+
+  const option = matchGlowColourOption(colourAttr.options, colourParam);
+  if (!option) return base;
+
+  const withColour = { ...base, [colourAttr.name]: option };
+  const exact = findVariationBySelection(
+    variations,
+    withColour,
+    attributes.map((attr) => attr.name),
+  );
+  if (exact) return withColour;
+
+  const any = variations.find((variation) =>
+    variation.attributeValues.some(
+      (attr) =>
+        isGlowColourAttributeName(attr.name, attr.name) &&
+        matchGlowColourOption([attr.value], option),
+    ),
+  );
+  if (!any) return withColour;
+
+  return {
+    ...withColour,
+    ...Object.fromEntries(any.attributeValues.map((attr) => [attr.name, attr.value])),
+  };
 }
 
 const selectClassName =
@@ -72,15 +116,30 @@ export function VariableProductImagePicker({
   variationAttributes,
   variations,
   galleryImages = [],
+  initialColour = null,
   children,
 }: Props) {
   const formId = useId();
+  const router = useRouter();
+  const pathname = usePathname();
   const useAttributeDropdowns = variationAttributes.length > 1;
+  const attributeNames = variationAttributes.map((attr) => attr.name);
 
-  const [selectedId, setSelectedId] = useState(variations[0]?.id ?? "");
   const [attributeSelection, setAttributeSelection] = useState(() =>
-    initialAttributeSelection(variationAttributes, variations),
+    selectionFromColourParam(variationAttributes, variations, initialColour),
   );
+  const [selectedId, setSelectedId] = useState(() => {
+    const selection = selectionFromColourParam(
+      variationAttributes,
+      variations,
+      initialColour,
+    );
+    return (
+      findVariationBySelection(variations, selection, attributeNames)?.id ??
+      variations[0]?.id ??
+      ""
+    );
+  });
 
   const dropdownVariation = useMemo(() => {
     if (!useAttributeDropdowns) return undefined;
@@ -109,8 +168,17 @@ export function VariableProductImagePicker({
     return null;
   }
 
+  function syncColourInUrl(value: string) {
+    const next = `${pathname}?colour=${encodeURIComponent(glowColourParam(value))}`;
+    router.replace(next, { scroll: false });
+  }
+
   function updateAttribute(name: string, value: string) {
     setAttributeSelection((current) => ({ ...current, [name]: value }));
+    const attr = variationAttributes.find((item) => item.name === name);
+    if (attr && isGlowColourAttribute(attr)) {
+      syncColourInUrl(value);
+    }
   }
 
   return (
@@ -242,7 +310,13 @@ export function VariableProductImagePicker({
                         name={`colour-${formId}`}
                         value={v.id}
                         checked={checked}
-                        onChange={() => setSelectedId(v.id)}
+                        onChange={() => {
+                          setSelectedId(v.id);
+                          const colourValue = v.attributeValues.find((attr) =>
+                            isGlowColourAttributeName(attr.name, attr.name),
+                          )?.value;
+                          if (colourValue) syncColourInUrl(colourValue);
+                        }}
                         className="h-4 w-4 shrink-0 accent-dusty-rose"
                       />
                       <span

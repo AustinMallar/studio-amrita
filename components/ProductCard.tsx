@@ -9,6 +9,8 @@ export type UiProduct = {
   id: string;
   /** WooCommerce URL slug — when set, the whole card links to `/products/[slug]`. */
   slug?: string;
+  /** Override card destination (e.g. `/products/slug?colour=matcha`). */
+  href?: string;
   name: string;
   /** Shorter card label when the WooCommerce title is verbose (e.g. "Matcha"). */
   displayName?: string;
@@ -24,7 +26,7 @@ export type UiProduct = {
 
 export function ProductCard({ product }: { product: UiProduct }) {
   const hasRemote = Boolean(product.imageUrl && product.imageUrl.startsWith("http"));
-  const href = product.slug ? `/products/${product.slug}` : null;
+  const href = product.href ?? (product.slug ? `/products/${product.slug}` : null);
   const hasHover =
     Boolean(product.hoverMediaUrl) &&
     product.hoverMediaKind != null;

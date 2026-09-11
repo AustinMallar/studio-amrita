@@ -1,7 +1,14 @@
 import { decodeHtmlEntities } from "./html-text";
 
-/** Canonical colour order for Essential Glow Bear grid rows. */
+/** Canonical colour order for Glow Bear grid rows. */
 const GLOW_BEAR_COLOR_ORDER = ["matcha", "sakura", "honey", "cloud"] as const;
+
+/** Categories whose variable products should render one catalog card per colour. */
+export const GLOW_BEAR_COLOURWAY_CATEGORY_SLUGS = new Set([
+  "essential-glow-bear",
+  "classic-glow-bear",
+  "baby-glow-bear",
+]);
 
 /** Extract the bear colour from WooCommerce titles like "The Matcha Glow Bear". */
 export function parseGlowBearColor(name: string): string | null {
@@ -29,6 +36,35 @@ export function storefrontProductName(fullName: string): string {
   return glowBearCardName(withoutHandmadeTail || primary);
 }
 
+export function isGlowColourAttributeName(name?: string, label?: string): boolean {
+  const blob = `${name ?? ""} ${label ?? ""}`.toLowerCase();
+  return /color|colour|shade|choose-your-glow|choose your glow/.test(blob);
+}
+
+/** Stable query value for `/products/[slug]?colour=`. */
+export function glowColourParam(option: string): string {
+  const short = parseGlowBearColor(option);
+  if (short) return short.toLowerCase();
+  return option
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function glowColourOptionsMatch(option: string, param: string): boolean {
+  if (!option || !param) return false;
+  return glowColourParam(option) === glowColourParam(param);
+}
+
+export function matchGlowColourOption(
+  options: string[],
+  param: string | null | undefined,
+): string | null {
+  if (!param) return null;
+  return options.find((option) => glowColourOptionsMatch(option, param)) ?? null;
+}
+
 function glowBearSortIndex(name: string): number {
   const color = parseGlowBearColor(name)?.toLowerCase();
   if (!color) return 999;
@@ -36,7 +72,12 @@ function glowBearSortIndex(name: string): number {
   return idx >= 0 ? idx : 999;
 }
 
-/** Sort Essential Glow Bear products Matcha → Sakura → Honey → Cloud. */
-export function sortEssentialGlowBearProducts<T extends { name: string }>(products: T[]): T[] {
-  return [...products].sort((a, b) => glowBearSortIndex(a.name) - glowBearSortIndex(b.name));
+/** Sort Glow Bear colourways Matcha → Sakura → Honey → Cloud. */
+export function sortEssentialGlowBearProducts<
+  T extends { name: string; displayName?: string },
+>(products: T[]): T[] {
+  return [...products].sort(
+    (a, b) =>
+      glowBearSortIndex(a.displayName ?? a.name) - glowBearSortIndex(b.displayName ?? b.name),
+  );
 }
